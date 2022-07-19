@@ -1,21 +1,40 @@
 import React from "react";
-import Center from "../components/Center";
-import { Button, Text } from "react-native-paper";
-import { HomeStackScreenProps } from "../navigations/HomeStack/types";
+import { HomeStackScreenProps } from "../navigations/AppStack/types";
+import {
+  Box,
+  Button,
+  Center,
+  HStack,
+  Text,
+  useColorMode,
+  useColorModeValue,
+  VStack,
+} from "native-base";
 
-const Home: React.FC<HomeStackScreenProps<"Home">> = ({ navigation }) => {
+const Home: React.FC<HomeStackScreenProps<"Dashboard">> = ({ navigation }) => {
+  const { toggleColorMode } = useColorMode();
   return (
-    <Center>
-      <Text>Welcome Home</Text>
-      <Button
-        mode="outlined"
-        onPress={() => {
-          navigation.navigate("Details");
-        }}
-      >
-        go to details
-      </Button>
-    </Center>
+    <HStack
+      bg={useColorModeValue("success.500", "warning.500")}
+      flex={1}
+      justifyContent="center"
+      alignItems={"center"}
+      p={1}
+    >
+      <Center>
+        <Text>Home Screen</Text>
+        <Button
+          onPress={() => {
+            navigation.navigate("Details");
+          }}
+          size="sm"
+          mb="2"
+          colorScheme={"warning"}
+        >
+          Click Me
+        </Button>
+      </Center>
+    </HStack>
   );
 };
 

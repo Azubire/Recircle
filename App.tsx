@@ -4,36 +4,33 @@ import Center from "./src/components/Center";
 //navigatonContainer
 import { NavigationContainer } from "@react-navigation/native";
 import AuthNavigationStack from "./src/navigations/authStack/AuthNavigationStack";
-import BottomTabs from "./src/navigations/appTabs/BottomTabs";
+import BottomTabs from "./src/navigations/appTabs/AppTabs";
 
 import {
   Provider as PaperProvider,
   MD3LightTheme as DefaultTheme,
 } from "react-native-paper";
 
+import { NativeBaseProvider, extendTheme } from "native-base";
+
 import { Provider as ReduxProvider } from "react-redux";
 import store from "./src/store";
-
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: "#3498db",
-    secondary: "#f1c40f",
-    tertiary: "#a1b2c3",
-  },
-};
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import HomeStack from "./src/navigations/AppStack/AppStack";
+import RootStack from "./src/navigations/RootStack/RootStack";
+import AppDrawer from "./src/navigations/AppDrawer";
 
 export default function App() {
   return (
     <ReduxProvider store={store}>
-      {/*// @ts-ignore */}
-      <PaperProvider theme={theme}>
-        <NavigationContainer>
-          <AuthNavigationStack />
-          {/* <BottomTabs /> */}
-        </NavigationContainer>
-      </PaperProvider>
+      <NativeBaseProvider>
+        <PaperProvider>
+          <NavigationContainer>
+            {/* <Root.Screen name="Auth" component={AuthNavigationStack} /> */}
+            <AppDrawer />
+          </NavigationContainer>
+        </PaperProvider>
+      </NativeBaseProvider>
     </ReduxProvider>
   );
 }

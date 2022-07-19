@@ -1,7 +1,7 @@
 import { NavigationProp, RouteProp } from "@react-navigation/native";
 
 export type HomeStackParamList = {
-  Home: undefined;
+  Dashboard: undefined;
   Details: undefined;
 };
 

@@ -2,12 +2,20 @@ import { View } from "react-native";
 import React from "react";
 import Center from "../components/Center";
 import { Text } from "react-native-paper";
-import { HomeStackScreenProps } from "../navigations/HomeStack/types";
+import { HomeStackScreenProps } from "../navigations/AppStack/types";
+import { Button } from "native-base";
 
-const Details: React.FC<HomeStackScreenProps<"Details">> = () => {
+const Details: React.FC<HomeStackScreenProps<"Details">> = ({ navigation }) => {
   return (
     <Center>
-      <Text>DetailsScreen</Text>
+      <Text>Details Screen</Text>
+      <Button
+        onPress={() => {
+          navigation.navigate("Dashboard");
+        }}
+      >
+        Go Back
+      </Button>
     </Center>
   );
 };
