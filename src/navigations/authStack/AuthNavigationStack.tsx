@@ -11,7 +11,7 @@ const AuthNavigationStack = () => {
   return (
     <AuthStack.Navigator
       initialRouteName="Signin"
-      screenOptions={{ headerShown: false }}
+      screenOptions={{ headerShown: true }}
     >
       <AuthStack.Screen name="Signin" component={SigninScreen} />
       <AuthStack.Screen name="Signup" component={SignupScreen} />

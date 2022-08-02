@@ -1,11 +1,12 @@
+import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { Box, Text } from "native-base";
+import { Text, View } from "react-native";
 
 const ContactUs = () => {
   return (
-    <Box bg="primary.400" p="12" rounded="lg">
-      <Text fontSize="xs">Contact Us</Text>
-    </Box>
+    <View>
+      <Text>Contact Us</Text>
+    </View>
   );
 };
 

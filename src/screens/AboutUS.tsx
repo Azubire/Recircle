@@ -1,11 +1,11 @@
-import { Box, Text } from "native-base";
 import React from "react";
+import { Text, View } from "react-native";
 
 const AboutUS = () => {
   return (
-    <Box bg="primary.400" p="12" rounded="lg">
-      <Text fontSize="xs">About Us</Text>
-    </Box>
+    <View>
+      <Text>About Us</Text>
+    </View>
   );
 };
 
