@@ -7,7 +7,7 @@ import { HomeStackParamList, HomeStackScreenProps } from "../AppStack/types";
 import { TabParamList } from "../appTabs/types";
 
 export type DrawerParamList = {
-  Categories: NavigatorScreenParams<TabParamList> | undefined;
+  Dashboard: NavigatorScreenParams<TabParamList> | undefined;
   History: undefined;
   AboutUs: undefined;
   ContactUs: undefined;

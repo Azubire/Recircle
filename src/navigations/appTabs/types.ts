@@ -10,7 +10,7 @@ import { HomeStackParamList, HomeStackScreenProps } from "../AppStack/types";
 export type TabParamList = {
   Home: undefined;
   Explore: undefined;
-  Sell: undefined;
+  Sell: { id: number };
   Search: undefined;
   Profile: undefined;
 };

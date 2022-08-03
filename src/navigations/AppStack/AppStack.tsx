@@ -5,21 +5,34 @@ import Details from "../../screens/DetailsScreen";
 import Profile from "../../screens/ProfileScreen";
 import Home from "../../screens/HomeScreen";
 import AppDrawer from "../AppDrawer";
+import Categories from "../../screens/Categories";
+import Recyclers from "../../screens/Recyclers";
+import MyAds from "../../screens/MyAds";
+import { useTheme } from "react-native-paper";
 
-const HomeStackNav = createNativeStackNavigator<HomeStackParamList>();
+const Stack = createNativeStackNavigator<HomeStackParamList>();
 
 const HomeStack = () => {
+  const { colors } = useTheme();
+
   return (
-    <HomeStackNav.Navigator
+    <Stack.Navigator
       initialRouteName="Home"
-      screenOptions={{ headerShown: true }}
+      screenOptions={{
+        headerShown: true,
+        headerStyle: { backgroundColor: colors.primary },
+        headerTintColor: colors.light,
+      }}
     >
-      <HomeStackNav.Screen
+      <Stack.Screen
         options={{ headerShown: false }}
         name="Home"
         component={AppDrawer}
       />
-    </HomeStackNav.Navigator>
+      <Stack.Screen name="Categories" component={Categories} />
+      <Stack.Screen name="Recyclers" component={Recyclers} />
+      <Stack.Screen name="MyAds" component={MyAds} />
+    </Stack.Navigator>
   );
 };
 

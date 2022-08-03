@@ -64,8 +64,8 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
   const getName = (item: string) => {
     let routeName;
     switch (item) {
-      case "Categories":
-        routeName = "Categories";
+      case "Dashboard":
+        routeName = "Dashboard";
         break;
       case "History":
         routeName = "History";

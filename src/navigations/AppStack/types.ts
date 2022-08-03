@@ -4,10 +4,9 @@ import { DrawerParamList } from "../AppDrawer/Types";
 
 export type HomeStackParamList = {
   Home: NavigatorScreenParams<DrawerParamList> | undefined;
-  Explore: undefined;
-  CreateAd: undefined;
-  Search: undefined;
-  Profile: undefined;
+  Categories: undefined;
+  Recyclers: undefined;
+  MyAds: undefined;
 };
 
 export type HomeStackScreenProps<T extends keyof HomeStackParamList> =
