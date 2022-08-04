@@ -34,6 +34,7 @@ const AppTabs = () => {
           tabBarStyle: { height: 60 },
           tabBarShowLabel: false,
           tabBarActiveTintColor: colors.primary,
+          tabBarHideOnKeyboard: true,
         };
       }}
     >
@@ -121,6 +122,7 @@ const AppTabs = () => {
             );
           },
           // tabBarStyle: { display: "none" },
+          headerTitle: "Create an ad",
         }}
         component={Sell}
       />
