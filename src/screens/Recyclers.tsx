@@ -1,8 +1,9 @@
-import { View, TouchableOpacity, Image, FlatList } from "react-native";
+import { View, FlatList, SafeAreaView } from "react-native";
 import React from "react";
 import { Avatar, Button, Card, Text, useTheme } from "react-native-paper";
 import { HomeStackScreenProps } from "../navigations/AppStack/types";
 import { Ionicons, Octicons } from "@expo/vector-icons";
+import { RecyclerStackScreenProps } from "../navigations/RecyclersStack/types";
 
 const img1 = require("../../assets/images/r1.jpg");
 const img2 = require("../../assets/images/r2.jpg");
@@ -48,20 +49,32 @@ const data = [
     verified: true,
     ratings: 122,
   },
+  {
+    id: 4,
+    name: "North-Bridge Collector",
+    motto: "we collect them all",
+    profile:
+      "We aim to protect and transform the world with our recycling methods. What is better than saung the world and making some money?.",
+    img: img3,
+    workinghours: "7am - 5pm",
+    workingDays: "Mon - Fri",
+    location: "Bolgatanga Soe",
+    verified: true,
+    ratings: 122,
+  },
 ];
 
-const Recyclers = ({ navigation }: HomeStackScreenProps<"Recyclers">) => {
+const Recyclers = ({ navigation }: RecyclerStackScreenProps<"Recyclers">) => {
   const { colors } = useTheme();
   return (
-    <View
-      style={{
-        flex: 1,
-        paddingHorizontal: 6,
-        marginVertical: 16,
-      }}
-    >
+    <SafeAreaView>
       <FlatList
-        showsVerticalScrollIndicator={false}
+        style={{ paddingHorizontal: 6 }}
+        ListHeaderComponentStyle={{ marginTop: 16 }}
+        ListHeaderComponent={() => {
+          return <View></View>;
+        }}
+        // showsVerticalScrollIndicator={false}
         data={data}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, index }) => (
@@ -75,13 +88,27 @@ const Recyclers = ({ navigation }: HomeStackScreenProps<"Recyclers">) => {
                 <Text>
                   <View>
                     <Text variant="bodySmall">{item.motto}</Text>
-                    <Text>{item.ratings}</Text>
+                    <View style={{ flexDirection: "row" }}>
+                      {Array.from(
+                        [1, 2, 3, 4, 5].map((item) => (
+                          <Ionicons
+                            name="star"
+                            color={colors.secondary}
+                            size={15}
+                          />
+                        ))
+                      )}
+                    </View>
                   </View>
                 </Text>
               }
               left={() => <Avatar.Image source={item.img} size={60} />}
               right={() => (
-                <Octicons name="verified" size={24} color={colors.primary} />
+                <Octicons
+                  name="verified"
+                  size={24}
+                  color={item.verified ? colors.primary : colors.danger}
+                />
               )}
               rightStyle={{ top: 10, position: "absolute", right: 10 }}
             />
@@ -109,27 +136,39 @@ const Recyclers = ({ navigation }: HomeStackScreenProps<"Recyclers">) => {
                     alignItems: "center",
                   }}
                 >
-                  <Ionicons name="time" size={20} />
+                  <Ionicons name="time-outline" size={20} />
                   <View style={{ flexDirection: "row", marginLeft: 8 }}>
                     <Text>8am - 4pm</Text>
                     <Text style={{ marginLeft: 8 }}>Mon - Fri</Text>
                   </View>
                 </View>
                 <View style={{ flexDirection: "row" }}>
-                  <Ionicons name="location" size={20} />
+                  <Ionicons name="location-outline" size={20} />
                   <Text style={{ marginLeft: 8 }}>{item.location}</Text>
                 </View>
               </View>
               <View style={{ marginRight: 20 }}>
-                <Button mode="outlined" style={{ borderColor: colors.primary }}>
+                <Button
+                  mode="outlined"
+                  textColor={colors.secondary}
+                  style={{ borderColor: colors.secondary }}
+                  onPress={() => {
+                    navigation.navigate("RecyclerDetails", {
+                      id: item.id.toString(),
+                      name: item.name,
+                    });
+                  }}
+                >
                   Contact
                 </Button>
               </View>
             </View>
           </Card>
         )}
+        // ListFooterComponent={() => <View></View>}
+        ListFooterComponentStyle={{ marginBottom: 16 }}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

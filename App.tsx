@@ -41,8 +41,8 @@ export default function App() {
       <PaperProvider theme={theme}>
         <NavigationContainer>
           {/* <AuthNavigationStack /> */}
-          {/* <HomeStack /> */}
-          <OnBoardingStack />
+          <HomeStack />
+          {/* <OnBoardingStack /> */}
         </NavigationContainer>
       </PaperProvider>
     </ReduxProvider>

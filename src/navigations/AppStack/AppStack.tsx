@@ -9,6 +9,7 @@ import Categories from "../../screens/Categories";
 import Recyclers from "../../screens/Recyclers";
 import MyAds from "../../screens/MyAds";
 import { useTheme } from "react-native-paper";
+import RecyclerStack from "../RecyclersStack";
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 
@@ -30,7 +31,11 @@ const HomeStack = () => {
         component={AppDrawer}
       />
       <Stack.Screen name="Categories" component={Categories} />
-      <Stack.Screen name="Recyclers" component={Recyclers} />
+      <Stack.Screen
+        name="RecyclersStack"
+        options={{ headerTitle: "Recyclers", headerShown: false }}
+        component={RecyclerStack}
+      />
       <Stack.Screen name="MyAds" component={MyAds} />
     </Stack.Navigator>
   );

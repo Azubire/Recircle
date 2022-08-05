@@ -1,11 +1,12 @@
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { DrawerParamList } from "../AppDrawer/Types";
+import { RecyclerStackParamList } from "../RecyclersStack/types";
 
 export type HomeStackParamList = {
   Home: NavigatorScreenParams<DrawerParamList> | undefined;
   Categories: undefined;
-  Recyclers: undefined;
+  RecyclersStack: NavigatorScreenParams<RecyclerStackParamList>;
   MyAds: undefined;
 };
 

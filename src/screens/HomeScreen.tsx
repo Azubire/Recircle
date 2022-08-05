@@ -31,7 +31,7 @@ const data: Array<{
   id: number;
   icon: ImageSourcePropType;
   title: string;
-  screen: "Sell" | "Recyclers" | "Categories" | "MyAds";
+  screen: "Sell" | "RecyclersStack" | "Categories" | "MyAds";
 }> = [
   {
     id: 1,
@@ -43,7 +43,7 @@ const data: Array<{
     id: 2,
     icon: icon2,
     title: "Recyclers",
-    screen: "Recyclers",
+    screen: "RecyclersStack",
   },
   {
     id: 3,

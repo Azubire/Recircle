@@ -150,6 +150,7 @@ const AppTabs = () => {
             return <Avatar.Image size={30} source={profileImage} />;
           },
           // tabBarStyle: { display: "none" },
+          headerShown: false,
         }}
         component={Profile}
       />
