@@ -10,6 +10,8 @@ import Recyclers from "../../screens/Recyclers";
 import MyAds from "../../screens/MyAds";
 import { useTheme } from "react-native-paper";
 import RecyclerStack from "../RecyclersStack";
+import Menu from "../../screens/Menu";
+import AdDetails from "../../screens/AdDetails";
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 
@@ -37,6 +39,11 @@ const HomeStack = () => {
         component={RecyclerStack}
       />
       <Stack.Screen name="MyAds" component={MyAds} />
+      <Stack.Screen
+        name="AdDetails"
+        component={AdDetails}
+        options={{ headerTitle: "Ad Details" }}
+      />
     </Stack.Navigator>
   );
 };

@@ -11,19 +11,28 @@ import {
 } from "@expo/vector-icons";
 import { TouchableOpacity, View } from "react-native";
 import { DrawerActions } from "@react-navigation/native";
-import { TabParamList } from "./types";
+import { TabParamList, TabScreenProps } from "./types";
 import Explore from "../../screens/Explore";
 import Sell from "../../screens/Sell";
 import Search from "../../screens/Search";
 import Profile from "../../screens/ProfileScreen";
-import { Avatar, useTheme } from "react-native-paper";
+import {
+  Avatar,
+  Button,
+  Divider,
+  Menu,
+  Text,
+  useTheme,
+} from "react-native-paper";
 import HomeStack from "../AppStack/AppStack";
-const profileImage = require("../../../assets/images/azubire.jpg");
+const profileImage = require("../../../assets/images/profile.jpeg");
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const AppTabs = () => {
   const { colors } = useTheme();
+
+  const [visible, setVisible] = React.useState(false);
 
   return (
     <Tab.Navigator
@@ -40,7 +49,7 @@ const AppTabs = () => {
     >
       <Tab.Screen
         name="Home"
-        options={({ navigation }) => ({
+        options={({ navigation }: TabScreenProps<"Home">) => ({
           tabBarIcon({ focused, color, size }) {
             return (
               <AntDesign
@@ -72,20 +81,36 @@ const AppTabs = () => {
                   width: 70,
                 }}
               >
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate("Notifications");
+                  }}
+                >
                   <MaterialCommunityIcons
                     name="bell-badge-outline"
                     size={25}
                     color="#fff"
                   />
                 </TouchableOpacity>
-                <TouchableOpacity>
-                  <MaterialCommunityIcons
-                    name="dots-vertical"
-                    size={25}
-                    color="#fff"
-                  />
-                </TouchableOpacity>
+
+                <Menu
+                  visible={visible}
+                  onDismiss={() => setVisible(false)}
+                  anchor={
+                    <TouchableOpacity onPress={() => setVisible(true)}>
+                      <MaterialCommunityIcons
+                        name="dots-vertical"
+                        size={25}
+                        color="#fff"
+                      />
+                    </TouchableOpacity>
+                  }
+                >
+                  <Menu.Item onPress={() => {}} title="Item 1" />
+                  <Menu.Item onPress={() => {}} title="Settings" />
+                  <Divider />
+                  <Menu.Item onPress={() => {}} title="Logout" />
+                </Menu>
               </View>
             );
           },

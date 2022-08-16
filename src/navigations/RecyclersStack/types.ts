@@ -7,7 +7,7 @@ import { HomeStackParamList, HomeStackScreenProps } from "../AppStack/types";
 
 export type RecyclerStackParamList = {
   Recyclers: undefined;
-  RecyclerDetails: { id: string; name: string };
+  RecyclerDetails: { id: number; name: string };
 };
 
 export type RecyclerStackScreenProps<T extends keyof RecyclerStackParamList> =

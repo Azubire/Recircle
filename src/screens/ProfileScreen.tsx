@@ -23,13 +23,13 @@ const Profile = () => {
             }}
           >
             <Image
-              source={require("../../assets/images/azubire.jpg")}
+              source={require("../../assets/images/cover.jpeg")}
               resizeMode="cover"
               style={{ width: "100%", height: 150 }}
             />
             <View style={{ marginTop: -50 }}>
               <Image
-                source={require("../../assets/images/azubire.jpg")}
+                source={require("../../assets/images/profile.jpeg")}
                 resizeMode="cover"
                 style={{
                   width: 110,
@@ -50,7 +50,7 @@ const Profile = () => {
               variant="bodyLarge"
               style={{ color: colors.light, marginTop: 8, paddingBottom: 6 }}
             >
-              Azubire Peter
+              Jane Doe
             </Text>
           </View>
 
@@ -68,7 +68,7 @@ const Profile = () => {
               <TextInput
                 editable={false}
                 mode="outlined"
-                value="@azubire999"
+                value="@janedoe999"
                 left={<TextInput.Icon name="account-cog-outline" />}
                 right={<TextInput.Icon name="pencil-outline" size={20} />}
               />
@@ -79,7 +79,7 @@ const Profile = () => {
               </Text>
               <TextInput
                 mode="outlined"
-                value="Azubire Peter"
+                value="Jane Doe"
                 left={<TextInput.Icon name="account-circle-outline" />}
                 right={<TextInput.Icon name="pencil-outline" size={20} />}
               />
@@ -90,7 +90,7 @@ const Profile = () => {
               </Text>
               <TextInput
                 mode="outlined"
-                value="azubirepeter@gmail.com"
+                value="janedoer@gmail.com"
                 left={<TextInput.Icon name="email-edit-outline" />}
                 right={<TextInput.Icon name="pencil-outline" size={20} />}
               />

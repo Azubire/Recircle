@@ -1,26 +1,16 @@
-import { useIsFocused } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
 import React from "react";
 import {
   FlatList,
   Image,
   ImageSourcePropType,
-  ScrollView,
+  SafeAreaView,
   View,
 } from "react-native";
-import {
-  Avatar,
-  Button,
-  Card,
-  Paragraph,
-  Text,
-  Title,
-  useTheme,
-} from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Button, Card, Text, useTheme } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { TabScreenProps } from "../navigations/appTabs/types";
 import { LinearGradient } from "expo-linear-gradient";
+import CustomStatusbar from "../components/CustomStatusbar";
 
 const icon1 = require("../../assets/images/icon1.png");
 const icon2 = require("../../assets/images/icon2.png");
@@ -62,16 +52,12 @@ const data: Array<{
 const Home = ({ navigation }: TabScreenProps<"Home">) => {
   const { colors } = useTheme();
   return (
-    <View
-      style={{
-        flex: 1,
-        paddingHorizontal: 2,
-      }}
-    >
-      <StatusBar style="light" backgroundColor={colors.primary} />
+    <>
+      <CustomStatusbar style="light" backgroundColor={colors.primary} />
       <View
         style={{
-          width: "100%",
+          flex: 1,
+          paddingHorizontal: 2,
         }}
       >
         <FlatList
@@ -124,6 +110,9 @@ const Home = ({ navigation }: TabScreenProps<"Home">) => {
                           mode="contained"
                           buttonColor={"#e11d48"}
                           style={{ width: 170 }}
+                          onPress={() => {
+                            navigation.navigate("Sell");
+                          }}
                         >
                           Start Selling Now
                         </Button>
@@ -176,7 +165,7 @@ const Home = ({ navigation }: TabScreenProps<"Home">) => {
           )}
         />
       </View>
-    </View>
+    </>
   );
 };
 

@@ -18,13 +18,17 @@ import {
 import { DrawerContentComponentProps } from "@react-navigation/drawer";
 import { StatusBar } from "expo-status-bar";
 import { useIsFocused } from "@react-navigation/native";
+import { useAppDispatch } from "../hooks/reduxhooks";
+import { removeUser } from "../store/features/AuthSlice";
+import * as secureStore from "expo-secure-store";
 
 const logo = require("../../assets/images/logo.png");
-const profileImage = require("../../assets/images/azubire.jpg");
+const profileImage = require("../../assets/images/profile.jpeg");
 
 const DrawerContent = (props: DrawerContentComponentProps) => {
   const [active, setActive] = React.useState<number | null>(null);
   const { navigation, state, descriptors } = props;
+  const dispatch = useAppDispatch();
 
   const { colors } = useTheme();
 
@@ -89,6 +93,11 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
     }
 
     return routeName;
+  };
+
+  const handleLogOut = () => {
+    dispatch(removeUser());
+    secureStore.deleteItemAsync("user");
   };
 
   return (
@@ -179,12 +188,12 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
             </TouchableOpacity>
             <TouchableOpacity>
               <View style={{ marginLeft: 8 }}>
-                <Text variant="titleMedium">Azubire Peter</Text>
+                <Text variant="titleMedium">Jane Doe</Text>
                 <Text
                   variant="labelMedium"
                   style={{ opacity: 0.85, marginTop: 2 }}
                 >
-                  azubirepeter@gmail.com
+                  janedoe@gmail.com
                 </Text>
               </View>
             </TouchableOpacity>
@@ -194,9 +203,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
             buttonColor={colors.secondary}
             loading={false}
             icon={() => <Ionicons name="log-out" size={25} color="#fff" />}
-            onPress={() => {
-              navigation.closeDrawer();
-            }}
+            onPress={handleLogOut}
           >
             Log Out
           </Button>

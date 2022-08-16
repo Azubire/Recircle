@@ -1,73 +1,48 @@
 import { View, FlatList, SafeAreaView } from "react-native";
 import React from "react";
-import { Avatar, Button, Card, Text, useTheme } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Avatar,
+  Button,
+  Card,
+  Text,
+  useTheme,
+} from "react-native-paper";
 import { HomeStackScreenProps } from "../navigations/AppStack/types";
 import { Ionicons, Octicons } from "@expo/vector-icons";
 import { RecyclerStackScreenProps } from "../navigations/RecyclersStack/types";
-
-const img1 = require("../../assets/images/r1.jpg");
-const img2 = require("../../assets/images/r2.jpg");
-const img3 = require("../../assets/images/r3.jpg");
-
-const data = [
-  {
-    id: 1,
-    name: "Caressona Ldt",
-    motto: "we are the best",
-    profile:
-      "We are focused on recycling waste products to bring out something meaningful to the environment.",
-    img: img1,
-    workinghours: "6am - 6pm",
-    workingDays: "Mon - Fri",
-    location: "Accra Tema",
-    verified: true,
-    ratings: 122,
-  },
-  {
-    id: 2,
-    name: "My-Waist Recycle Ldt",
-    motto: "Bring your material to us",
-    profile:
-      "We collect all kind of waste material from you no matter your location. Just make your offer.",
-    img: img2,
-    workinghours: "8am - 4pm",
-    workingDays: "Mon - Fri",
-    location: "Kumasi Adom",
-    verified: false,
-    ratings: 122,
-  },
-  {
-    id: 3,
-    name: "North-Bridge Collector",
-    motto: "we collect them all",
-    profile:
-      "We aim to protect and transform the world with our recycling methods. What is better than saung the world and making some money?.",
-    img: img3,
-    workinghours: "7am - 5pm",
-    workingDays: "Mon - Fri",
-    location: "Bolgatanga Soe",
-    verified: true,
-    ratings: 122,
-  },
-  {
-    id: 4,
-    name: "North-Bridge Collector",
-    motto: "we collect them all",
-    profile:
-      "We aim to protect and transform the world with our recycling methods. What is better than saung the world and making some money?.",
-    img: img3,
-    workinghours: "7am - 5pm",
-    workingDays: "Mon - Fri",
-    location: "Bolgatanga Soe",
-    verified: true,
-    ratings: 122,
-  },
-];
+import CustomStatusbar from "../components/CustomStatusbar";
+import {
+  getAllRecyclers,
+  initialStateTypes,
+} from "../store/features/RecyclerSclice";
+import { useAppSelector } from "../hooks/reduxhooks";
 
 const Recyclers = ({ navigation }: RecyclerStackScreenProps<"Recyclers">) => {
+  const [data, setData] = React.useState<initialStateTypes[]>([]);
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const response = useAppSelector(getAllRecyclers);
+
+  React.useEffect(() => {
+    // get data from redux store
+
+    // update state with data retrieved from the store
+    setData(response);
+    console.log("response", response);
+
+    setLoading(false);
+  }, []);
+
+  console.log("data", data);
+  console.log("loading", loading);
+
   const { colors } = useTheme();
-  return (
+
+  return loading ? (
+    <ActivityIndicator size="large" />
+  ) : (
     <SafeAreaView>
+      <CustomStatusbar style="light" />
       <FlatList
         style={{ paddingHorizontal: 6 }}
         ListHeaderComponentStyle={{ marginTop: 16 }}
@@ -90,8 +65,9 @@ const Recyclers = ({ navigation }: RecyclerStackScreenProps<"Recyclers">) => {
                     <Text variant="bodySmall">{item.motto}</Text>
                     <View style={{ flexDirection: "row" }}>
                       {Array.from(
-                        [1, 2, 3, 4, 5].map((item) => (
+                        [1, 2, 3, 4, 5].map((item, index) => (
                           <Ionicons
+                            key={index}
                             name="star"
                             color={colors.secondary}
                             size={15}
@@ -154,7 +130,7 @@ const Recyclers = ({ navigation }: RecyclerStackScreenProps<"Recyclers">) => {
                   style={{ borderColor: colors.secondary }}
                   onPress={() => {
                     navigation.navigate("RecyclerDetails", {
-                      id: item.id.toString(),
+                      id: item.id,
                       name: item.name,
                     });
                   }}

@@ -53,7 +53,7 @@ const Categories = ({ navigation }: HomeStackScreenProps<"Categories">) => {
         paddingHorizontal: 2,
       }}
     >
-      {/* <StatusBar style="dark" backgroundColor={colors.primary} /> */}
+      <StatusBar style="light" />
       <View
         style={{
           width: "100%",

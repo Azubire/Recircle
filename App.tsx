@@ -1,17 +1,11 @@
-import { StatusBar } from "expo-status-bar";
-// import TextEncoder from "text-encoding";
-//navigatonContainer
 import { NavigationContainer } from "@react-navigation/native";
 import {
   MD3LightTheme as DefaultTheme,
   Provider as PaperProvider,
 } from "react-native-paper";
 import { Provider as ReduxProvider } from "react-redux";
+import Navigation from "./src/navigations/Navigation";
 import store from "./src/store";
-import AppDrawer from "./src/navigations/AppDrawer";
-import HomeStack from "./src/navigations/AppStack/AppStack";
-import AuthNavigationStack from "./src/navigations/authStack/AuthNavigationStack";
-import OnBoardingStack from "./src/navigations/OnBoarding";
 
 const theme = {
   ...DefaultTheme,
@@ -40,9 +34,7 @@ export default function App() {
     <ReduxProvider store={store}>
       <PaperProvider theme={theme}>
         <NavigationContainer>
-          {/* <AuthNavigationStack /> */}
-          <HomeStack />
-          {/* <OnBoardingStack /> */}
+          <Navigation />
         </NavigationContainer>
       </PaperProvider>
     </ReduxProvider>
