@@ -59,18 +59,19 @@ const AppTabs = () => {
               />
             );
           },
-          headerShown: true,
+          // headerShown: true,
           headerLeft: (props) => (
             <TouchableOpacity
               onPress={() => {
                 navigation.dispatch(DrawerActions.toggleDrawer());
               }}
             >
-              <MaterialCommunityIcons name="menu" size={25} color="#fff" />
+              <MaterialCommunityIcons name="menu" size={30} color="#fff" />
             </TouchableOpacity>
           ),
           headerLeftContainerStyle: { paddingLeft: 15 },
           headerRightContainerStyle: { paddingRight: 15 },
+          headerStatusBarHeight: 24,
 
           headerRight: () => {
             return (

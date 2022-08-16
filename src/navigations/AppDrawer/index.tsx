@@ -71,7 +71,7 @@ const AppDrawer = () => {
       drawerContent={(props) => <DrawerContent {...props} />}
     >
       <Drawer.Screen
-        options={{ headerShown: false, drawerLabel: "Dashboard" }}
+        options={{ headerShown: false }}
         name="Dashboard"
         component={AppTabs}
       />

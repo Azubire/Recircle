@@ -20,16 +20,15 @@ const HomeStack = () => {
 
   return (
     <Stack.Navigator
-      initialRouteName="Home"
+      initialRouteName="Drawer"
       screenOptions={{
-        headerShown: true,
         headerStyle: { backgroundColor: colors.primary },
         headerTintColor: colors.light,
       }}
     >
       <Stack.Screen
         options={{ headerShown: false }}
-        name="Home"
+        name="Drawer"
         component={AppDrawer}
       />
       <Stack.Screen name="Categories" component={Categories} />

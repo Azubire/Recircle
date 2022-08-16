@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { ImageSourcePropType } from "react-native";
 import { RootState } from "..";
+import Search from "../../screens/Search";
 
 const plastic1 = require("../../../assets/images/Ads/plastic1.jpg");
 const plastic2 = require("../../../assets/images/Ads/plastic2.jpg");

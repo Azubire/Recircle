@@ -83,6 +83,7 @@ const Recyclers = ({ navigation }: RecyclerStackScreenProps<"Recyclers">) => {
             />
             <Card.Content>
               <Text
+                numberOfLines={5}
                 variant="bodyMedium"
                 // style={{ textAlign: "center", marginVertical: 16 }}
               >

@@ -4,7 +4,7 @@ import { DrawerParamList } from "../AppDrawer/Types";
 import { RecyclerStackParamList } from "../RecyclersStack/types";
 
 export type HomeStackParamList = {
-  Home: NavigatorScreenParams<DrawerParamList> | undefined;
+  Drawer: NavigatorScreenParams<DrawerParamList> | undefined;
   Categories: undefined;
   RecyclersStack: NavigatorScreenParams<RecyclerStackParamList>;
   MyAds: undefined;

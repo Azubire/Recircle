@@ -7,6 +7,7 @@ import { getItem, setItem } from "../utils/helpers";
 import * as secureStore from "expo-secure-store";
 import { ActivityIndicator, View } from "react-native";
 import CustomStatusbar from "../components/CustomStatusbar";
+import { StatusBar } from "expo-status-bar";
 
 const Navigation = () => {
   const [loading, setLoading] = React.useState(false);
@@ -28,18 +29,16 @@ const Navigation = () => {
   //   getItem("user");
   // }, []);
 
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <CustomStatusbar />
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
   return (
     // <>{currentUser.isLoggedIn ? <HomeStack /> : <AuthNavigationStack />}</>
-    <HomeStack />
+    loading ? (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <StatusBar />
+        <ActivityIndicator size="large" />
+      </View>
+    ) : (
+      <HomeStack />
+    )
   );
 };
 

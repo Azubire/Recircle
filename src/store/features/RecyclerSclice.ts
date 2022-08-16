@@ -106,4 +106,11 @@ export const getAllRecyclers = (state: RootState) => state.Recycler;
 export const getRecycler = (id: number) => (state: RootState) =>
   state.Recycler.filter((recycler) => recycler.id === id);
 
+export const getSearchResults = (searchTerm: string) => (state: RootState) => {
+  const res = state.Recycler.map((item) => item.name.includes(searchTerm));
+
+  // state.Recycler.filter(item=>item.)
+  return res;
+};
+
 export default RecyclerSlice.reducer;

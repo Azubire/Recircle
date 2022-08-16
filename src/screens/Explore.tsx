@@ -1,14 +1,6 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  FlatList,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import { View, ScrollView, FlatList, ActivityIndicator } from "react-native";
 import React from "react";
 import { StatusBar } from "expo-status-bar";
-import CustomStatusbar from "../components/CustomStatusbar";
 import { useAppSelector } from "../hooks/reduxhooks";
 import {
   getBestSellingAds,
@@ -17,12 +9,12 @@ import {
   initialAdSliceStatetypes,
 } from "../store/features/AdSlice";
 import { Button, Card, Paragraph, Title, useTheme } from "react-native-paper";
-import { HomeStackScreenProps } from "../navigations/AppStack/types";
 import { TabScreenProps } from "../navigations/appTabs/types";
 
 const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
   const [data, setData] = React.useState<initialAdSliceStatetypes>();
   const [loading, setLoading] = React.useState(true);
+  const [request, setRequest] = React.useState(false);
 
   const newestAds = useAppSelector(getNewestAds);
   const bestSellingAd = useAppSelector(getBestSellingAds);
@@ -41,7 +33,7 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
   console.log("-->>>", data);
   return (
     <>
-      <CustomStatusbar style="light" />
+      <StatusBar style="light" />
       <ScrollView>
         {loading ? (
           <ActivityIndicator animating size="large" />
@@ -74,7 +66,13 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                         <Paragraph numberOfLines={2}>{item.desc}</Paragraph>
                       </Card.Content>
                       <Card.Actions>
-                        <Button textColor={colors.info}>Request</Button>
+                        <Button
+                          mode="text"
+                          textColor={colors.info}
+                          onPress={() => setRequest((prev) => !prev)}
+                        >
+                          {request ? "Request Send" : " Request"}
+                        </Button>
                         <Button
                           buttonColor={colors.info}
                           onPress={() => {

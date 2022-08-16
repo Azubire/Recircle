@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
-  ImageSourcePropType,
   SafeAreaView,
   View,
 } from "react-native";
@@ -17,31 +16,31 @@ import {
   HomeCategorySliceTypes,
 } from "../store/features/HomeCategorySlice";
 import { useAppSelector } from "../hooks/reduxhooks";
+import { StatusBar } from "expo-status-bar";
 
 const Home = ({ navigation }: TabScreenProps<"Home">) => {
   const [HomeCategory, setHomeCategory] =
     React.useState<HomeCategorySliceTypes[]>();
-  const [loading, setLoading] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState<boolean>(true);
 
   const { colors } = useTheme();
 
   const response = useAppSelector(getHomeCategory);
 
   React.useEffect(() => {
-    setLoading(true);
     setHomeCategory(response);
     setLoading(false);
   }, [response]);
 
   return (
-    <>
+    <SafeAreaView>
       <CustomStatusbar style="light" backgroundColor={colors.primary} />
       {loading ? (
         <ActivityIndicator size="large" />
       ) : (
         <View
           style={{
-            flex: 1,
+            // flex: 1,
             paddingHorizontal: 2,
           }}
         >
@@ -151,7 +150,7 @@ const Home = ({ navigation }: TabScreenProps<"Home">) => {
           />
         </View>
       )}
-    </>
+    </SafeAreaView>
   );
 };
 
