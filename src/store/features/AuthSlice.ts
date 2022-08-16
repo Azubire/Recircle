@@ -1,9 +1,18 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ImageSourcePropType } from "react-native";
 import { RootState } from "..";
 
-interface stateProps {
+const coverImg = require("../../../assets/images/cover.jpeg");
+const profileImg = require("../../../assets/images/profile.jpeg");
+
+export interface stateProps {
   user: {
     userToken: string | null;
+    userName: string | null;
+    img: {
+      coverImg: ImageSourcePropType;
+      profileImg: ImageSourcePropType;
+    };
     email: string | null;
     password: string | null;
     isLoggedIn: boolean;
@@ -13,6 +22,8 @@ interface stateProps {
 const initialState: stateProps = {
   user: {
     userToken: null,
+    userName: "John Doe",
+    img: { coverImg: coverImg, profileImg: profileImg },
     email: null,
     password: null,
     isLoggedIn: false,
@@ -23,21 +34,18 @@ const AuthSlice = createSlice({
   name: "Auth",
   initialState: initialState,
   reducers: {
-    setUser: (
-      state,
-      action: PayloadAction<{
-        user: {
-          userToken: string;
-          email: string;
-          password: string;
-          isLoggedIn:boolean
-        };
-      }>
-    ) => {
-      state.user = action.payload.user
+    setUser: (state, action: PayloadAction<stateProps>) => {
+      state.user = action.payload.user;
     },
     removeUser: (state) => {
-      state.user = {userToken:null,email:null,password:null,isLoggedIn:false}
+      state.user = {
+        ...state.user,
+        userToken: null,
+        userName: null,
+        email: null,
+        password: null,
+        isLoggedIn: false,
+      };
     },
   },
 });

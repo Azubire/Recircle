@@ -1,13 +1,7 @@
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, ActivityIndicator } from "react-native";
 import React from "react";
 import { TabScreenProps } from "../navigations/appTabs/types";
-import {
-  ActivityIndicator,
-  Button,
-  Text,
-  TextInput,
-  useTheme,
-} from "react-native-paper";
+import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import RNPickerSelect from "react-native-picker-select";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -36,7 +30,7 @@ const schema = Joi.object({
 
 const Sell = ({ route }: TabScreenProps<"Sell">) => {
   const [categoryId, setCategoryId] = React.useState<number | undefined>();
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
 
   //react-hook-form
   const {
@@ -72,9 +66,10 @@ const Sell = ({ route }: TabScreenProps<"Sell">) => {
   const { colors } = useTheme();
 
   const id = route.params?.id;
+
   React.useEffect(() => {
-    setLoading(true);
-    setCategoryId((prev) => id);
+    // setLoading(true);
+    setCategoryId(id);
     setLoading(false);
   }, [id]);
 

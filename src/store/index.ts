@@ -3,12 +3,14 @@ import UserReducer from "./features/userSlice";
 import AuthReducer from "./features/AuthSlice";
 import RecyclerReducer from "./features/RecyclerSclice";
 import AdReducer from "./features/AdSlice";
+import HomeCategoryReducer from "./features/HomeCategorySlice";
 
 const store = configureStore({
   reducer: {
     currentUser: AuthReducer,
     Recycler: RecyclerReducer,
     Ads: AdReducer,
+    HomeCategory: HomeCategoryReducer,
   },
 });
 

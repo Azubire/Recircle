@@ -8,7 +8,7 @@ export type HomeStackParamList = {
   Categories: undefined;
   RecyclersStack: NavigatorScreenParams<RecyclerStackParamList>;
   MyAds: undefined;
-  AdDetails: { id: number };
+  AdDetails: { id: number; filter: string };
 };
 
 export type HomeStackScreenProps<T extends keyof HomeStackParamList> =

@@ -1,7 +1,13 @@
-import { View, ScrollView, Image, ImageSourcePropType } from "react-native";
+import {
+  View,
+  ScrollView,
+  Image,
+  ImageSourcePropType,
+  ActivityIndicator,
+} from "react-native";
 import React from "react";
 import { RecyclerStackScreenProps } from "../navigations/RecyclersStack/types";
-import { ActivityIndicator, Button, Text, useTheme } from "react-native-paper";
+import { Button, Text, useTheme } from "react-native-paper";
 import { string } from "joi";
 import { FlatList } from "react-native-gesture-handler";
 import CustomStatusbar from "../components/CustomStatusbar";

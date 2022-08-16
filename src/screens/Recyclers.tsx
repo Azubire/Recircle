@@ -1,13 +1,6 @@
-import { View, FlatList, SafeAreaView } from "react-native";
+import { View, FlatList, SafeAreaView, ActivityIndicator } from "react-native";
 import React from "react";
-import {
-  ActivityIndicator,
-  Avatar,
-  Button,
-  Card,
-  Text,
-  useTheme,
-} from "react-native-paper";
+import { Avatar, Button, Card, Text, useTheme } from "react-native-paper";
 import { HomeStackScreenProps } from "../navigations/AppStack/types";
 import { Ionicons, Octicons } from "@expo/vector-icons";
 import { RecyclerStackScreenProps } from "../navigations/RecyclersStack/types";
@@ -28,18 +21,18 @@ const Recyclers = ({ navigation }: RecyclerStackScreenProps<"Recyclers">) => {
 
     // update state with data retrieved from the store
     setData(response);
-    console.log("response", response);
+    // console.log("response", response);
 
     setLoading(false);
-  }, []);
+  }, [response]);
 
-  console.log("data", data);
-  console.log("loading", loading);
+  // console.log("data", data);
+  // console.log("loading", loading);
 
   const { colors } = useTheme();
 
   return loading ? (
-    <ActivityIndicator size="large" />
+    <ActivityIndicator animating size="large" />
   ) : (
     <SafeAreaView>
       <CustomStatusbar style="light" />
