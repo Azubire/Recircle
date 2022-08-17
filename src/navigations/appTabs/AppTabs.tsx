@@ -18,6 +18,7 @@ import Search from "../../screens/Search";
 import Profile from "../../screens/ProfileScreen";
 import {
   Avatar,
+  Badge,
   Button,
   Divider,
   Menu,
@@ -49,7 +50,7 @@ const AppTabs = () => {
     >
       <Tab.Screen
         name="Home"
-        options={({ navigation }: TabScreenProps<"Home">) => ({
+        options={({ navigation, route }: TabScreenProps<"Home">) => ({
           tabBarIcon({ focused, color, size }) {
             return (
               <AntDesign
@@ -92,6 +93,9 @@ const AppTabs = () => {
                     size={25}
                     color="#fff"
                   />
+                  <Badge size={13} style={{ position: "absolute" }}>
+                    {route.params.notificationCount}
+                  </Badge>
                 </TouchableOpacity>
 
                 <Menu

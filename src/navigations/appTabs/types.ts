@@ -8,7 +8,7 @@ import { AppDrawerScreenProps, DrawerParamList } from "../AppDrawer/Types";
 import { HomeStackParamList, HomeStackScreenProps } from "../AppStack/types";
 
 export type TabParamList = {
-  Home: undefined;
+  Home: { notificationCount: number };
   Explore: undefined;
   Sell: { id?: number } | undefined;
   Search: undefined;

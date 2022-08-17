@@ -24,7 +24,7 @@ const initialState: stateProps = {
     userToken: null,
     userName: "John Doe",
     img: { coverImg: coverImg, profileImg: profileImg },
-    email: null,
+    email: "johndoe@gmail.com",
     password: null,
     isLoggedIn: false,
   },

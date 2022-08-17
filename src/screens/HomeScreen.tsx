@@ -17,8 +17,9 @@ import {
 } from "../store/features/HomeCategorySlice";
 import { useAppSelector } from "../hooks/reduxhooks";
 import { StatusBar } from "expo-status-bar";
+import { getAllNotificationCount } from "../store/features/NotificationSlice";
 
-const Home = ({ navigation }: TabScreenProps<"Home">) => {
+const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
   const [HomeCategory, setHomeCategory] =
     React.useState<HomeCategorySliceTypes[]>();
   const [loading, setLoading] = React.useState<boolean>(true);
@@ -31,6 +32,12 @@ const Home = ({ navigation }: TabScreenProps<"Home">) => {
     setHomeCategory(response);
     setLoading(false);
   }, [response]);
+
+  const notificationCount = useAppSelector(getAllNotificationCount);
+
+  React.useLayoutEffect(() => {
+    navigation.setParams({ notificationCount });
+  }, [notificationCount]);
 
   return (
     <SafeAreaView>

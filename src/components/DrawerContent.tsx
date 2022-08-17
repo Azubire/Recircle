@@ -18,19 +18,33 @@ import {
 import { DrawerContentComponentProps } from "@react-navigation/drawer";
 import { StatusBar } from "expo-status-bar";
 import { useIsFocused } from "@react-navigation/native";
-import { useAppDispatch } from "../hooks/reduxhooks";
-import { removeUser } from "../store/features/AuthSlice";
+import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
+import { getUser, removeUser } from "../store/features/AuthSlice";
 import * as secureStore from "expo-secure-store";
+import {
+  getAllNotification,
+  getAllNotificationCount,
+} from "../store/features/NotificationSlice";
 
 const logo = require("../../assets/images/logo.png");
 const profileImage = require("../../assets/images/profile.jpeg");
 
 const DrawerContent = (props: DrawerContentComponentProps) => {
   const [active, setActive] = React.useState<number | null>(null);
+  const [notificationCount, setNotificationCount] = React.useState<
+    number | null
+  >();
+
   const { navigation, state, descriptors } = props;
   const dispatch = useAppDispatch();
 
   const { colors } = useTheme();
+  const count = useAppSelector(getAllNotificationCount);
+  const user = useAppSelector(getUser);
+
+  React.useEffect(() => {
+    setNotificationCount(count);
+  }, [count]);
 
   React.useEffect(() => {
     setActive(state.index);
@@ -132,7 +146,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
               <MaterialCommunityIcons name="plus" size={25} color={"#fff"} />
             )}
             onPress={() => {
-              navigation.navigate("Categories", { screen: "Sell" });
+              navigation.navigate("Dashboard", { screen: "Sell" });
             }}
           >
             Create New Ad
@@ -151,12 +165,12 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
                       return (
                         <Badge
                           style={{
-                            borderRadius: 4,
+                            borderRadius: 30,
                             width: 30,
                             backgroundColor: colors.primary,
                           }}
                         >
-                          10
+                          {notificationCount?.toString()}
                         </Badge>
                       );
                     }
@@ -184,16 +198,20 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
             }}
           >
             <TouchableOpacity>
-              <Avatar.Image size={40} source={profileImage} />
+              <Avatar.Image size={40} source={user.img.profileImg} />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Dashboard", { screen: "Profile" });
+              }}
+            >
               <View style={{ marginLeft: 8 }}>
-                <Text variant="titleMedium">Jane Doe</Text>
+                <Text variant="titleMedium">{user.userName}</Text>
                 <Text
                   variant="labelMedium"
                   style={{ opacity: 0.85, marginTop: 2 }}
                 >
-                  janedoe@gmail.com
+                  {user.email}
                 </Text>
               </View>
             </TouchableOpacity>

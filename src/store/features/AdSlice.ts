@@ -25,6 +25,7 @@ export interface adFilterTypes {
   price: string;
   date: string;
   time: string;
+  status: "Pending" | "Completed" | "Rejected";
 }
 
 export interface initialAdSliceStatetypes {
@@ -44,6 +45,7 @@ const initialState: initialAdSliceStatetypes = {
       price: "50",
       date: "2nd Sep 2022",
       time: "12 : 05 Pm",
+      status: "Completed",
     },
     {
       id: 2,
@@ -54,6 +56,7 @@ const initialState: initialAdSliceStatetypes = {
       price: "50",
       date: "2nd Sep 2022",
       time: "12 : 05 Pm",
+      status: "Pending",
     },
     {
       id: 3,
@@ -64,11 +67,12 @@ const initialState: initialAdSliceStatetypes = {
       price: "50",
       date: "2nd Sep 2022",
       time: "12 : 05 Pm",
+      status: "Rejected",
     },
   ],
   bestSellingAds: [
     {
-      id: 1,
+      id: 4,
       title: "58Kg of plastic",
       desc: "I have gathered 58Kg of plastic waste from my kitchen and i'm willing to sell this to save the planet",
       category: "Plastic",
@@ -76,9 +80,10 @@ const initialState: initialAdSliceStatetypes = {
       price: "50",
       date: "2nd Sep 2022",
       time: "12 : 05 Pm",
+      status: "Completed",
     },
     {
-      id: 2,
+      id: 5,
       title: "80Kg of plastic",
       desc: "I have gathered 58Kg of plastic waste from my kitchen and i'm willing to sell this to save the planet",
       category: "Plastic",
@@ -86,9 +91,10 @@ const initialState: initialAdSliceStatetypes = {
       price: "50",
       date: "2nd Sep 2022",
       time: "12 : 05 Pm",
+      status: "Pending",
     },
     {
-      id: 3,
+      id: 6,
       title: "79Kg of cans",
       desc: "I have gathered 79Kg of glass from my kitchen and i'm willing to sell this to save the planet",
       category: "Cans",
@@ -96,9 +102,10 @@ const initialState: initialAdSliceStatetypes = {
       price: "50",
       date: "2nd Sep 2022",
       time: "12 : 05 Pm",
+      status: "Rejected",
     },
     {
-      id: 4,
+      id: 7,
       title: "40Kg of cans",
       desc: "I have gathered 40Kg of cans waste from my kitchen and i'm willing to sell this to save the planet",
       category: "Cans",
@@ -106,11 +113,12 @@ const initialState: initialAdSliceStatetypes = {
       price: "50",
       date: "2nd Sep 2022",
       time: "12 : 05 Pm",
+      status: "Completed",
     },
   ],
   topAds: [
     {
-      id: 1,
+      id: 8,
       title: "58Kg of glass",
       desc: "I have gathered 58Kg of plastic waste from my kitchen and i'm willing to sell this to save the planet",
       category: "Glass",
@@ -118,9 +126,10 @@ const initialState: initialAdSliceStatetypes = {
       price: "50",
       date: "2nd Sep 2022",
       time: "12 : 05 Pm",
+      status: "Pending",
     },
     {
-      id: 2,
+      id: 9,
       title: "79Kg of cans",
       desc: "I have gathered 79Kg of glass from my kitchen and i'm willing to sell this to save the planet",
       category: "Cans",
@@ -128,9 +137,10 @@ const initialState: initialAdSliceStatetypes = {
       price: "50",
       date: "2nd Sep 2022",
       time: "12 : 05 Pm",
+      status: "Rejected",
     },
     {
-      id: 3,
+      id: 10,
       title: "40Kg of plastic",
       desc: "I have gathered 40Kg of cans waste from my kitchen and i'm willing to sell this to save the planet",
       category: "Plastic",
@@ -138,6 +148,7 @@ const initialState: initialAdSliceStatetypes = {
       price: "50",
       date: "2nd Sep 2022",
       time: "12 : 05 Pm",
+      status: "Completed",
     },
   ],
 };
@@ -152,7 +163,7 @@ export const getNewestAds = (state: RootState) => state.Ads.newestAds;
 export const getBestSellingAds = (state: RootState) => state.Ads.bestSellingAds;
 export const getTopAds = (state: RootState) => state.Ads.topAds;
 
-export const getAd = (filter: string, id: number) => (state: RootState) => {
+export const getAd = (filter?: string, id?: number) => (state: RootState) => {
   let result;
   switch (filter) {
     case "NEW":
@@ -166,11 +177,17 @@ export const getAd = (filter: string, id: number) => (state: RootState) => {
       break;
 
     default:
-      result = state.Ads.newestAds;
+      result = state.Ads;
       break;
   }
 
   return result;
 };
+
+export const getAllAds = (state: RootState) => [
+  ...state.Ads.bestSellingAds,
+  ...state.Ads.newestAds,
+  ...state.Ads.topAds,
+];
 
 export default AdSlice.reducer;

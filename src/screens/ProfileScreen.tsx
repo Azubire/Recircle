@@ -16,12 +16,11 @@ import { useAppSelector } from "../hooks/reduxhooks";
 
 const Profile = () => {
   const [user, setUser] = React.useState<stateProps>();
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
 
   const response = useAppSelector(getUser);
 
   React.useEffect(() => {
-    setLoading(true);
     setUser({ user: response });
     setLoading(false);
   }, [response]);
@@ -30,16 +29,16 @@ const Profile = () => {
   const { colors } = useTheme();
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <CustomStatusbar style="light" backgroundColor={colors.gray} />
+      <CustomStatusbar style="light" backgroundColor={colors.gray} hidden />
       {loading ? (
-        <ActivityIndicator size="large" />
+        <ActivityIndicator />
       ) : (
         <ScrollView>
           <View style={{ flex: 1 }}>
             {/* header  */}
             <View
               style={{
-                backgroundColor: colors.gray,
+                // backgroundColor: colors.gray,
                 alignItems: "center",
               }}
             >
