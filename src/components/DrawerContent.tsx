@@ -158,6 +158,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
             return (
               <View key={index}>
                 <PaperDrawer.Item
+                  style={{}}
                   label={getName(item)}
                   active={active === index}
                   right={() => {
@@ -178,7 +179,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
                   icon={() => getIcon(item)}
                   onPress={() => {
                     setActive(index);
-                    navigation.navigate(item);
+                    // navigation.navigate(item);
                   }}
                 />
               </View>

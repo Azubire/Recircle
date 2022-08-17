@@ -41,7 +41,7 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
 
   return (
     <SafeAreaView>
-      <CustomStatusbar style="light" backgroundColor={colors.primary} />
+      <CustomStatusbar style="light" />
       {loading ? (
         <ActivityIndicator size="large" />
       ) : (

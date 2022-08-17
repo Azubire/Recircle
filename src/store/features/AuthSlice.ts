@@ -17,16 +17,25 @@ export interface stateProps {
     password: string | null;
     isLoggedIn: boolean;
   };
+  auth: {
+    // Multiple possible status enum values
+    status: "idle" | "loading" | "succeeded" | "failed";
+    error: string | null;
+  };
 }
 
 const initialState: stateProps = {
   user: {
     userToken: null,
-    userName: "John Doe",
+    userName: null,
     img: { coverImg: coverImg, profileImg: profileImg },
-    email: "johndoe@gmail.com",
+    email: null,
     password: null,
     isLoggedIn: false,
+  },
+  auth: {
+    status: "idle",
+    error: null,
   },
 };
 

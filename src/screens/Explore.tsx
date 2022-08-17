@@ -10,6 +10,7 @@ import {
 } from "../store/features/AdSlice";
 import { Button, Card, Paragraph, Title, useTheme } from "react-native-paper";
 import { TabScreenProps } from "../navigations/appTabs/types";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
   const [data, setData] = React.useState<initialAdSliceStatetypes>();
@@ -32,7 +33,7 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
   }, [newestAds, bestSellingAd, topAds]);
   console.log("-->>>", data);
   return (
-    <>
+    <SafeAreaView>
       <StatusBar style="light" />
       <ScrollView>
         {loading ? (
@@ -183,7 +184,7 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
           </>
         )}
       </ScrollView>
-    </>
+    </SafeAreaView>
   );
 };
 
