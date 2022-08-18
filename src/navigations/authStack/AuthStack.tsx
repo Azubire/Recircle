@@ -6,19 +6,19 @@ import SigninScreen from "../../screens/SigninScreen";
 import SignupScreen from "../../screens/SignupScreen";
 import WelcomeScreen from "../../screens/WelcomeScreen";
 
-const AuthStack = createNativeStackNavigator<AuthStackParamList>();
+const Stack = createNativeStackNavigator<AuthStackParamList>();
 
-const AuthNavigationStack = () => {
+const AuthStack = () => {
   return (
-    <AuthStack.Navigator
+    <Stack.Navigator
       initialRouteName="Welcome"
       screenOptions={{ headerShown: false }}
     >
-      <AuthStack.Screen name="Welcome" component={WelcomeScreen} />
-      <AuthStack.Screen name="Signin" component={SigninScreen} />
-      <AuthStack.Screen name="Signup" component={SignupScreen} />
-    </AuthStack.Navigator>
+      <Stack.Screen name="Welcome" component={WelcomeScreen} />
+      <Stack.Screen name="Signin" component={SigninScreen} />
+      <Stack.Screen name="Signup" component={SignupScreen} />
+    </Stack.Navigator>
   );
 };
 
-export default AuthNavigationStack;
+export default AuthStack;

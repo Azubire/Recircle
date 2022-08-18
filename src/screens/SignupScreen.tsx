@@ -41,7 +41,7 @@ const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
         form.email,
         form.password
       );
-      console.log(response);
+      // console.log(response);
       setLoading(false);
       setForm({ firstName: "", lastName: "", email: "", password: "" });
     } catch (error) {

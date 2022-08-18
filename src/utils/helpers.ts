@@ -1,23 +1,24 @@
 import * as SecureStore from "expo-secure-store";
 
-interface IsetItem {
+interface UserInterface {
   key: string;
-  payload: string;
+  payload: {
+    userToken: string;
+    profile: {
+      userName: string;
+      email: string;
+      coverImg: string;
+      profileImg: string;
+    };
+  };
 }
-export const setItem = (key: string, payload: string) => {
-  SecureStore.setItemAsync(key, payload);
-};
 
-export const getItem = async (key: string) => {
-  const results = await SecureStore.getItemAsync(key);
-  if (results) {
-    return await JSON.parse(results);
-  }
-  return null;
-};
-
-const getUserFromAsyncStorage = async (key: string) => {
+export const getUserFromSecureStore = async (key: string) => {
   const results = await SecureStore.getItemAsync(key);
 
   return results ? results : null;
+};
+
+export const setUserToSecureStore = (props: UserInterface) => {
+  SecureStore.setItemAsync(props.key, JSON.stringify(props.payload));
 };

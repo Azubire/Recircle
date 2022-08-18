@@ -179,7 +179,11 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
                   icon={() => getIcon(item)}
                   onPress={() => {
                     setActive(index);
-                    // navigation.navigate(item);
+                    if (item === "Dashboard") {
+                      navigation.navigate("Dashboard", { screen: "Home" });
+                    } else {
+                      navigation.navigate(item);
+                    }
                   }}
                 />
               </View>
@@ -199,7 +203,11 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
             }}
           >
             <TouchableOpacity>
-              <Avatar.Image size={40} source={user.img.profileImg} />
+              <Avatar.Image
+                size={40}
+                // @ts-ignore
+                source={user?.user.profile.profileImg}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
@@ -207,12 +215,12 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
               }}
             >
               <View style={{ marginLeft: 8 }}>
-                <Text variant="titleMedium">{user.userName}</Text>
+                <Text variant="titleMedium">{user?.user.profile.userName}</Text>
                 <Text
                   variant="labelMedium"
                   style={{ opacity: 0.85, marginTop: 2 }}
                 >
-                  {user.email}
+                  {user?.user.profile.email}
                 </Text>
               </View>
             </TouchableOpacity>

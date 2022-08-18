@@ -16,8 +16,8 @@ import {
   HomeCategorySliceTypes,
 } from "../store/features/HomeCategorySlice";
 import { useAppSelector } from "../hooks/reduxhooks";
-import { StatusBar } from "expo-status-bar";
 import { getAllNotificationCount } from "../store/features/NotificationSlice";
+import { useIsFocused } from "@react-navigation/native";
 
 const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
   const [HomeCategory, setHomeCategory] =
@@ -34,10 +34,11 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
   }, [response]);
 
   const notificationCount = useAppSelector(getAllNotificationCount);
+  const focused = useIsFocused();
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     navigation.setParams({ notificationCount });
-  }, [notificationCount]);
+  }, [notificationCount, loading, focused]);
 
   return (
     <SafeAreaView>

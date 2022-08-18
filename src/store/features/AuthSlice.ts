@@ -7,35 +7,34 @@ const profileImg = require("../../../assets/images/profile.jpeg");
 
 export interface stateProps {
   user: {
-    userToken: string | null;
-    userName: string | null;
-    img: {
-      coverImg: ImageSourcePropType;
-      profileImg: ImageSourcePropType;
+    userToken: string | undefined;
+    profile: {
+      userName: string | undefined;
+      email: string | undefined;
+      coverImg?: ImageSourcePropType | undefined;
+      profileImg?: ImageSourcePropType | undefined;
     };
-    email: string | null;
-    password: string | null;
-    isLoggedIn: boolean;
   };
-  auth: {
+  auth?: {
     // Multiple possible status enum values
     status: "idle" | "loading" | "succeeded" | "failed";
-    error: string | null;
+    error: string | undefined;
   };
 }
 
 const initialState: stateProps = {
   user: {
-    userToken: null,
-    userName: null,
-    img: { coverImg: coverImg, profileImg: profileImg },
-    email: null,
-    password: null,
-    isLoggedIn: false,
+    userToken: undefined,
+    profile: {
+      userName: undefined,
+      email: undefined,
+      coverImg: undefined,
+      profileImg: undefined,
+    },
   },
   auth: {
     status: "idle",
-    error: null,
+    error: undefined,
   },
 };
 
@@ -48,12 +47,11 @@ const AuthSlice = createSlice({
     },
     removeUser: (state) => {
       state.user = {
-        ...state.user,
-        userToken: null,
-        userName: null,
-        email: null,
-        password: null,
-        isLoggedIn: false,
+        userToken: undefined,
+        profile: {
+          userName: undefined,
+          email: undefined,
+        },
       };
     },
   },
@@ -61,6 +59,6 @@ const AuthSlice = createSlice({
 
 export const { setUser, removeUser } = AuthSlice.actions;
 
-export const getUser = (state: RootState) => state.currentUser.user;
+export const getUser = (state: RootState) => state.currentUser;
 
 export default AuthSlice.reducer;

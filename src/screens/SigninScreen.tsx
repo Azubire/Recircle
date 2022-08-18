@@ -1,6 +1,5 @@
 import { View, Image, ScrollView, KeyboardAvoidingView } from "react-native";
 import React from "react";
-import Center from "../components/Center";
 import {
   Button,
   Checkbox,
@@ -8,45 +7,79 @@ import {
   TextInput,
   useTheme,
 } from "react-native-paper";
-import {
-  NavigationProp,
-  RouteProp,
-  useNavigation,
-} from "@react-navigation/native";
-import {
-  AuthScreenProps,
-  AuthStackParamList,
-} from "../navigations/authStack/types";
+
+import { AuthScreenProps } from "../navigations/authStack/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Ionicons } from "@expo/vector-icons";
 import CustomStatusbar from "../components/CustomStatusbar";
-import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
-import { getUser, setUser } from "../store/features/AuthSlice";
-import { setItem } from "../utils/helpers";
+import { useAppDispatch } from "../hooks/reduxhooks";
+import { setUser } from "../store/features/AuthSlice";
 
-const SigninScreen = () => {
-  const navigation =
-    useNavigation<NavigationProp<AuthStackParamList, "Signin">>();
+const coverImg = require("../../assets/images/cover.jpeg");
+const profileImg = require("../../assets/images/profile.jpeg");
+
+const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
+  const [formData, setFormData] = React.useState<{
+    email: string;
+    password: string;
+  }>({ email: "", password: "" });
+  const [loading, setLoading] = React.useState(false);
 
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
 
-  const currentUser = useAppSelector(getUser);
-  const user = {
-    user: {
-      userToken: "sadsd3423423ddfasd",
-      email: "sdasd@gmail.com",
-      password: "454",
-      isLoggedIn: true,
-    },
+  const fakeUser = {
+    email: "azubirepeter@gmail.com",
+    password: "123456",
   };
-  const handleLogin = () => {
-    dispatch(setUser(user));
-    setItem("user", JSON.stringify(user));
 
-    console.log("cliked", currentUser);
+  // fake api response
+  const loginAsync = async ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => {
+    let user;
+
+    if (email == fakeUser.email && password == fakeUser.password) {
+      user = {
+        userToken: "shg2s1dasd121s1d2a1sdasdad4s45as",
+        profile: {
+          userName: "azubire999",
+          email: email,
+          coverImg: coverImg,
+          profileImg: profileImg,
+        },
+      };
+    } else {
+      throw new Error("error");
+    }
+
+    return user;
   };
+
+  const onSubmit = async () => {
+    // console.log(formData);
+    try {
+      setLoading((prev) => true);
+      const results = await loginAsync(formData);
+      dispatch(setUser({ user: results }));
+      // setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    return () => {
+      setLoading(false);
+    };
+  }, []);
+
   return (
     <>
       <CustomStatusbar />
@@ -105,6 +138,10 @@ const SigninScreen = () => {
               <View style={{ marginBottom: 16 }}>
                 <Text>Email Address</Text>
                 <TextInput
+                  value={formData.email}
+                  onChangeText={(email) =>
+                    setFormData((prev) => ({ ...prev, email }))
+                  }
                   style={{ backgroundColor: colors.light }}
                   mode="outlined"
                   placeholder="Enter your email"
@@ -114,6 +151,10 @@ const SigninScreen = () => {
               <View style={{ marginBottom: 16 }}>
                 <Text>Password</Text>
                 <TextInput
+                  value={formData.password}
+                  onChangeText={(password) =>
+                    setFormData((prev) => ({ ...prev, password }))
+                  }
                   secureTextEntry
                   style={{ backgroundColor: colors.light }}
                   mode="outlined"
@@ -134,6 +175,7 @@ const SigninScreen = () => {
               </View>
               {/* Button  */}
               <Button
+                loading={loading}
                 mode="contained"
                 buttonColor={colors.primary}
                 // style={{ marginBottom: 10 }}
@@ -149,7 +191,7 @@ const SigninScreen = () => {
                     color={colors.light}
                   />
                 )}
-                onPress={handleLogin}
+                onPress={onSubmit}
               >
                 <Text variant="bodyLarge" style={{ color: colors.light }}>
                   Signin

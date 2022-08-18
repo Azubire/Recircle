@@ -14,11 +14,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { getUser, stateProps } from "../store/features/AuthSlice";
 import { useAppSelector } from "../hooks/reduxhooks";
 
+const coverImg = require("../../assets/images/cover.jpeg");
+const profileImg = require("../../assets/images/profile.jpeg");
+
 const Profile = () => {
   const [user, setUser] = React.useState<stateProps>();
   const [loading, setLoading] = React.useState(true);
 
-  const response = useAppSelector(getUser);
+  const { user: response } = useAppSelector(getUser);
 
   React.useEffect(() => {
     setUser({ user: response });
@@ -43,13 +46,15 @@ const Profile = () => {
               }}
             >
               <Image
-                source={user?.user.img.coverImg || response.img.coverImg}
+                // @ts-ignore
+                source={user?.user.profile.coverImg}
                 resizeMode="cover"
                 style={{ width: "100%", height: 150 }}
               />
               <View style={{ marginTop: -50 }}>
                 <Image
-                  source={user?.user.img.profileImg || response.img.profileImg}
+                  // @ts-ignore
+                  source={user?.user.profile.profileImg}
                   resizeMode="cover"
                   style={{
                     width: 110,
@@ -68,9 +73,9 @@ const Profile = () => {
               </View>
               <Text
                 variant="bodyLarge"
-                style={{ color: colors.light, marginTop: 8, paddingBottom: 6 }}
+                style={{ marginTop: 8, paddingBottom: 6 }}
               >
-                {user?.user.userName}
+                {user?.user.profile.userName}
               </Text>
             </View>
 
@@ -88,7 +93,7 @@ const Profile = () => {
                 <TextInput
                   editable={false}
                   mode="outlined"
-                  value="@janedoe999"
+                  value={user?.user.profile.userName}
                   left={<TextInput.Icon name="account-cog-outline" />}
                   right={<TextInput.Icon name="pencil-outline" size={20} />}
                 />
@@ -100,7 +105,7 @@ const Profile = () => {
                 </Text>
                 <TextInput
                   mode="outlined"
-                  value="janedoer@gmail.com"
+                  value={user?.user.profile.email}
                   left={<TextInput.Icon name="email-edit-outline" />}
                   right={<TextInput.Icon name="pencil-outline" size={20} />}
                 />
@@ -113,7 +118,7 @@ const Profile = () => {
                 <TextInput
                   secureTextEntry
                   mode="outlined"
-                  value="123456"
+                  value=""
                   left={<TextInput.Icon name="account-eye-outline" />}
                   right={<TextInput.Icon name="pencil-outline" size={20} />}
                 />
