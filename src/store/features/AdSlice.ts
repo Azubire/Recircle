@@ -177,7 +177,7 @@ export const getAd = (filter?: string, id?: number) => (state: RootState) => {
       break;
 
     default:
-      result = state.Ads;
+      result = state.Ads.bestSellingAds;
       break;
   }
 

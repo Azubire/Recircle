@@ -9,6 +9,7 @@ export type HomeStackParamList = {
   RecyclersStack: NavigatorScreenParams<RecyclerStackParamList>;
   MyAds: undefined;
   AdDetails: { id: number; filter: string };
+  BecomeRecycler: undefined;
 };
 
 export type HomeStackScreenProps<T extends keyof HomeStackParamList> =

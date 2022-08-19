@@ -54,7 +54,8 @@ const AppWrapper = () => {
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
       <NavigationContainer>
         {/* conditionally render app and auth  */}
-        {user.userToken ? <HomeStack /> : <AuthStack />}
+        {/* {user.userToken ? <HomeStack /> : <AuthStack />} */}
+        <HomeStack />
       </NavigationContainer>
     </View>
   );

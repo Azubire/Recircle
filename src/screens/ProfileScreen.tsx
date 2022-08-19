@@ -7,17 +7,18 @@ import {
 } from "react-native";
 import React from "react";
 import Center from "../components/Center";
-import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import { Button, Text, TextInput, Title, useTheme } from "react-native-paper";
 import CustomStatusbar from "../components/CustomStatusbar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { getUser, stateProps } from "../store/features/AuthSlice";
 import { useAppSelector } from "../hooks/reduxhooks";
+import { TabScreenProps } from "../navigations/appTabs/types";
 
 const coverImg = require("../../assets/images/cover.jpeg");
 const profileImg = require("../../assets/images/profile.jpeg");
 
-const Profile = () => {
+const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
   const [user, setUser] = React.useState<stateProps>();
   const [loading, setLoading] = React.useState(true);
 
@@ -32,7 +33,7 @@ const Profile = () => {
   const { colors } = useTheme();
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <CustomStatusbar style="light" backgroundColor={colors.gray} hidden />
+      <CustomStatusbar style="light" backgroundColor={colors.gray} />
       {loading ? (
         <ActivityIndicator />
       ) : (
@@ -77,6 +78,22 @@ const Profile = () => {
               >
                 {user?.user.profile.userName}
               </Text>
+            </View>
+
+            <View style={{ paddingHorizontal: 16 }}>
+              <Text>
+                Click below to become a recycler and set up your profile
+              </Text>
+              <Button
+                onPress={() => {
+                  navigation.navigate("BecomeRecycler");
+                }}
+                mode="outlined"
+                textColor={colors.danger}
+                style={{ alignSelf: "center", borderColor: colors.danger }}
+              >
+                Become A Recycler
+              </Button>
             </View>
 
             <View style={{ paddingHorizontal: 6 }}>

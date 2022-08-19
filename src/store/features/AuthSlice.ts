@@ -58,7 +58,9 @@ const AuthSlice = createSlice({
 });
 
 export const { setUser, removeUser } = AuthSlice.actions;
-
+/**
+ * @param  {RootState} state
+ */
 export const getUser = (state: RootState) => state.currentUser;
 
 export default AuthSlice.reducer;

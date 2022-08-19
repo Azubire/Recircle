@@ -4,6 +4,7 @@ import {
   FlatList,
   Image,
   SafeAreaView,
+  ScrollView,
   View,
 } from "react-native";
 import { Button, Card, Text, useTheme } from "react-native-paper";
@@ -75,7 +76,10 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
                   >
                     <Card style={{ backgroundColor: "transparent" }}>
                       <Card.Title
-                        titleStyle={{ marginTop: 12, color: colors.lightText }}
+                        titleStyle={{
+                          marginTop: 12,
+                          color: colors.lightText,
+                        }}
                         titleVariant="bodySmall"
                         title="Let's Recycle With Recycle"
                         subtitleStyle={{

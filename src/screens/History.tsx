@@ -11,7 +11,7 @@ import {
   Title,
   useTheme,
 } from "react-native-paper";
-import RNPickerSelect from "react-native-picker-select";
+import { Picker } from "@react-native-picker/picker";
 import { Ionicons } from "@expo/vector-icons";
 import { useAppSelector } from "../hooks/reduxhooks";
 import { adFilterTypes, getAd, getAllAds } from "../store/features/AdSlice";
@@ -19,7 +19,7 @@ import { adFilterTypes, getAd, getAllAds } from "../store/features/AdSlice";
 const History = ({ navigation }: AppDrawerScreenProps<"History">) => {
   const [filterItems, setFilterItems] = React.useState<adFilterTypes[]>();
   const [loading, setLoading] = React.useState(true);
-  const [listId, setListId] = React.useState(1);
+  const [selectedValue, setSelectedValue] = React.useState<number>(1);
   const { colors } = useTheme();
 
   const filterOptions = [
@@ -37,20 +37,20 @@ const History = ({ navigation }: AppDrawerScreenProps<"History">) => {
     switch (value) {
       case 2:
         newFilterItems = response?.filter((item) => item.status == "Completed");
-        setListId(2);
+        setSelectedValue(2);
         break;
       case 3:
         newFilterItems = response?.filter((item) => item.status == "Pending");
-        setListId(3);
+        setSelectedValue(3);
         break;
       case 4:
         newFilterItems = response?.filter((item) => item.status == "Rejected");
-        setListId(4);
+        setSelectedValue(4);
         break;
 
       default:
         newFilterItems = response;
-        setListId(1);
+        setSelectedValue(1);
         break;
     }
 
@@ -67,37 +67,39 @@ const History = ({ navigation }: AppDrawerScreenProps<"History">) => {
     <View style={{ flex: 1 }}>
       <CustomStatusbar style="light" />
 
-      {loading ? (
-        <ActivityIndicator />
-      ) : (
-        <FlatList
-          data={filterItems}
-          keyExtractor={(item, index) => index.toString()}
-          ListHeaderComponent={() => (
-            <View
-              style={{
-                marginTop: 16,
-                marginHorizontal: 6,
-              }}
+      <View
+        style={{
+          marginVertical: 16,
+          marginHorizontal: 6,
+        }}
+      >
+        <Title>Filter</Title>
+        <TextInput
+          mode="outlined"
+          render={() => (
+            <Picker
+              selectedValue={selectedValue}
+              onValueChange={(itemValue) => handleValueChange(itemValue)}
             >
-              <Title>Filter</Title>
-              <TextInput
-                mode="outlined"
-                // value={1}
-                render={() => (
-                  <RNPickerSelect
-                    placeholder={{
-                      label: "Select filter",
-                      value: listId,
-                    }}
-                    onValueChange={(value) => handleValueChange(value)}
-                    items={filterOptions}
-                  />
-                )}
-              />
-            </View>
+              {filterOptions.map((item) => (
+                <Picker.Item
+                  key={item.value}
+                  label={item.label}
+                  value={item.value}
+                />
+              ))}
+            </Picker>
           )}
-          renderItem={({ item, index }) => (
+        />
+      </View>
+
+      <FlatList
+        data={filterItems}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item, index }) =>
+          loading ? (
+            <ActivityIndicator />
+          ) : (
             <View style={{ flex: 1, margin: 6 }}>
               <Card mode="contained">
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -133,12 +135,10 @@ const History = ({ navigation }: AppDrawerScreenProps<"History">) => {
                 </View>
               </Card>
             </View>
-          )}
-          ListFooterComponent={() => (
-            <View style={{ marginVertical: 8 }}></View>
-          )}
-        />
-      )}
+          )
+        }
+        ListFooterComponent={() => <View style={{ marginVertical: 8 }}></View>}
+      />
     </View>
   );
 };

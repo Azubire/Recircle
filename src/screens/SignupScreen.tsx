@@ -32,26 +32,26 @@ const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const { colors } = useTheme();
 
-  const handleSignin = async () => {
-    //firebase sign in
-    setLoading(true);
-    try {
-      const response = await createUserWithEmailAndPassword(
-        auth,
-        form.email,
-        form.password
-      );
-      // console.log(response);
-      setLoading(false);
-      setForm({ firstName: "", lastName: "", email: "", password: "" });
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
+  // const handleSignin = async () => {
+  //   //firebase sign in
+  //   setLoading(true);
+  //   try {
+  //     const response = await createUserWithEmailAndPassword(
+  //       auth,
+  //       form.email,
+  //       form.password
+  //     );
+  //     // console.log(response);
+  //     setLoading(false);
+  //     setForm({ firstName: "", lastName: "", email: "", password: "" });
+  //   } catch (error) {
+  //     console.log(error);
+  //     setLoading(false);
 
-      setForm({ firstName: "", lastName: "", email: "", password: "" });
-    }
-    // console.log();
-  };
+  //     setForm({ firstName: "", lastName: "", email: "", password: "" });
+  //   }
+  //   // console.log();
+  // };
 
   return (
     <>
@@ -191,7 +191,7 @@ const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
                   color={colors.light}
                 />
               )}
-              onPress={() => handleSignin()}
+              // onPress={() => handleSignin()}
             >
               <Text variant="bodyLarge" style={{ color: colors.light }}>
                 Sign up

@@ -12,6 +12,7 @@ import { useTheme } from "react-native-paper";
 import RecyclerStack from "../RecyclersStack";
 import Menu from "../../screens/Menu";
 import AdDetails from "../../screens/AdDetails";
+import BecomeRecycler from "../../screens/BecomeRecycler";
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 
@@ -42,6 +43,11 @@ const HomeStack = () => {
         name="AdDetails"
         component={AdDetails}
         options={{ headerTitle: "Ad Details" }}
+      />
+      <Stack.Screen
+        name="BecomeRecycler"
+        component={BecomeRecycler}
+        options={{ headerTitle: "Become A Recycler" }}
       />
     </Stack.Navigator>
   );

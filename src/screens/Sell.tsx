@@ -3,12 +3,14 @@ import React from "react";
 import { TabScreenProps } from "../navigations/appTabs/types";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
-import RNPickerSelect from "react-native-picker-select";
+import { Picker } from "@react-native-picker/picker";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import "fast-text-encoding";
 import Joi from "joi";
 import CustomStatusbar from "../components/CustomStatusbar";
+import { useAppSelector } from "../hooks/reduxhooks";
+import { getAllCategory } from "../store/features/RecyclingCategorySlice";
 
 type formData = {
   title: string;
@@ -29,8 +31,14 @@ const schema = Joi.object({
 });
 
 const Sell = ({ route }: TabScreenProps<"Sell">) => {
-  const [categoryId, setCategoryId] = React.useState<number | undefined>();
+  const [selectedCategory, setSelectedCategory] = React.useState<
+    number | undefined
+  >();
   const [loading, setLoading] = React.useState(true);
+
+  const id = route.params?.id;
+  const { colors } = useTheme();
+  const categories = useAppSelector(getAllCategory);
 
   //react-hook-form
   const {
@@ -63,13 +71,9 @@ const Sell = ({ route }: TabScreenProps<"Sell">) => {
     console.log("form-data---->>>>", data);
   };
 
-  const { colors } = useTheme();
-
-  const id = route.params?.id;
-
   React.useEffect(() => {
     // setLoading(true);
-    setCategoryId(id);
+    setSelectedCategory(id);
     setLoading(false);
   }, [id]);
 
@@ -117,55 +121,23 @@ const Sell = ({ route }: TabScreenProps<"Sell">) => {
             >
               <Text variant="labelLarge">Select Category</Text>
               <TextInput
-                style={{
-                  backgroundColor: colors.light,
-                  // justifyContent: "center",
-                  // alignItems: "center",
-                  // alignContent: "center",
-                }}
                 mode="outlined"
-                render={(props) => (
-                  <RNPickerSelect
-                    useNativeAndroidPickerStyle={false}
-                    value={categoryId}
-                    Icon={() => (
-                      <Ionicons
-                        name="chevron-down"
-                        size={20}
-                        color={colors.gray}
+                render={() => (
+                  <Picker
+                    selectedValue={selectedCategory}
+                    onValueChange={(itemValue) =>
+                      setSelectedCategory(itemValue)
+                    }
+                    prompt="Select a category"
+                  >
+                    {categories.map((item) => (
+                      <Picker.Item
+                        key={item.id}
+                        label={item.title}
+                        value={item}
                       />
-                    )}
-                    placeholder={{
-                      label: "Select a category",
-                      value: null,
-                    }}
-                    style={{
-                      inputAndroid: {
-                        color: colors.gray,
-                        paddingHorizontal: 16,
-                        paddingVertical: 10,
-                        fontSize: 16,
-                      },
-                      inputIOS: {
-                        color: colors.gray,
-                        paddingHorizontal: 16,
-                        paddingVertical: 10,
-                        fontSize: 16,
-                      },
-                      iconContainer: {
-                        right: 10,
-                        top: 10,
-                      },
-                      inputAndroidContainer: { paddingRight: 10 },
-                    }}
-                    onValueChange={(value) => console.log(value)}
-                    items={[
-                      { label: "Plactic", value: 1 },
-                      { label: "Paper", value: 2 },
-                      { label: "Glass", value: 3 },
-                      { label: "Iron & Wood", value: 4 },
-                    ]}
-                  />
+                    ))}
+                  </Picker>
                 )}
               />
             </View>
