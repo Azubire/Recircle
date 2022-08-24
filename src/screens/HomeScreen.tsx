@@ -7,7 +7,15 @@ import {
   ScrollView,
   View,
 } from "react-native";
-import { Button, Card, Text, useTheme } from "react-native-paper";
+import {
+  Button,
+  Card,
+  Modal,
+  Portal,
+  Text,
+  Title,
+  useTheme,
+} from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { TabScreenProps } from "../navigations/appTabs/types";
 import { LinearGradient } from "expo-linear-gradient";
@@ -24,10 +32,18 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
   const [HomeCategory, setHomeCategory] =
     React.useState<HomeCategorySliceTypes[]>();
   const [loading, setLoading] = React.useState<boolean>(true);
+  const [showModal, setShowModal] = React.useState(false);
 
   const { colors } = useTheme();
 
   const response = useAppSelector(getHomeCategory);
+  React.useEffect(() => {
+    if (!loading) {
+      setTimeout(() => {
+        setShowModal(true);
+      }, 5000);
+    }
+  });
 
   React.useEffect(() => {
     setHomeCategory(response);
@@ -53,6 +69,45 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
             paddingHorizontal: 2,
           }}
         >
+          <Portal>
+            <Modal
+              visible={showModal}
+              onDismiss={() => {
+                return;
+              }}
+              contentContainerStyle={{
+                width: "80%",
+                // height: 300,
+                paddingHorizontal: 20,
+                paddingVertical: 35,
+                backgroundColor: colors.light,
+                alignSelf: "center",
+              }}
+            >
+              <Ionicons
+                style={{ alignSelf: "center" }}
+                name="checkmark-circle-outline"
+                size={80}
+                color={colors.success}
+              />
+              <Title style={{ textAlign: "center" }}>
+                Welcome to Lets Recycle
+              </Title>
+              <Text style={{ textAlign: "center" }} variant="bodyMedium">
+                start creating adverts and start earning
+              </Text>
+
+              <Button
+                style={{ marginTop: 16 }}
+                mode="contained"
+                onPress={() => {
+                  setShowModal(false);
+                }}
+              >
+                Close
+              </Button>
+            </Modal>
+          </Portal>
           <FlatList
             showsVerticalScrollIndicator={false}
             data={HomeCategory}

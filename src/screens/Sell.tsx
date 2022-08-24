@@ -1,4 +1,9 @@
-import { View, ScrollView, ActivityIndicator } from "react-native";
+import {
+  View,
+  ScrollView,
+  ActivityIndicator,
+  ImageSourcePropType,
+} from "react-native";
 import React from "react";
 import { TabScreenProps } from "../navigations/appTabs/types";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
@@ -11,23 +16,24 @@ import Joi from "joi";
 import CustomStatusbar from "../components/CustomStatusbar";
 import { useAppSelector } from "../hooks/reduxhooks";
 import { getAllCategory } from "../store/features/RecyclingCategorySlice";
+import { getUser } from "../store/features/AuthSlice";
 
 type formData = {
   title: string;
-  category: string;
-  weight: string;
-  price: string;
   description: string;
-  image: string | string[];
+  adImage: ImageSourcePropType;
+  price: number;
+  weight: number;
+  categoryId: number;
 };
 // joi validation
-const schema = Joi.object({
+const schema = Joi.object<any, true, formData>({
   title: Joi.string().required(),
-  category: Joi.number().required(),
+  categoryId: Joi.number().required(),
   weight: Joi.number().required(),
   price: Joi.number().required(),
   description: Joi.string().required(),
-  image: Joi.string().required(),
+  adImage: Joi.number().required(),
 });
 
 const Sell = ({ route }: TabScreenProps<"Sell">) => {
@@ -37,8 +43,16 @@ const Sell = ({ route }: TabScreenProps<"Sell">) => {
   const [loading, setLoading] = React.useState(true);
 
   const id = route.params?.id;
+  const userId = useAppSelector(getUser);
+  const { auth } = useAppSelector(getUser);
+
   const { colors } = useTheme();
   const categories = useAppSelector(getAllCategory);
+
+  React.useEffect(() => {
+    setSelectedCategory(id);
+    setLoading(false);
+  }, [id]);
 
   //react-hook-form
   const {
@@ -47,14 +61,7 @@ const Sell = ({ route }: TabScreenProps<"Sell">) => {
     control,
     formState: { errors, isSubmitSuccessful, isValid, isDirty },
   } = useForm<formData>({
-    defaultValues: {
-      title: "",
-      category: "",
-      weight: "",
-      price: "",
-      description: "",
-      image: "",
-    },
+    defaultValues: {},
     // resolver : joiResolver(schema)
     resolver: async (data, context, options) => {
       // you can debug your validation schema here
@@ -70,12 +77,6 @@ const Sell = ({ route }: TabScreenProps<"Sell">) => {
   const onSubmit: SubmitHandler<formData> = (data) => {
     console.log("form-data---->>>>", data);
   };
-
-  React.useEffect(() => {
-    // setLoading(true);
-    setSelectedCategory(id);
-    setLoading(false);
-  }, [id]);
 
   return loading ? (
     <ActivityIndicator animating size="large" />
@@ -108,8 +109,6 @@ const Sell = ({ route }: TabScreenProps<"Sell">) => {
               justifyContent: "center",
               alignItems: "center",
               alignContent: "center",
-              // width: "100%",
-              // justifyContent: "space-between",
             }}
           >
             <View

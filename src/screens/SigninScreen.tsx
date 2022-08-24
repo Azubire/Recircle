@@ -3,8 +3,11 @@ import React from "react";
 import {
   Button,
   Checkbox,
+  HelperText,
+  Snackbar,
   Text,
   TextInput,
+  Title,
   useTheme,
 } from "react-native-paper";
 
@@ -13,76 +16,87 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Ionicons } from "@expo/vector-icons";
 import CustomStatusbar from "../components/CustomStatusbar";
-import { useAppDispatch } from "../hooks/reduxhooks";
-import { setUser } from "../store/features/AuthSlice";
+import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
+import { getUser, setUser, signIn } from "../store/features/AuthSlice";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { joiResolver } from "@hookform/resolvers/joi";
+import Joi from "joi";
 
 const coverImg = require("../../assets/images/cover.jpeg");
 const profileImg = require("../../assets/images/profile.jpeg");
 
-const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
-  const [formData, setFormData] = React.useState<{
-    email: string;
-    password: string;
-  }>({ email: "", password: "" });
-  const [loading, setLoading] = React.useState(false);
+interface formData {
+  email: string;
+  password: string;
+}
 
+const schema = Joi.object<any, true, formData>({
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .required(),
+  password: Joi.string().required(),
+});
+
+const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
+  const [loading, setLoading] = React.useState(false);
+  const [showSnackBar, setShowSnackBar] = React.useState({
+    show: false,
+    message: "",
+  });
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
+  const state = useAppSelector(getUser);
 
-  const fakeUser = {
-    email: "azubirepeter@gmail.com",
-    password: "123456",
-  };
+  //react-hook-form
+  const {
+    reset,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitSuccessful, isValid, isDirty },
+  } = useForm<formData>({
+    defaultValues: {},
 
-  // fake api response
-  const loginAsync = async ({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }) => {
-    let user;
+    resolver: joiResolver(schema),
+    // resolver: async (data, context, options) => {
+    //   // you can debug your validation schema here
+    //   console.log("formData", data);
+    //   console.log(
+    //     "validation result",
+    //     await joiResolver(schema)(data, context, options)
+    //   );
+    //   return joiResolver(schema)(data, context, options);
+    // },
+  });
 
-    if (email == fakeUser.email && password == fakeUser.password) {
-      user = {
-        userToken: "shg2s1dasd121s1d2a1sdasdad4s45as",
-        profile: {
-          userName: "azubire999",
-          email: email,
-          coverImg: coverImg,
-          profileImg: profileImg,
-        },
-      };
-    } else {
-      throw new Error("error");
-    }
-
-    return user;
-  };
-
-  const onSubmit = async () => {
-    // console.log(formData);
+  const onSubmit: SubmitHandler<formData> = async (formData) => {
+    setLoading(true);
     try {
-      setLoading((prev) => true);
-      const results = await loginAsync(formData);
-      dispatch(setUser({ user: results }));
-      // setLoading(false);
+      const data = await dispatch(signIn(formData)).unwrap();
+      if (data.error) {
+        console.log(data.message);
+        setLoading(false);
+        setShowSnackBar((prev) => ({ show: true, message: data.message }));
+      }
+      console.log("response", data);
     } catch (error) {
       console.log(error);
       setLoading(false);
+      setShowSnackBar((prev) => ({
+        show: true,
+        message: "something went wront try again",
+      }));
+    } finally {
+      console.log("finally");
+      setLoading(false);
+      console.log("auth", state.auth);
+      console.log("user", state.user);
     }
   };
-
-  React.useEffect(() => {
-    return () => {
-      setLoading(false);
-    };
-  }, []);
 
   return (
     <>
       <CustomStatusbar />
+
       <SafeAreaView
         style={{
           flex: 1,
@@ -129,7 +143,15 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
                 }}
                 variant="titleSmall"
               >
-                Welome back, enter your credentials to access your account
+                {showSnackBar.show ? (
+                  <View>
+                    <Title style={{ color: colors.danger }}>
+                      {showSnackBar.message}
+                    </Title>
+                  </View>
+                ) : (
+                  " Welome back, enter your credentials to access your account"
+                )}
               </Text>
             </View>
             {/* form  */}
@@ -137,29 +159,54 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
               {/* Email  */}
               <View style={{ marginBottom: 16 }}>
                 <Text>Email Address</Text>
-                <TextInput
-                  value={formData.email}
-                  onChangeText={(email) =>
-                    setFormData((prev) => ({ ...prev, email }))
-                  }
-                  style={{ backgroundColor: colors.light }}
-                  mode="outlined"
-                  placeholder="Enter your email"
+                <Controller
+                  name="email"
+                  control={control}
+                  defaultValue=""
+                  render={({ field: { onChange }, ...rest }) => (
+                    <>
+                      <TextInput
+                        onChangeText={(email) => onChange(email)}
+                        error={Boolean(errors.email)}
+                        style={{ backgroundColor: colors.light }}
+                        mode="outlined"
+                        placeholder="Enter your email"
+                        {...rest}
+                      />
+                      <HelperText type="error" visible={Boolean(errors.email)}>
+                        {errors.email?.message}
+                      </HelperText>
+                    </>
+                  )}
                 />
               </View>
               {/* Password  */}
               <View style={{ marginBottom: 16 }}>
                 <Text>Password</Text>
-                <TextInput
-                  value={formData.password}
-                  onChangeText={(password) =>
-                    setFormData((prev) => ({ ...prev, password }))
-                  }
-                  secureTextEntry
-                  style={{ backgroundColor: colors.light }}
-                  mode="outlined"
-                  placeholder="at least 8 characters"
-                  right={<TextInput.Icon name="eye" />}
+                <Controller
+                  name="password"
+                  control={control}
+                  defaultValue=""
+                  render={({ field: { onChange, ...rest } }) => (
+                    <>
+                      <TextInput
+                        onChangeText={(password) => onChange(password)}
+                        error={Boolean(errors.password)}
+                        secureTextEntry
+                        style={{ backgroundColor: colors.light }}
+                        mode="outlined"
+                        placeholder="at least 8 characters"
+                        right={<TextInput.Icon name="eye" />}
+                        {...rest}
+                      />
+                      <HelperText
+                        type="error"
+                        visible={Boolean(errors.password)}
+                      >
+                        {errors.password?.message}
+                      </HelperText>
+                    </>
+                  )}
                 />
               </View>
               {/* keep me signin in  */}
@@ -178,7 +225,6 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
                 loading={loading}
                 mode="contained"
                 buttonColor={colors.primary}
-                // style={{ marginBottom: 10 }}
                 contentStyle={{
                   flexDirection: "row-reverse",
                   alignItems: "center",
@@ -191,7 +237,7 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
                     color={colors.light}
                   />
                 )}
-                onPress={onSubmit}
+                onPress={handleSubmit(onSubmit)}
               >
                 <Text variant="bodyLarge" style={{ color: colors.light }}>
                   Signin

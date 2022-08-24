@@ -205,8 +205,9 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
             <TouchableOpacity>
               <Avatar.Image
                 size={40}
-                // @ts-ignore
-                source={user?.user.profile.profileImg}
+                source={
+                  user?.user.profile.profileImg || user.defaultImg.profileImg
+                }
               />
             </TouchableOpacity>
             <TouchableOpacity

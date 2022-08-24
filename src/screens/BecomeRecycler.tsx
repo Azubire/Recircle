@@ -4,142 +4,345 @@ import {
   SafeAreaView,
   ImageSourcePropType,
   KeyboardAvoidingView,
+  Platform,
+  Image,
 } from "react-native";
 import React, { useState } from "react";
 import CustomStatusbar from "../components/CustomStatusbar";
 import { HomeStackScreenProps } from "../navigations/AppStack/types";
-import { Button, Text, TextInput, Title, useTheme } from "react-native-paper";
-import { Picker } from "@react-native-picker/picker";
+import {
+  Button,
+  HelperText,
+  Snackbar,
+  Text,
+  TextInput,
+  Title,
+  useTheme,
+} from "react-native-paper";
 import { useAppSelector } from "../hooks/reduxhooks";
-import { getHomeCategory } from "../store/features/HomeCategorySlice";
-import { getAllAds } from "../store/features/AdSlice";
 import { getAllCategory } from "../store/features/RecyclingCategorySlice";
 import MultiSelect from "react-native-multiple-select";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { joiResolver } from "@hookform/resolvers/joi";
+import Joi from "joi";
+import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 
-interface FormDataTypes {
+// formData imterface definition
+interface formData {
   companyName: string;
   about: string;
   profile: string;
   location: string;
   workingHours: string;
-  profileImg: ImageSourcePropType | undefined;
-  isVerified: boolean;
-  recyclingCategories: Array<{ id: number; name: string }>;
-  userId: number | undefined;
+  recyclingCatId: [];
 }
+
+//joi schema validation
+const schema = Joi.object<any, true, formData>({
+  companyName: Joi.string().required(),
+  about: Joi.string().required(),
+  profile: Joi.string().required().min(10),
+  location: Joi.string().required(),
+  workingHours: Joi.string().required(),
+  recyclingCatId: Joi.array().required(),
+});
 
 const BecomeRecycler = ({
   navigation,
 }: HomeStackScreenProps<"BecomeRecycler">) => {
-  const [formData, setFormData] = React.useState<FormDataTypes>({
-    companyName: "",
-    about: "",
-    profile: "",
-    location: "",
-    workingHours: "",
-    profileImg: undefined,
-    isVerified: false,
-    recyclingCategories: [],
-    userId: undefined,
-  });
-  const [selectedCategory, setSelectedCategory] = React.useState<{
-    id: number;
-    name: string;
-  }>();
-
   const { colors } = useTheme();
   const categories = useAppSelector(getAllCategory);
   const newCat = categories.map((cat) => ({ id: cat.id, name: cat.title }));
 
-  // React.useEffect(() => {
-  //   setFormData((prev) => ({ ...prev, recyclingCategories: newCat }));
-  // }, [categories]);
-  console.log(formData.recyclingCategories);
+  // category state
+  const [selectedCategory, setSelectedCategory] = React.useState<
+    {
+      id: number;
+      name: string;
+    }[]
+  >([]);
+
+  //selected image
+  const [image, setImage] = useState<ImageSourcePropType | string>();
+  const [isImageSet, setIsImageSet] = useState(false);
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    console.log(result);
+    if (!result.cancelled) {
+      setImage(result.uri);
+      setIsImageSet(true);
+    }
+  };
+
+  //react-hook-form
+  const {
+    reset,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitSuccessful, isValid, isDirty },
+  } = useForm<formData>({
+    defaultValues: {},
+
+    // resolver : joiResolver(schema)
+    resolver: async (data, context, options) => {
+      // you can debug your validation schema here
+      // console.log("formData", data);
+      console.log(
+        "validation result",
+        await joiResolver(schema)(data, context, options)
+      );
+      return joiResolver(schema)(data, context, options);
+    },
+  });
+
+  //create form data
+  const createFormData = (image: any, body: any) => {
+    const data = new FormData();
+    data.append(
+      "image",
+      Platform.OS === "ios" ? image.replace("file://", "") : image
+    );
+
+    for (let key in body) {
+      data.append(key, body[key]);
+    }
+
+    return data;
+  };
+
+  //function to submit form after validation
+  const onSubmit: SubmitHandler<formData> = (data) => {
+    if (!image) {
+      console.log("select image");
+      return;
+    }
+
+    const newData = createFormData(image, data);
+
+    console.log("form-data---->>>>", newData);
+    reset();
+    // redux async thunk dispatches here
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <CustomStatusbar style="light" />
-      <KeyboardAvoidingView>
-        <View style={{ paddingHorizontal: 16 }}>
-          <Text
-            variant="titleMedium"
-            style={{
-              marginVertical: 16,
-              textAlign: "center",
-              borderBottomWidth: 2,
-              borderBottomColor: colors.info,
-            }}
-          >
-            Please complete the form below to become a recycler
-          </Text>
-          <MultiSelect
-            searchIcon={false}
-            hideTags
-            selectText="Selected categories"
-            styleTextDropdown={{
-              paddingLeft: 16,
-            }}
-            styleTextDropdownSelected={{
-              paddingLeft: 16,
-            }}
-            styleRowList={{ paddingVertical: 6 }}
-            items={newCat}
-            uniqueKey="id"
-            selectedItems={formData.recyclingCategories}
-            onSelectedItemsChange={(items) =>
-              setFormData((prev) => ({ ...prev, recyclingCategories: items }))
-            }
-          />
-        </View>
-        <ScrollView>
+      <ScrollView>
+        <KeyboardAvoidingView>
+          <View style={{ paddingHorizontal: 16 }}>
+            <Text
+              variant="titleMedium"
+              style={{
+                marginVertical: 16,
+                textAlign: "center",
+                borderBottomWidth: 2,
+                borderBottomColor: colors.info,
+              }}
+            >
+              Please complete the form below to become a recycler
+            </Text>
+            <Controller
+              name="recyclingCatId"
+              control={control}
+              defaultValue={[]}
+              render={({ field: { onChange } }) => (
+                <>
+                  <MultiSelect
+                    searchIcon={false}
+                    hideTags
+                    selectText="Selected categories"
+                    styleTextDropdown={{
+                      paddingLeft: 16,
+                    }}
+                    styleTextDropdownSelected={{
+                      paddingLeft: 16,
+                    }}
+                    styleRowList={{ paddingVertical: 6 }}
+                    items={newCat}
+                    uniqueKey="id"
+                    selectedItems={selectedCategory}
+                    onSelectedItemsChange={(items) => {
+                      setSelectedCategory(items);
+                      return onChange(items);
+                    }}
+                  />
+                  <HelperText
+                    type="error"
+                    visible={Boolean(errors.recyclingCatId)}
+                  >
+                    {errors.recyclingCatId?.message}
+                  </HelperText>
+                </>
+              )}
+            />
+          </View>
           <View style={{ marginTop: 16, paddingHorizontal: 16 }}>
             {/* form  */}
             <View style={{ marginTop: 16 }}>
-              <TextInput
-                value={formData.companyName}
-                onChangeText={(companyName) =>
-                  setFormData((prev) => ({ ...prev, companyName }))
-                }
-                label="Company Name"
-                placeholder="Enter name of company"
+              <Controller
+                name="companyName"
+                control={control}
+                defaultValue=""
+                render={({ field: { onChange, ...rest } }) => (
+                  <>
+                    <TextInput
+                      onChangeText={(text) => onChange(text)}
+                      error={Boolean(errors.companyName)}
+                      label="Company Name"
+                      placeholder="Enter name of company"
+                      {...rest}
+                    />
+                    <HelperText
+                      type="error"
+                      visible={Boolean(errors.companyName)}
+                    >
+                      {errors.companyName?.message}
+                    </HelperText>
+                  </>
+                )}
               />
-              <TextInput
-                style={{ marginTop: 16 }}
-                value={formData.about}
-                onChangeText={(about) =>
-                  setFormData((prev) => ({ ...prev, about }))
-                }
-                label="About"
-                placeholder="Enter a short description of your company"
+              <Controller
+                name="about"
+                control={control}
+                defaultValue=""
+                render={({ field: { onChange, ...rest } }) => (
+                  <>
+                    <TextInput
+                      style={{ marginTop: 16 }}
+                      onChangeText={(about) => onChange(about)}
+                      error={Boolean(errors.about)}
+                      label="About"
+                      placeholder="Enter a short description of your company"
+                      {...rest}
+                    />
+                    <HelperText type="error" visible={Boolean(errors.about)}>
+                      {errors.about?.message}
+                    </HelperText>
+                  </>
+                )}
               />
-              <TextInput
-                style={{ marginTop: 16 }}
-                value={formData.profile}
-                multiline
-                numberOfLines={4}
-                onChangeText={(profile) =>
-                  setFormData((prev) => ({ ...prev, profile }))
-                }
-                label="Profile"
-                placeholder="Enter your company's profile"
+              <Controller
+                name="profile"
+                control={control}
+                defaultValue=""
+                render={({ field: { onChange, ...rest } }) => (
+                  <>
+                    <TextInput
+                      error={Boolean(errors.profile)}
+                      style={{ marginTop: 16 }}
+                      multiline
+                      numberOfLines={4}
+                      onChangeText={(profile) => onChange(profile)}
+                      label="Profile"
+                      placeholder="Enter your company's profile"
+                      {...rest}
+                    />
+                    <HelperText type="error" visible={Boolean(errors.profile)}>
+                      {errors.profile?.message}
+                    </HelperText>
+                  </>
+                )}
               />
-              <TextInput
-                style={{ marginTop: 16 }}
-                value={formData.location}
-                onChangeText={(location) =>
-                  setFormData((prev) => ({ ...prev, location }))
-                }
-                label="location"
-                placeholder="Enter your location"
+              <Controller
+                name="location"
+                control={control}
+                defaultValue=""
+                render={({ field: { onChange, ...rest } }) => (
+                  <>
+                    <TextInput
+                      error={Boolean(errors.location)}
+                      style={{ marginTop: 16 }}
+                      onChangeText={(location) => onChange(location)}
+                      label="location"
+                      placeholder="Enter your location"
+                      {...rest}
+                    />
+                    <HelperText type="error" visible={Boolean(errors.location)}>
+                      {errors.location?.message}
+                    </HelperText>
+                  </>
+                )}
+              />
+              <Controller
+                name="workingHours"
+                control={control}
+                defaultValue=""
+                render={({ field: { onChange, ...rest } }) => (
+                  <>
+                    <TextInput
+                      error={Boolean(errors.location)}
+                      style={{ marginTop: 16 }}
+                      onChangeText={(location) => onChange(location)}
+                      label="Working Hours"
+                      placeholder="Enter your woking hours"
+                      {...rest}
+                    />
+                    <HelperText
+                      type="error"
+                      visible={Boolean(errors.workingHours)}
+                    >
+                      {errors.workingHours?.message}
+                    </HelperText>
+                  </>
+                )}
               />
 
-              <Button style={{ marginVertical: 24 }} mode="contained">
+              <View>
+                <Text variant="labelLarge">Upload Image</Text>
+                {isImageSet ? (
+                  <Image
+                    // @ts-ignore
+                    source={{ uri: image }}
+                    style={{ width: 100, height: 100 }}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <HelperText type="error" visible={!isImageSet}>
+                    Please select an image
+                  </HelperText>
+                )}
+
+                <View
+                  style={{
+                    alignItems: "center",
+                    borderStyle: "dashed",
+                    borderWidth: 1,
+                    marginBottom: 20,
+                    marginTop: 8,
+                    paddingVertical: 20,
+                  }}
+                >
+                  <Ionicons name="cloud-upload-outline" size={20} />
+                  <Text style={{ marginVertical: 10, fontWeight: "100" }}>
+                    Browse and choose images
+                  </Text>
+                  <Button
+                    mode="contained"
+                    buttonColor={colors.primary}
+                    onPress={pickImage}
+                  >
+                    <Ionicons name="add" size={20} color={colors.light} />
+                  </Button>
+                </View>
+              </View>
+
+              <Button
+                style={{ marginVertical: 24 }}
+                mode="contained"
+                onPress={handleSubmit(onSubmit)}
+              >
                 Submit
               </Button>
             </View>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </ScrollView>
     </SafeAreaView>
   );
 };

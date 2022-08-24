@@ -28,7 +28,7 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
     setUser({ user: response });
     setLoading(false);
   }, [response]);
-  console.log(user);
+  // console.log(user);
 
   const { colors } = useTheme();
   return (

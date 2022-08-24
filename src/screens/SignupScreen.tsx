@@ -1,61 +1,151 @@
 import { View, ScrollView, Image } from "react-native";
 import React from "react";
-import Center from "../components/Center";
-import {
-  AuthScreenProps,
-  AuthStackParamList,
-} from "../navigations/authStack/types";
-import { RouteProp, useRoute } from "@react-navigation/native";
+import { AuthScreenProps } from "../navigations/authStack/types";
 import {
   Button,
   Checkbox,
+  HelperText,
+  Modal,
+  Portal,
   Text,
   TextInput,
+  Title,
   useTheme,
 } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomStatusbar from "../components/CustomStatusbar";
-import { getAuth } from "firebase/auth";
+// import { getAuth } from "firebase/auth";
 
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../configs/firebaseConfig";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { joiResolver } from "@hookform/resolvers/joi";
+import Joi from "joi";
+import { getAuth, getUser, signUp } from "../store/features/AuthSlice";
+import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
+
+interface formData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+const schema = Joi.object<any, false, formData>({
+  firstName: Joi.string().required(),
+  lastName: Joi.string().required(),
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .required(),
+  password: Joi.string().min(6).required(),
+  confirmPassword: Joi.ref("password"),
+});
+
 // const auth = getAuth();
 const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
-  const [form, setForm] = React.useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
-
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [showModal, setShowModal] = React.useState(false);
   const { colors } = useTheme();
+  const dispatch = useAppDispatch();
 
-  // const handleSignin = async () => {
-  //   //firebase sign in
+  const { auth } = useAppSelector(getAuth);
+  const state = useAppSelector(getUser);
+  console.log(state.user);
+
+  //react-hook-form
+  const {
+    reset,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitSuccessful, isValid, isDirty },
+  } = useForm<formData>({
+    defaultValues: {},
+    resolver: joiResolver(schema),
+    // resolver: async (data, context, options) => {
+    //   // you can debug your validation schema here
+    //   // console.log("formData", data);
+    //   console.log(
+    //     "validation result",
+    //     await joiResolver(schema)(data, context, options)
+    //   );
+    //   return joiResolver(schema)(data, context, options);
+    // },
+  });
+  // React.useEffect(() => {
+  //   console.log("state", state);
+  // }, [auth.status]);
+
+  // if (auth.status === "loading") {
   //   setLoading(true);
-  //   try {
-  //     const response = await createUserWithEmailAndPassword(
-  //       auth,
-  //       form.email,
-  //       form.password
-  //     );
-  //     // console.log(response);
-  //     setLoading(false);
-  //     setForm({ firstName: "", lastName: "", email: "", password: "" });
-  //   } catch (error) {
-  //     console.log(error);
-  //     setLoading(false);
+  // }
+  //else if (auth.status === "failed" || auth.status === "idle") {
+  //   setLoading(false);
+  // } else if (auth.error && auth.message) {
+  //   console.log(auth.message);
+  // }
+  const onSubmit: SubmitHandler<formData> = async (data) => {
+    setLoading(true);
+    const { confirmPassword, ...rest } = data;
+    const newFormData = rest;
 
-  //     setForm({ firstName: "", lastName: "", email: "", password: "" });
-  //   }
-  //   // console.log();
-  // };
+    // setLoading(true);
+    // redux async thunk dispatches here
+    try {
+      const data = await dispatch(signUp(newFormData)).unwrap();
+      // console.log("response", data);
+      if (!data.error) {
+        setShowModal(true);
+        reset();
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log("error", error);
+      setLoading(false);
+    } finally {
+      console.log("runs anyway");
+      setLoading(false);
+    }
+  };
 
   return (
     <>
       <CustomStatusbar />
+      <Portal>
+        <Modal
+          visible={showModal}
+          onDismiss={() => {}}
+          contentContainerStyle={{
+            width: "80%",
+            // height: 300,
+            paddingHorizontal: 20,
+            paddingVertical: 35,
+            backgroundColor: colors.light,
+            alignSelf: "center",
+          }}
+        >
+          <Ionicons
+            style={{ alignSelf: "center" }}
+            name="checkmark-circle-outline"
+            size={80}
+            color={colors.success}
+          />
+          <Title style={{ textAlign: "center" }}>Registration Successful</Title>
+          <Text style={{ textAlign: "center" }} variant="bodyMedium">
+            Sign up was successful, you need to sign in now to continue with
+            your account
+          </Text>
+
+          <Button
+            style={{ marginTop: 16 }}
+            mode="contained"
+            onPress={() => {
+              navigation.navigate("Signin");
+            }}
+          >
+            Sign in to continue
+          </Button>
+        </Modal>
+      </Portal>
       <SafeAreaView
         style={{
           flex: 1,
@@ -107,22 +197,54 @@ const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
             <View style={{ marginBottom: 16, flexDirection: "row" }}>
               <View style={{ flex: 1, marginRight: 5 }}>
                 <Text>First Name</Text>
-                <TextInput
-                  value={form.firstName}
-                  onChangeText={(Text) => setForm({ ...form, firstName: Text })}
-                  style={{ backgroundColor: colors.light }}
-                  mode="outlined"
-                  placeholder="your first name"
+                <Controller
+                  name="firstName"
+                  control={control}
+                  defaultValue=""
+                  render={({ field: { onChange, ...rest } }) => (
+                    <>
+                      <TextInput
+                        onChangeText={(firstname) => onChange(firstname)}
+                        error={Boolean(errors.firstName)}
+                        style={{ backgroundColor: colors.light }}
+                        mode="outlined"
+                        placeholder="your first name"
+                        {...rest}
+                      />
+                      <HelperText
+                        type="error"
+                        visible={Boolean(errors.firstName)}
+                      >
+                        {errors.firstName?.message}
+                      </HelperText>
+                    </>
+                  )}
                 />
               </View>
               <View style={{ flex: 1, marginLeft: 5, marginRight: 1 }}>
                 <Text>Last Name</Text>
-                <TextInput
-                  value={form.lastName}
-                  onChangeText={(Text) => setForm({ ...form, lastName: Text })}
-                  style={{ backgroundColor: colors.light }}
-                  mode="outlined"
-                  placeholder="your last name"
+                <Controller
+                  name="lastName"
+                  control={control}
+                  defaultValue=""
+                  render={({ field: { onChange, ...rest } }) => (
+                    <>
+                      <TextInput
+                        onChangeText={(lastname) => onChange(lastname)}
+                        error={Boolean(errors.lastName)}
+                        style={{ backgroundColor: colors.light }}
+                        mode="outlined"
+                        placeholder="your last name"
+                        {...rest}
+                      />
+                      <HelperText
+                        type="error"
+                        visible={Boolean(errors.lastName)}
+                      >
+                        {errors.lastName?.message}
+                      </HelperText>
+                    </>
+                  )}
                 />
               </View>
             </View>
@@ -130,36 +252,78 @@ const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
             {/* Email  */}
             <View style={{ marginBottom: 16 }}>
               <Text>Email Address</Text>
-              <TextInput
-                value={form.email}
-                onChangeText={(Text) => setForm({ ...form, email: Text })}
-                style={{ backgroundColor: colors.light }}
-                mode="outlined"
-                placeholder="email"
+              <Controller
+                name="email"
+                control={control}
+                render={({ field: { onChange, ...rest } }) => (
+                  <>
+                    <TextInput
+                      onChangeText={(email) => onChange(email)}
+                      error={Boolean(errors.email)}
+                      style={{ backgroundColor: colors.light }}
+                      mode="outlined"
+                      placeholder="email"
+                      {...rest}
+                    />
+                    <HelperText type="error" visible={Boolean(errors.email)}>
+                      {errors.email?.message}
+                    </HelperText>
+                  </>
+                )}
               />
             </View>
             {/* Password  */}
             <View style={{ marginBottom: 16 }}>
               <Text>Create Password</Text>
-              <TextInput
-                value={form.password}
-                onChangeText={(Text) => setForm({ ...form, password: Text })}
-                secureTextEntry
-                style={{ backgroundColor: colors.light }}
-                mode="outlined"
-                placeholder="at least 8 characters"
-                right={<TextInput.Icon name="eye" />}
+              <Controller
+                name="password"
+                control={control}
+                render={({ field: { onChange, value, ...rest } }) => (
+                  <>
+                    <TextInput
+                      value={value}
+                      onChangeText={(password) => onChange(password)}
+                      error={Boolean(errors.password)}
+                      secureTextEntry
+                      style={{ backgroundColor: colors.light }}
+                      mode="outlined"
+                      placeholder="at least 8 characters"
+                      right={<TextInput.Icon name="eye" />}
+                      {...rest}
+                    />
+                    <HelperText type="error" visible={Boolean(errors.password)}>
+                      {errors.password?.message}
+                    </HelperText>
+                  </>
+                )}
               />
             </View>
             {/* Repeat Password  */}
             <View style={{ marginBottom: 16 }}>
               <Text>Confirm Password</Text>
-              <TextInput
-                secureTextEntry
-                style={{ backgroundColor: colors.light }}
-                mode="outlined"
-                placeholder="repeat password "
-                right={<TextInput.Icon name="eye" />}
+              <Controller
+                name="confirmPassword"
+                control={control}
+                render={({ field: { onChange, ...rest } }) => (
+                  <>
+                    <TextInput
+                      onChangeText={(text) => onChange(text)}
+                      secureTextEntry
+                      style={{ backgroundColor: colors.light }}
+                      mode="outlined"
+                      error={Boolean(errors.confirmPassword)}
+                      placeholder="repeat password "
+                      right={<TextInput.Icon name="eye" />}
+                      {...rest}
+                    />
+                    <HelperText
+                      type="error"
+                      visible={Boolean(errors.confirmPassword)}
+                    >
+                      {errors.confirmPassword?.message}
+                    </HelperText>
+                  </>
+                )}
               />
             </View>
             {/* keep me signin in  */}
@@ -191,7 +355,7 @@ const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
                   color={colors.light}
                 />
               )}
-              // onPress={() => handleSignin()}
+              onPress={handleSubmit(onSubmit)}
             >
               <Text variant="bodyLarge" style={{ color: colors.light }}>
                 Sign up
@@ -210,6 +374,7 @@ const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
             >
               <Text variant="bodyMedium">Already have an account account?</Text>
               <Button
+                // loading={}
                 mode="text"
                 onPress={() => {
                   navigation.navigate("Signin");
