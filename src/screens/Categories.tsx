@@ -12,10 +12,11 @@ import { Button, Card, Text, useTheme } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 import { HomeStackScreenProps } from "../navigations/AppStack/types";
 import {
+  fetchRecyclingCategories,
   getAllCategory,
   RecyclingCategoryTypes,
 } from "../store/features/RecyclingCategorySlice";
-import { useAppSelector } from "../hooks/reduxhooks";
+import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import CustomStatusbar from "../components/CustomStatusbar";
 
 const Categories = ({ navigation }: HomeStackScreenProps<"Categories">) => {
@@ -24,23 +25,34 @@ const Categories = ({ navigation }: HomeStackScreenProps<"Categories">) => {
   const [loading, setLoading] = React.useState(true);
 
   const { colors } = useTheme();
+  const dispatch = useAppDispatch();
 
   const response = useAppSelector(getAllCategory);
 
+  const getData = async () => {
+    if (response.status === "idle") {
+      try {
+        const data = await dispatch(fetchRecyclingCategories());
+        console.log("data", data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   React.useEffect(() => {
-    setCategories(response);
-    setLoading(false);
-  }, [response]);
+    getData();
+  }, [response.status]);
 
   return (
     <>
       <CustomStatusbar style="light" />
-      {loading ? (
+      {response.status === "loading" || response.status === "idle" ? (
         <ActivityIndicator size="large" />
       ) : (
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={categories}
+          data={response.data}
           numColumns={2}
           keyExtractor={(item) => item.id.toString()}
           ListHeaderComponent={() => {
@@ -103,7 +115,9 @@ const Categories = ({ navigation }: HomeStackScreenProps<"Categories">) => {
               <Card style={{ backgroundColor: colors.light }}>
                 <Card.Cover
                   resizeMode="contain"
-                  source={item.icon}
+                  source={{
+                    uri: `http://192.168.43.35:3001/images/categoryImages/${item.icon}`,
+                  }}
                   style={{
                     paddingTop: 10,
                     // borderWidth: 1,
@@ -118,7 +132,7 @@ const Categories = ({ navigation }: HomeStackScreenProps<"Categories">) => {
                     variant="titleMedium"
                     style={{ textAlign: "center", marginVertical: 16 }}
                   >
-                    {item.title}
+                    {item.name}
                   </Text>
                 </Card.Content>
               </Card>

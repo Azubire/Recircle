@@ -21,6 +21,7 @@ import { getUser, setUser, signIn } from "../store/features/AuthSlice";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
+import { setUserToSecureStore } from "../utils/helpers";
 
 const coverImg = require("../../assets/images/cover.jpeg");
 const profileImg = require("../../assets/images/profile.jpeg");
@@ -76,6 +77,14 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
         console.log(data.message);
         setLoading(false);
         setShowSnackBar((prev) => ({ show: true, message: data.message }));
+      } else if (!data.error) {
+        setUserToSecureStore({
+          key: "USERTOKEN",
+          payload: {
+            userToken: data.data.userToken,
+            email: data.data.profile.email,
+          },
+        });
       }
       console.log("response", data);
     } catch (error) {
@@ -314,6 +323,7 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
                   flexDirection: "row",
                   alignItems: "center",
                   alignSelf: "center",
+                  marginBottom: 16,
                 }}
               >
                 <Text variant="bodyMedium">Don't have and account?</Text>

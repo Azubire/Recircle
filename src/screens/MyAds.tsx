@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import React from "react";
 import CustomStatusbar from "../components/CustomStatusbar";
-import { useAppSelector } from "../hooks/reduxhooks";
+import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import { adFilterTypes, getBestSellingAds } from "../store/features/AdSlice";
 import {
   Button,
@@ -19,49 +19,63 @@ import {
   useTheme,
 } from "react-native-paper";
 import { HomeStackScreenProps } from "../navigations/AppStack/types";
+import { getUserAds, getUserAdsState } from "../store/features/UserAds";
+import { baseUrl } from "../store/features/AuthSlice";
 
-const MyAds = ({ navigation }: HomeStackScreenProps<"MyAds">) => {
-  const [myAds, setMyAds] = React.useState<adFilterTypes[]>();
+const MyAds = ({ navigation, route }: HomeStackScreenProps<"MyAds">) => {
+  // const [myAds, setMyAds] = React.useState<adFilterTypes[]>();
   const [loading, setLoading] = React.useState<boolean>(true);
 
-  const response = useAppSelector(getBestSellingAds);
+  const dispatch = useAppDispatch();
+  const { status, data } = useAppSelector(getUserAdsState);
   const { colors } = useTheme();
+  const { id } = route.params;
+  console.log(id);
+
+  const myAds = async (id: string) => {
+    try {
+      await dispatch(getUserAds(id)).unwrap();
+      // console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   React.useEffect(() => {
-    setMyAds(response);
-    setLoading(false);
-  }, [response]);
+    myAds(id.toString());
+  }, [dispatch]);
 
   return (
     <SafeAreaView>
       <CustomStatusbar style="light" />
-
-      <FlatList
-        data={myAds}
-        initialNumToRender={20}
-        keyExtractor={(item, index) => item.id.toString()}
-        ListHeaderComponent={() => (
-          <View>
-            <Title
-              style={{
-                marginVertical: 16,
-                paddingHorizontal: 6,
-                textAlign: "center",
-              }}
-            >
-              List of adverts you have posted
-            </Title>
-          </View>
-        )}
-        renderItem={({ item, index }) =>
-          loading ? (
-            <ActivityIndicator />
-          ) : (
+      {status === "loading" ? (
+        <ActivityIndicator size="large" />
+      ) : (
+        <FlatList
+          data={data}
+          initialNumToRender={20}
+          keyExtractor={(item, index) => item.id.toString()}
+          ListHeaderComponent={() => (
+            <View>
+              <Title
+                style={{
+                  marginVertical: 16,
+                  paddingHorizontal: 6,
+                  textAlign: "center",
+                }}
+              >
+                List of adverts you have posted
+              </Title>
+            </View>
+          )}
+          renderItem={({ item, index }) => (
             <View style={{ flex: 1, margin: 6 }}>
               <Card mode="contained">
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Image
-                    source={item.img}
+                    source={{
+                      uri: `${baseUrl}/images/ads/${item.adImage}`,
+                    }}
                     style={{ height: 120, flex: 1 }}
                     resizeMode="cover"
                   />
@@ -69,11 +83,13 @@ const MyAds = ({ navigation }: HomeStackScreenProps<"MyAds">) => {
                     {/* <Title>{item.title}</Title> */}
                     <Card.Title
                       title={item.title}
-                      subtitle={`${item.date} | ${item.time}`}
+                      subtitle={`${item.createdAt} | ${item.createdAt}`}
                       // left={LeftContent}
                     />
                     <Card.Content>
-                      <Paragraph numberOfLines={2}>{item.desc}</Paragraph>
+                      <Paragraph numberOfLines={2}>
+                        {item.description}
+                      </Paragraph>
                     </Card.Content>
                     <View
                       style={{
@@ -88,10 +104,12 @@ const MyAds = ({ navigation }: HomeStackScreenProps<"MyAds">) => {
                 </View>
               </Card>
             </View>
-          )
-        }
-        ListFooterComponent={() => <View style={{ marginVertical: 8 }}></View>}
-      />
+          )}
+          ListFooterComponent={() => (
+            <View style={{ marginVertical: 8 }}></View>
+          )}
+        />
+      )}
     </SafeAreaView>
   );
 };

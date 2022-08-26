@@ -21,46 +21,63 @@ import { TabScreenProps } from "../navigations/appTabs/types";
 import { LinearGradient } from "expo-linear-gradient";
 import CustomStatusbar from "../components/CustomStatusbar";
 import {
+  fetchHomeCategory,
   getHomeCategory,
   HomeCategorySliceTypes,
 } from "../store/features/HomeCategorySlice";
-import { useAppSelector } from "../hooks/reduxhooks";
+import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import { getAllNotificationCount } from "../store/features/NotificationSlice";
 import { useIsFocused } from "@react-navigation/native";
+import { getAuth, getUser } from "../store/features/AuthSlice";
 
 const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
-  const [HomeCategory, setHomeCategory] =
-    React.useState<HomeCategorySliceTypes[]>();
-  const [loading, setLoading] = React.useState<boolean>(true);
   const [showModal, setShowModal] = React.useState(false);
 
   const { colors } = useTheme();
+  const dispatch = useAppDispatch();
 
-  const response = useAppSelector(getHomeCategory);
+  const state = useAppSelector(getHomeCategory);
+  const { auth } = useAppSelector(getAuth);
+  const { user } = useAppSelector(getUser);
+
   React.useEffect(() => {
-    if (!loading) {
+    if (state.status === "success") {
       setTimeout(() => {
-        setShowModal(true);
+        // setShowModal(true);
       }, 5000);
     }
-  });
+  }, [state.status === "success"]);
+
+  const fetchCategory = async () => {
+    if (state.status === "idle") {
+      try {
+        const data = await dispatch(fetchHomeCategory(user.userToken)).unwrap();
+        if (!data.error) {
+          // success
+        }
+      } catch (error) {
+        //erro
+      }
+    }
+  };
 
   React.useEffect(() => {
-    setHomeCategory(response);
-    setLoading(false);
-  }, [response]);
+    fetchCategory();
+  }, [state.data]);
 
   const notificationCount = useAppSelector(getAllNotificationCount);
   const focused = useIsFocused();
 
   React.useEffect(() => {
-    navigation.setParams({ notificationCount });
-  }, [notificationCount, loading, focused]);
+    if (state.status === "success") {
+      navigation.setParams({ notificationCount });
+    }
+  }, [notificationCount, focused, state.status === "success"]);
 
   return (
     <SafeAreaView>
       <CustomStatusbar style="light" />
-      {loading ? (
+      {state.status === "loading" ? (
         <ActivityIndicator size="large" />
       ) : (
         <View
@@ -69,6 +86,7 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
             paddingHorizontal: 2,
           }}
         >
+          {/* modal  */}
           <Portal>
             <Modal
               visible={showModal}
@@ -94,23 +112,25 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
                 Welcome to Lets Recycle
               </Title>
               <Text style={{ textAlign: "center" }} variant="bodyMedium">
-                start creating adverts and start earning
+                start creating adverts to start earning
               </Text>
 
               <Button
+                buttonColor={colors.secondary}
                 style={{ marginTop: 16 }}
                 mode="contained"
                 onPress={() => {
                   setShowModal(false);
                 }}
               >
-                Close
+                Ok
               </Button>
             </Modal>
           </Portal>
+          {/* flatlist  */}
           <FlatList
             showsVerticalScrollIndicator={false}
-            data={HomeCategory}
+            data={state.data}
             numColumns={2}
             keyExtractor={(item) => item.id.toString()}
             ListHeaderComponent={() => {
@@ -185,7 +205,9 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
               >
                 <Card.Cover
                   resizeMode="contain"
-                  source={item.icon}
+                  source={{
+                    uri: `http://192.168.43.35:3001/images/categoryImages/${item.icon}`,
+                  }}
                   style={{
                     paddingTop: 10,
                     // borderWidth: 1,
@@ -206,7 +228,7 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
                     mode="contained"
                     buttonColor={colors.primary}
                     onPress={() => {
-                      navigation.navigate(item.screen);
+                      navigation.navigate(item.screen, { id: user.profile.id });
                     }}
                   >
                     <Ionicons name="arrow-forward" color="#fff" size={24} />

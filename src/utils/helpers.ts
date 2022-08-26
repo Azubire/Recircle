@@ -4,12 +4,7 @@ interface UserInterface {
   key: string;
   payload: {
     userToken: string;
-    profile: {
-      userName: string;
-      email: string;
-      coverImg: string;
-      profileImg: string;
-    };
+    email: string;
   };
 }
 /**

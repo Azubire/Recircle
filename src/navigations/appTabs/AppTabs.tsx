@@ -26,6 +26,8 @@ import {
   useTheme,
 } from "react-native-paper";
 import HomeStack from "../AppStack/AppStack";
+import { useAppSelector } from "../../hooks/reduxhooks";
+import { getUser } from "../../store/features/AuthSlice";
 const profileImage = require("../../../assets/images/profile.jpeg");
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -34,6 +36,7 @@ const AppTabs = () => {
   const { colors } = useTheme();
 
   const [visible, setVisible] = React.useState(false);
+  const state = useAppSelector(getUser);
 
   return (
     <Tab.Navigator
@@ -177,7 +180,17 @@ const AppTabs = () => {
         name="Profile"
         options={{
           tabBarIcon({ focused, color, size }) {
-            return <Avatar.Image size={30} source={profileImage} />;
+            return (
+              <Avatar.Image
+                size={30}
+                //@ts-ignore
+                source={{
+                  uri:
+                    `http://192.168.43.35:3001/images/categoryImages/${state.user.profile?.profileImg}` ||
+                    state.defaultImg.profileImg,
+                }}
+              />
+            );
           },
           // tabBarStyle: { display: "none" },
           headerShown: false,

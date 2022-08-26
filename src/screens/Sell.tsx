@@ -3,54 +3,70 @@ import {
   ScrollView,
   ActivityIndicator,
   ImageSourcePropType,
+  Platform,
+  Image,
 } from "react-native";
 import React from "react";
 import { TabScreenProps } from "../navigations/appTabs/types";
-import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import {
+  Button,
+  HelperText,
+  Text,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import "fast-text-encoding";
 import Joi from "joi";
 import CustomStatusbar from "../components/CustomStatusbar";
-import { useAppSelector } from "../hooks/reduxhooks";
+import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import { getAllCategory } from "../store/features/RecyclingCategorySlice";
 import { getUser } from "../store/features/AuthSlice";
+import * as ImagePicker from "expo-image-picker";
+import { createAd, getAds } from "../store/features/AdSlice";
+import mime from "mime";
+import { useNavigation } from "@react-navigation/native";
 
-type formData = {
+export type formData = {
   title: string;
   description: string;
-  adImage: ImageSourcePropType;
-  price: number;
-  weight: number;
+  price: string;
+  weight: string;
   categoryId: number;
+  userId: number;
 };
 // joi validation
 const schema = Joi.object<any, true, formData>({
   title: Joi.string().required(),
   categoryId: Joi.number().required(),
-  weight: Joi.number().required(),
-  price: Joi.number().required(),
+  userId: Joi.number().required(),
+  weight: Joi.string().required(),
+  price: Joi.string().required(),
   description: Joi.string().required(),
-  adImage: Joi.number().required(),
 });
 
-const Sell = ({ route }: TabScreenProps<"Sell">) => {
-  const [selectedCategory, setSelectedCategory] = React.useState<
-    number | undefined
-  >();
+const Sell = ({ route, navigation }: TabScreenProps<"Sell">) => {
+  const [selectedCategory, setSelectedCategory] = React.useState<number>(0);
   const [loading, setLoading] = React.useState(true);
+  const [isImageSet, setIsImageSet] = React.useState(false);
+  const [image, setImage] = React.useState<any>();
 
   const id = route.params?.id;
-  const userId = useAppSelector(getUser);
-  const { auth } = useAppSelector(getUser);
+  const { userToken } = useAppSelector(getUser).user;
+  const { user } = useAppSelector(getUser);
 
   const { colors } = useTheme();
+  const dispatch = useAppDispatch();
   const categories = useAppSelector(getAllCategory);
+  const adState = useAppSelector(getAds);
 
   React.useEffect(() => {
-    setSelectedCategory(id);
+    if (id) {
+      setSelectedCategory(id);
+    }
     setLoading(false);
   }, [id]);
 
@@ -61,24 +77,64 @@ const Sell = ({ route }: TabScreenProps<"Sell">) => {
     control,
     formState: { errors, isSubmitSuccessful, isValid, isDirty },
   } = useForm<formData>({
-    defaultValues: {},
-    // resolver : joiResolver(schema)
-    resolver: async (data, context, options) => {
-      // you can debug your validation schema here
-      console.log("formData", data);
-      console.log(
-        "validation result",
-        await joiResolver(schema)(data, context, options)
-      );
-      return joiResolver(schema)(data, context, options);
-    },
+    defaultValues: { userId: user.profile.id },
+    resolver: joiResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<formData> = (data) => {
-    console.log("form-data---->>>>", data);
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    console.log(result);
+    if (!result.cancelled) {
+      setImage(result);
+      setIsImageSet(true);
+    }
   };
 
-  return loading ? (
+  //create form data
+  const createFormData = (image: any, body: any) => {
+    const newImg = {
+      uri: image.uri,
+      name: image.uri.split("/").pop(),
+      type: mime.getType(image.uri),
+    };
+    const data = new FormData();
+    //@ts-ignore
+    data.append("adImage", newImg);
+
+    for (let key in body) {
+      data.append(key, body[key]);
+    }
+
+    return data;
+  };
+
+  const onSubmit: SubmitHandler<formData> = async (data) => {
+    if (!image) {
+      console.log("select image");
+      return;
+    }
+
+    const newData = createFormData(image, data);
+    console.log(newData);
+    try {
+      const data = await dispatch(createAd({ newData, userToken })).unwrap();
+      console.log(data);
+      if (adState.status === "success") {
+        navigation.navigate("MyAds", { id: user.profile.id });
+        reset();
+      }
+    } catch (error) {
+      console.log(error);
+      console.log(adState.status);
+    }
+  };
+
+  return categories.status === "loading" ? (
     <ActivityIndicator animating size="large" />
   ) : (
     <>
@@ -95,10 +151,25 @@ const Sell = ({ route }: TabScreenProps<"Sell">) => {
           {/* title  */}
           <View style={{ marginBottom: 20 }}>
             <Text variant="labelLarge">Title</Text>
-            <TextInput
-              style={{ backgroundColor: colors.light }}
-              mode="outlined"
-              placeholder="Title of your ad"
+            <Controller
+              name="title"
+              control={control}
+              defaultValue=""
+              render={({ field: { onChange, ...rest } }) => (
+                <>
+                  <TextInput
+                    error={Boolean(errors.title)}
+                    onChangeText={(title) => onChange(title)}
+                    style={{ backgroundColor: colors.light }}
+                    mode="outlined"
+                    placeholder="Title of your ad"
+                    {...rest}
+                  />
+                  <HelperText type="error" visible={Boolean(errors.title)}>
+                    {errors.title?.message}
+                  </HelperText>
+                </>
+              )}
             />
           </View>
           {/* //select category  */}
@@ -119,35 +190,70 @@ const Sell = ({ route }: TabScreenProps<"Sell">) => {
               }}
             >
               <Text variant="labelLarge">Select Category</Text>
-              <TextInput
-                mode="outlined"
-                render={() => (
-                  <Picker
-                    selectedValue={selectedCategory}
-                    onValueChange={(itemValue) =>
-                      setSelectedCategory(itemValue)
-                    }
-                    prompt="Select a category"
-                  >
-                    {categories.map((item) => (
-                      <Picker.Item
-                        key={item.id}
-                        label={item.title}
-                        value={item}
-                      />
-                    ))}
-                  </Picker>
+              <Controller
+                name="categoryId"
+                control={control}
+                defaultValue={1}
+                render={({ field: { onChange } }) => (
+                  <>
+                    <TextInput
+                      error={Boolean(errors.categoryId)}
+                      mode="outlined"
+                      render={() => (
+                        <Picker
+                          selectedValue={selectedCategory}
+                          onValueChange={(itemValue) => {
+                            console.log(itemValue);
+                            setSelectedCategory(itemValue);
+                            //@ts-ignore
+                            return onChange(itemValue);
+                          }}
+                          prompt="Select a category"
+                        >
+                          {categories.data.map((item) => (
+                            <Picker.Item
+                              key={item.id}
+                              label={item.name}
+                              value={item.id}
+                            />
+                          ))}
+                        </Picker>
+                      )}
+                    />
+                    <HelperText
+                      type="error"
+                      visible={Boolean(errors.categoryId)}
+                    >
+                      {errors.categoryId?.message}
+                    </HelperText>
+                  </>
                 )}
               />
             </View>
             <View style={{ flex: 1, marginLeft: 16, marginRight: 1 }}>
               <Text variant="labelLarge">Weight</Text>
 
-              <TextInput
-                style={{ backgroundColor: colors.light }}
-                label="Weight"
-                mode="outlined"
-                placeholder="45.5Kg"
+              <Controller
+                name="weight"
+                control={control}
+                defaultValue=""
+                render={({ field: { onChange, ...rest } }) => (
+                  <>
+                    <TextInput
+                      keyboardType="numeric"
+                      error={Boolean(errors.weight)}
+                      onChangeText={(weight) => onChange(weight)}
+                      style={{ backgroundColor: colors.light }}
+                      label="Weight"
+                      mode="outlined"
+                      placeholder="45.5Kg"
+                      {...rest}
+                    />
+                    <HelperText type="error" visible={Boolean(errors.weight)}>
+                      {errors.weight?.message}
+                    </HelperText>
+                  </>
+                )}
               />
             </View>
           </View>
@@ -155,29 +261,74 @@ const Sell = ({ route }: TabScreenProps<"Sell">) => {
           <View style={{ marginBottom: 20 }}>
             <Text variant="labelLarge">Price</Text>
 
-            <TextInput
-              style={{ backgroundColor: colors.light }}
-              mode="outlined"
-              placeholder="100.00"
-              right={<TextInput.Affix text="GHC" />}
+            <Controller
+              name="price"
+              control={control}
+              defaultValue=""
+              render={({ field: { onChange, ...rest } }) => (
+                <>
+                  <TextInput
+                    keyboardType="numeric"
+                    error={Boolean(errors.price)}
+                    onChangeText={(price) => onChange(price)}
+                    style={{ backgroundColor: colors.light }}
+                    mode="outlined"
+                    placeholder="100.00"
+                    right={<TextInput.Affix text="GHC" />}
+                    {...rest}
+                  />
+                  <HelperText type="error" visible={Boolean(errors.price)}>
+                    {errors.price?.message}
+                  </HelperText>
+                </>
+              )}
             />
           </View>
           {/* Description  */}
           <View style={{ marginBottom: 20 }}>
             <Text variant="labelLarge">Description</Text>
 
-            <TextInput
-              style={{ backgroundColor: colors.light }}
-              multiline
-              numberOfLines={4}
-              mode="outlined"
-              placeholder="details about the ad"
+            <Controller
+              name="description"
+              control={control}
+              defaultValue=""
+              render={({ field: { onChange, ...rest } }) => (
+                <>
+                  <TextInput
+                    error={Boolean(errors.description)}
+                    onChangeText={(desc) => onChange(desc)}
+                    style={{ backgroundColor: colors.light }}
+                    multiline
+                    numberOfLines={4}
+                    mode="outlined"
+                    placeholder="details about the ad"
+                    {...rest}
+                  />
+                  <HelperText
+                    type="error"
+                    visible={Boolean(errors.description)}
+                  >
+                    {errors.description?.message}
+                  </HelperText>
+                </>
+              )}
             />
           </View>
           {/* upload Image  */}
           <View>
             <Text variant="labelLarge">Upload Image</Text>
-
+            {isImageSet ? (
+              <Image
+                // @ts-ignore
+                source={{ uri: image.uri }}
+                style={{ width: 100, height: 100 }}
+                resizeMode="cover"
+              />
+            ) : (
+              <HelperText type="error" visible={!isImageSet}>
+                Please select an image
+              </HelperText>
+            )}
             <View
               style={{
                 alignItems: "center",
@@ -192,7 +343,11 @@ const Sell = ({ route }: TabScreenProps<"Sell">) => {
               <Text style={{ marginVertical: 10, fontWeight: "100" }}>
                 Browse and choose images
               </Text>
-              <Button mode="contained" buttonColor={colors.primary}>
+              <Button
+                mode="contained"
+                buttonColor={colors.primary}
+                onPress={pickImage}
+              >
                 <Ionicons name="add" size={20} color={colors.light} />
               </Button>
             </View>
@@ -219,6 +374,7 @@ const Sell = ({ route }: TabScreenProps<"Sell">) => {
               Add Category
             </Button>
             <Button
+              loading={Boolean(adState.status === "loading")}
               style={{ marginLeft: 16 }}
               mode="contained"
               buttonColor={colors.primary}

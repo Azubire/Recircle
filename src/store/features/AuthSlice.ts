@@ -8,7 +8,7 @@ import axios from "axios";
 import { ImageSourcePropType } from "react-native";
 import { RootState } from "..";
 
-const baseUrl = "http://192.168.43.35:3000";
+export const baseUrl = "http://192.168.43.35:3001";
 const coverImg = require("../../../assets/images/default_cover.jpg");
 const profileImg = require("../../../assets/images/default_user.jpg");
 // const profileImg = require("../../../assets/images/");
@@ -18,10 +18,11 @@ interface axiosResponse {
   data: {
     userToken: string;
     profile: {
+      id: number;
       userName: string;
       email: string;
-      coverImg: string;
-      profileImg: string;
+      coverImg: ImageSourcePropType | undefined;
+      profileImg: ImageSourcePropType | undefined;
     };
   };
 }
@@ -36,15 +37,20 @@ interface signUpFormData {
   email: string;
   password: string;
 }
+export interface verifyTokenData {
+  userToken: string;
+  email: string;
+}
 
 export interface stateProps {
   user: {
     userToken: string;
     profile: {
+      id: number;
       userName: string;
       email: string;
-      coverImg: string;
-      profileImg: string;
+      coverImg?: ImageSourcePropType | undefined;
+      profileImg?: ImageSourcePropType | undefined;
     };
   };
   auth: {
@@ -87,14 +93,33 @@ export const signIn = createAsyncThunk(
   }
 );
 
+export const verifyToken = createAsyncThunk(
+  "auth/verifyToken",
+  async (asyncData: verifyTokenData): Promise<axiosResponse> => {
+    // console.log("thunk", asyncData);
+    const { data } = await axios.post<axiosResponse>(
+      `${baseUrl}/auth/verifytoken`,
+      {
+        email: asyncData.email,
+      },
+      {
+        headers: { Authorization: `Bearer ${asyncData.userToken}` },
+      }
+    );
+
+    return data;
+  }
+);
+
 const initialState: stateProps = {
   user: {
     userToken: "",
     profile: {
+      id: -1,
       userName: "",
       email: "",
-      coverImg: coverImg,
-      profileImg: profileImg,
+      coverImg: undefined,
+      profileImg: undefined,
     },
   },
   auth: {
@@ -119,10 +144,11 @@ const AuthSlice = createSlice({
       state.user = {
         userToken: "",
         profile: {
+          id: -1,
           userName: "",
           email: "",
-          coverImg: "",
-          profileImg: "",
+          coverImg: undefined,
+          profileImg: undefined,
         },
       };
     },
@@ -162,6 +188,16 @@ const AuthSlice = createSlice({
       state.auth.status = "failed";
       state.auth.error = true;
       state.auth.message = action.error.message;
+    });
+    builder.addCase(verifyToken.rejected, (state, action) => {
+      state.user.userToken = "";
+    });
+    builder.addCase(verifyToken.fulfilled, (state, action) => {
+      if (action.payload.error) {
+        state.user.userToken = "";
+      } else {
+        state.user = action.payload.data;
+      }
     });
   },
 });

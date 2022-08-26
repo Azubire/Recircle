@@ -1,13 +1,21 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import HomeStack from "./AppStack/AppStack";
-import { getUser, setUser } from "../store/features/AuthSlice";
+import {
+  getUser,
+  setUser,
+  signIn,
+  verifyToken,
+  verifyTokenData,
+} from "../store/features/AuthSlice";
 import { View } from "react-native";
 
 import * as SplashScreen from "expo-splash-screen";
 import AuthStack from "./authStack/AuthStack";
 import { NavigationContainer } from "@react-navigation/native";
-import { getUserFromSecureStore } from "../utils/helpers";
+import { getUserFromSecureStore, setUserToSecureStore } from "../utils/helpers";
+import store from "../store";
+import { fetchRecyclingCategories } from "../store/features/RecyclingCategorySlice";
 
 // keep the splash screen visible until we manually hides it
 SplashScreen.preventAutoHideAsync();
@@ -23,17 +31,35 @@ const AppWrapper = () => {
     async function prepare() {
       try {
         // get user token from localStorage
-        const user = await getUserFromSecureStore("USERTOKEN");
+        const userToken = await getUserFromSecureStore("USERTOKEN");
         // verify userToken
+        // console.log("local user", JSON.parse(userToken));
 
         // dispatch setUser action if user
-        if (user) {
-          dispatch(setUser(JSON.parse(user)));
+        if (userToken) {
+          const payload: verifyTokenData = JSON.parse(userToken);
+          // console.log("user in if state", typeof payload.email);
+
+          const data = await dispatch(
+            verifyToken({ email: payload.email, userToken: payload.userToken })
+          ).unwrap();
+          console.log(data);
+          if (!data.error && data.data) {
+            setUserToSecureStore({
+              key: "USERTOKEN",
+              payload: {
+                userToken: data.data.userToken,
+                email: data.data.profile.email,
+              },
+            });
+          }
         }
       } catch (e) {
         console.warn(e);
+        console.log("no token");
       } finally {
         // Tell the application to render
+        store.dispatch(fetchRecyclingCategories());
         setAppIsReady(true);
       }
     }

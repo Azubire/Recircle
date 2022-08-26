@@ -53,7 +53,7 @@ const BecomeRecycler = ({
 }: HomeStackScreenProps<"BecomeRecycler">) => {
   const { colors } = useTheme();
   const categories = useAppSelector(getAllCategory);
-  const newCat = categories.map((cat) => ({ id: cat.id, name: cat.title }));
+  const newCat = categories.data.map((cat) => ({ id: cat.id, name: cat.name }));
 
   // category state
   const [selectedCategory, setSelectedCategory] = React.useState<
@@ -89,16 +89,16 @@ const BecomeRecycler = ({
   } = useForm<formData>({
     defaultValues: {},
 
-    // resolver : joiResolver(schema)
-    resolver: async (data, context, options) => {
-      // you can debug your validation schema here
-      // console.log("formData", data);
-      console.log(
-        "validation result",
-        await joiResolver(schema)(data, context, options)
-      );
-      return joiResolver(schema)(data, context, options);
-    },
+    resolver: joiResolver(schema),
+    // resolver: async (data, context, options) => {
+    //   // you can debug your validation schema here
+    //   // console.log("formData", data);
+    //   console.log(
+    //     "validation result",
+    //     await joiResolver(schema)(data, context, options)
+    //   );
+    //   return joiResolver(schema)(data, context, options);
+    // },
   });
 
   //create form data

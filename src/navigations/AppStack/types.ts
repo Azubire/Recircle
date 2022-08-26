@@ -7,7 +7,7 @@ export type HomeStackParamList = {
   Drawer: NavigatorScreenParams<DrawerParamList> | undefined;
   Categories: undefined;
   RecyclersStack: NavigatorScreenParams<RecyclerStackParamList>;
-  MyAds: undefined;
+  MyAds: { id: number };
   AdDetails: { id: number; filter: string };
   BecomeRecycler: undefined;
 };

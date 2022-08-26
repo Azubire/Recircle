@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   Image,
+  ImageSourcePropType,
   ScrollView,
   TouchableOpacity,
   View,
@@ -19,23 +20,41 @@ const coverImg = require("../../assets/images/cover.jpeg");
 const profileImg = require("../../assets/images/profile.jpeg");
 
 const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
-  const [user, setUser] = React.useState<stateProps>();
+  const [user, setUser] = React.useState<{
+    profile: {
+      userName: string;
+      email: string;
+      coverImg: ImageSourcePropType | undefined;
+      profileImg: ImageSourcePropType | undefined;
+    };
+  }>();
   const [loading, setLoading] = React.useState(true);
 
-  const { user: response } = useAppSelector(getUser);
+  const state = useAppSelector(getUser);
 
   React.useEffect(() => {
-    setUser({ user: response });
+    setUser((prev) => ({
+      profile: {
+        userName: state.user.profile.userName,
+        email: state.user.profile.email,
+        coverImg: state.user.profile.coverImg,
+        profileImg: state.user.profile.profileImg,
+      },
+    }));
     setLoading(false);
-  }, [response]);
+  }, [state.user.profile]);
   // console.log(user);
 
   const { colors } = useTheme();
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <CustomStatusbar style="light" backgroundColor={colors.gray} />
+    <>
+      <CustomStatusbar
+        style="light"
+        // backgroundColor={colors.gray}
+        translucent={true}
+      />
       {loading ? (
-        <ActivityIndicator />
+        <ActivityIndicator size="large" />
       ) : (
         <ScrollView>
           <View style={{ flex: 1 }}>
@@ -47,15 +66,23 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
               }}
             >
               <Image
-                // @ts-ignore
-                source={user?.user.profile.coverImg}
+                //@ts-ignore
+                source={{
+                  uri:
+                    `http://192.168.43.35:3001/images/categoryImages/${user?.profile.profileImg}` ||
+                    state.defaultImg.coverImg,
+                }}
                 resizeMode="cover"
-                style={{ width: "100%", height: 150 }}
+                style={{ width: "100%", height: 200 }}
               />
               <View style={{ marginTop: -50 }}>
                 <Image
-                  // @ts-ignore
-                  source={user?.user.profile.profileImg}
+                  //@ts-ignore
+                  source={{
+                    uri:
+                      `http://192.168.43.35:3001/images/categoryImages/${user?.profile.profileImg}` ||
+                      state.defaultImg.profileImg,
+                  }}
                   resizeMode="cover"
                   style={{
                     width: 110,
@@ -76,88 +103,89 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
                 variant="bodyLarge"
                 style={{ marginTop: 8, paddingBottom: 6 }}
               >
-                {user?.user.profile.userName}
+                {user?.profile.userName}
               </Text>
             </View>
+            <SafeAreaView>
+              <View style={{ paddingHorizontal: 16 }}>
+                <Text>
+                  Click below to become a recycler and set up your profile
+                </Text>
+                <Button
+                  onPress={() => {
+                    navigation.navigate("BecomeRecycler");
+                  }}
+                  mode="outlined"
+                  textColor={colors.danger}
+                  style={{ alignSelf: "center", borderColor: colors.danger }}
+                >
+                  Become A Recycler
+                </Button>
+              </View>
 
-            <View style={{ paddingHorizontal: 16 }}>
-              <Text>
-                Click below to become a recycler and set up your profile
-              </Text>
+              <View style={{ paddingHorizontal: 6 }}>
+                <Text
+                  variant="bodyLarge"
+                  style={{ marginTop: 16, textAlign: "center" }}
+                >
+                  Change your details below
+                </Text>
+                <View style={{ marginVertical: 16 }}>
+                  <Text variant="labelLarge" style={{ marginBottom: 3 }}>
+                    Username
+                  </Text>
+                  <TextInput
+                    editable={false}
+                    mode="outlined"
+                    value={user?.profile.userName}
+                    left={<TextInput.Icon name="account-cog-outline" />}
+                    right={<TextInput.Icon name="pencil-outline" size={20} />}
+                  />
+                </View>
+
+                <View style={{ marginBottom: 16 }}>
+                  <Text variant="labelLarge" style={{ marginBottom: 3 }}>
+                    Email Address
+                  </Text>
+                  <TextInput
+                    mode="outlined"
+                    value={user?.profile.email}
+                    left={<TextInput.Icon name="email-edit-outline" />}
+                    right={<TextInput.Icon name="pencil-outline" size={20} />}
+                  />
+                </View>
+
+                <View style={{ marginBottom: 16 }}>
+                  <Text variant="labelLarge" style={{ marginBottom: 3 }}>
+                    Password
+                  </Text>
+                  <TextInput
+                    secureTextEntry
+                    mode="outlined"
+                    value=""
+                    left={<TextInput.Icon name="account-eye-outline" />}
+                    right={<TextInput.Icon name="pencil-outline" size={20} />}
+                  />
+                </View>
+              </View>
+
               <Button
-                onPress={() => {
-                  navigation.navigate("BecomeRecycler");
-                }}
                 mode="outlined"
-                textColor={colors.danger}
-                style={{ alignSelf: "center", borderColor: colors.danger }}
+                buttonColor={colors.secondary}
+                textColor={colors.lightText}
+                style={{
+                  alignSelf: "center",
+                  marginVertical: 16,
+                  borderColor: colors.secondary,
+                }}
               >
-                Become A Recycler
+                Save Changes
               </Button>
-            </View>
-
-            <View style={{ paddingHorizontal: 6 }}>
-              <Text
-                variant="bodyLarge"
-                style={{ marginTop: 16, textAlign: "center" }}
-              >
-                Change your details below
-              </Text>
-              <View style={{ marginVertical: 16 }}>
-                <Text variant="labelLarge" style={{ marginBottom: 3 }}>
-                  Username
-                </Text>
-                <TextInput
-                  editable={false}
-                  mode="outlined"
-                  value={user?.user.profile.userName}
-                  left={<TextInput.Icon name="account-cog-outline" />}
-                  right={<TextInput.Icon name="pencil-outline" size={20} />}
-                />
-              </View>
-
-              <View style={{ marginBottom: 16 }}>
-                <Text variant="labelLarge" style={{ marginBottom: 3 }}>
-                  Email Address
-                </Text>
-                <TextInput
-                  mode="outlined"
-                  value={user?.user.profile.email}
-                  left={<TextInput.Icon name="email-edit-outline" />}
-                  right={<TextInput.Icon name="pencil-outline" size={20} />}
-                />
-              </View>
-
-              <View style={{ marginBottom: 16 }}>
-                <Text variant="labelLarge" style={{ marginBottom: 3 }}>
-                  Password
-                </Text>
-                <TextInput
-                  secureTextEntry
-                  mode="outlined"
-                  value=""
-                  left={<TextInput.Icon name="account-eye-outline" />}
-                  right={<TextInput.Icon name="pencil-outline" size={20} />}
-                />
-              </View>
-            </View>
-
-            <Button
-              mode="outlined"
-              buttonColor={colors.secondary}
-              textColor={colors.lightText}
-              style={{
-                alignSelf: "center",
-                marginVertical: 16,
-                borderColor: colors.secondary,
-              }}
-            >
-              Save Changes
-            </Button>
+            </SafeAreaView>
           </View>
         </ScrollView>
       )}
-    </SafeAreaView>
+    </>
   );
 };
 

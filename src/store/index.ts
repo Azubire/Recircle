@@ -6,6 +6,7 @@ import AdReducer from "./features/AdSlice";
 import HomeCategoryReducer from "./features/HomeCategorySlice";
 import NotificationReducer from "./features/NotificationSlice";
 import RecyclingCategoryReducer from "./features/RecyclingCategorySlice";
+import UserAdsReducer from "./features/UserAds";
 
 const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ const store = configureStore({
     HomeCategory: HomeCategoryReducer,
     Notification: NotificationReducer,
     RecyclingCategory: RecyclingCategoryReducer,
+    UserAds: UserAdsReducer,
   },
 });
 
