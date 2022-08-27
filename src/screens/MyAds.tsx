@@ -35,7 +35,7 @@ const MyAds = ({ navigation, route }: HomeStackScreenProps<"MyAds">) => {
   const myAds = async (id: string) => {
     try {
       await dispatch(getUserAds(id)).unwrap();
-      // console.log(data);
+      console.log(data);
     } catch (error) {
       console.log(error);
     }
@@ -48,11 +48,11 @@ const MyAds = ({ navigation, route }: HomeStackScreenProps<"MyAds">) => {
   return (
     <SafeAreaView>
       <CustomStatusbar style="light" />
-      {status === "loading" ? (
+      {status === "loading" || status === "idle" ? (
         <ActivityIndicator size="large" />
-      ) : (
+      ) : data.user.length > 0 ? (
         <FlatList
-          data={data}
+          data={data.user}
           initialNumToRender={20}
           keyExtractor={(item, index) => item.id.toString()}
           ListHeaderComponent={() => (
@@ -109,6 +109,10 @@ const MyAds = ({ navigation, route }: HomeStackScreenProps<"MyAds">) => {
             <View style={{ marginVertical: 8 }}></View>
           )}
         />
+      ) : (
+        <Text>
+          You dont have adverts yet create some to and view them here later
+        </Text>
       )}
     </SafeAreaView>
   );

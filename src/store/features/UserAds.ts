@@ -7,18 +7,22 @@ interface UserAds {
   error: boolean;
   status: "idle" | "loading" | "success" | "failed";
   data: {
-    id: string;
-    title: string;
-    description: string;
-    adImage: string;
-    createdAt: string;
-  }[];
+    user: {
+      id: string;
+      title: string;
+      description: string;
+      adImage: string;
+      createdAt: string;
+    }[];
+  };
 }
 
 const initialState: UserAds = {
   error: false,
   status: "idle",
-  data: [],
+  data: {
+    user: [],
+  },
 };
 
 export const getUserAds = createAsyncThunk("user/ads", async (id: string) => {
@@ -39,7 +43,7 @@ const userAds = createSlice({
       if (action.payload.error) {
         (state.error = true), (state.status = "failed");
       } else {
-        state.data = action.payload.data;
+        state.data.user = action.payload.data.user;
         state.error = false;
         state.status = "success";
       }

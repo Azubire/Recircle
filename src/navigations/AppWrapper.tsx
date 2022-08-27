@@ -43,7 +43,7 @@ const AppWrapper = () => {
           const data = await dispatch(
             verifyToken({ email: payload.email, userToken: payload.userToken })
           ).unwrap();
-          console.log(data);
+          // console.log(data);
           if (!data.error && data.data) {
             setUserToSecureStore({
               key: "USERTOKEN",

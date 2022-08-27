@@ -193,7 +193,6 @@ const Sell = ({ route, navigation }: TabScreenProps<"Sell">) => {
               <Controller
                 name="categoryId"
                 control={control}
-                defaultValue={1}
                 render={({ field: { onChange } }) => (
                   <>
                     <TextInput
