@@ -19,14 +19,24 @@ import {
   Title,
   useTheme,
 } from "react-native-paper";
-import { useAppSelector } from "../hooks/reduxhooks";
-import { getAllCategory } from "../store/features/RecyclingCategorySlice";
+import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
+import {
+  fetchRecyclingCategories,
+  getAllCategory,
+} from "../store/features/RecyclingCategorySlice";
 import MultiSelect from "react-native-multiple-select";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import mime from "mime";
+import { getAuth } from "../store/features/AuthSlice";
+import {
+  createRecycler,
+  getAllRecyclers,
+} from "../store/features/RecyclerSclice";
+import { Picker } from "@react-native-picker/picker";
 
 // formData imterface definition
 interface formData {
@@ -34,8 +44,9 @@ interface formData {
   about: string;
   profile: string;
   location: string;
+  userId: number;
   workingHours: string;
-  recyclingCatId: [];
+  recyclingCatId: number;
 }
 
 //joi schema validation
@@ -45,7 +56,8 @@ const schema = Joi.object<any, true, formData>({
   profile: Joi.string().required().min(10),
   location: Joi.string().required(),
   workingHours: Joi.string().required(),
-  recyclingCatId: Joi.array().required(),
+  recyclingCatId: Joi.number().required(),
+  userId: Joi.number().required(),
 });
 
 const BecomeRecycler = ({
@@ -53,19 +65,27 @@ const BecomeRecycler = ({
 }: HomeStackScreenProps<"BecomeRecycler">) => {
   const { colors } = useTheme();
   const categories = useAppSelector(getAllCategory);
+
   const newCat = categories.data.map((cat) => ({ id: cat.id, name: cat.name }));
 
   // category state
-  const [selectedCategory, setSelectedCategory] = React.useState<
-    {
-      id: number;
-      name: string;
-    }[]
-  >([]);
+  const [selectedCategory, setSelectedCategory] = React.useState<number>(0);
+
+  const { user } = useAppSelector(getAuth);
+  const state = useAppSelector(getAllRecyclers);
+  const dispatch = useAppDispatch();
 
   //selected image
-  const [image, setImage] = useState<ImageSourcePropType | string>();
+  const [image, setImage] = useState<any>();
   const [isImageSet, setIsImageSet] = useState(false);
+
+  React.useEffect(() => {
+    if (categories.status === "failed" || categories.status === "idle") {
+      dispatch(fetchRecyclingCategories);
+    }
+    console.log("----", categories);
+  }, []);
+
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -75,7 +95,7 @@ const BecomeRecycler = ({
     });
     console.log(result);
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImage(result);
       setIsImageSet(true);
     }
   };
@@ -87,12 +107,14 @@ const BecomeRecycler = ({
     control,
     formState: { errors, isSubmitSuccessful, isValid, isDirty },
   } = useForm<formData>({
-    defaultValues: {},
+    defaultValues: {
+      userId: user.profile.id,
+    },
 
     resolver: joiResolver(schema),
     // resolver: async (data, context, options) => {
-    //   // you can debug your validation schema here
-    //   // console.log("formData", data);
+    // you can debug your validation schema here
+    // console.log("formData", data);
     //   console.log(
     //     "validation result",
     //     await joiResolver(schema)(data, context, options)
@@ -103,11 +125,14 @@ const BecomeRecycler = ({
 
   //create form data
   const createFormData = (image: any, body: any) => {
+    const newImg = {
+      uri: image.uri,
+      name: image.uri.split("/").pop(),
+      type: mime.getType(image.uri),
+    };
     const data = new FormData();
-    data.append(
-      "image",
-      Platform.OS === "ios" ? image.replace("file://", "") : image
-    );
+    //@ts-ignore
+    data.append("recyclerImage", newImg);
 
     for (let key in body) {
       data.append(key, body[key]);
@@ -117,24 +142,31 @@ const BecomeRecycler = ({
   };
 
   //function to submit form after validation
-  const onSubmit: SubmitHandler<formData> = (data) => {
+  const onSubmit: SubmitHandler<formData> = async (data) => {
     if (!image) {
       console.log("select image");
       return;
     }
 
     const newData = createFormData(image, data);
-
-    console.log("form-data---->>>>", newData);
-    reset();
-    // redux async thunk dispatches here
+    // console.log(newData);
+    const { userToken } = user;
+    try {
+      const data = await dispatch(
+        createRecycler({ newData, userToken })
+      ).unwrap();
+      navigation.goBack();
+      reset();
+    } catch (error) {
+      console.log("error", error);
+    }
   };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <CustomStatusbar style="light" />
       <ScrollView>
-        <KeyboardAvoidingView>
+        <KeyboardAvoidingView enabled>
           <View style={{ paddingHorizontal: 16 }}>
             <Text
               variant="titleMedium"
@@ -150,27 +182,32 @@ const BecomeRecycler = ({
             <Controller
               name="recyclingCatId"
               control={control}
-              defaultValue={[]}
               render={({ field: { onChange } }) => (
                 <>
-                  <MultiSelect
-                    searchIcon={false}
-                    hideTags
-                    selectText="Selected categories"
-                    styleTextDropdown={{
-                      paddingLeft: 16,
-                    }}
-                    styleTextDropdownSelected={{
-                      paddingLeft: 16,
-                    }}
-                    styleRowList={{ paddingVertical: 6 }}
-                    items={newCat}
-                    uniqueKey="id"
-                    selectedItems={selectedCategory}
-                    onSelectedItemsChange={(items) => {
-                      setSelectedCategory(items);
-                      return onChange(items);
-                    }}
+                  <HelperText type="info">Select a category</HelperText>
+                  <TextInput
+                    error={Boolean(errors.recyclingCatId)}
+                    mode="outlined"
+                    render={() => (
+                      <Picker
+                        selectedValue={selectedCategory}
+                        onValueChange={(itemValue) => {
+                          console.log(itemValue);
+                          setSelectedCategory(itemValue);
+                          //@ts-ignore
+                          return onChange(itemValue);
+                        }}
+                        prompt="Select a category"
+                      >
+                        {newCat.map((item) => (
+                          <Picker.Item
+                            key={item.id}
+                            label={item.name}
+                            value={item.id}
+                          />
+                        ))}
+                      </Picker>
+                    )}
                   />
                   <HelperText
                     type="error"
@@ -298,7 +335,7 @@ const BecomeRecycler = ({
                 {isImageSet ? (
                   <Image
                     // @ts-ignore
-                    source={{ uri: image }}
+                    source={{ uri: image.uri }}
                     style={{ width: 100, height: 100 }}
                     resizeMode="cover"
                   />
@@ -333,6 +370,7 @@ const BecomeRecycler = ({
               </View>
 
               <Button
+                loading={Boolean(state.status === "loading")}
                 style={{ marginVertical: 24 }}
                 mode="contained"
                 onPress={handleSubmit(onSubmit)}

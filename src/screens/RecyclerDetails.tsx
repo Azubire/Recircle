@@ -17,6 +17,7 @@ import {
   initialStateTypes,
 } from "../store/features/RecyclerSclice";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
+import dateFormat from "dateformat";
 
 const RecyclerDetails = ({
   route,
@@ -31,15 +32,17 @@ const RecyclerDetails = ({
   const { id } = route.params;
 
   const response = useAppSelector(getRecycler(id));
+  const state = useAppSelector(getAllRecyclers);
 
   React.useEffect(() => {
+    console.log(response[0].RecyclingCategory.name);
     setRecycler(response);
     setLoading(false);
   }, [id]);
 
   // console.log(recycler);
 
-  return loading ? (
+  return state.status === "loading" ? (
     <ActivityIndicator size="large" />
   ) : (
     <ScrollView>
@@ -48,7 +51,9 @@ const RecyclerDetails = ({
         <View>
           <View>
             <Image
-              source={recycler[0].img}
+              source={{
+                uri: `http://192.168.43.35:3001/images/recyclers/${response[0].profileImg}`,
+              }}
               resizeMode="cover"
               style={{ width: "100%", height: 200 }}
             />
@@ -61,23 +66,17 @@ const RecyclerDetails = ({
             >
               What we buy
             </Text>
-            <FlatList
-              style={{ marginTop: 10 }}
-              showsHorizontalScrollIndicator={false}
-              horizontal
-              data={recycler[0].buyingCategory}
-              renderItem={({ item, index }) => (
-                <Button
-                  mode="contained-tonal"
-                  style={{
-                    marginHorizontal: 6,
-                    borderRadius: 3,
-                  }}
-                >
-                  {item}
-                </Button>
-              )}
-            />
+            <Button
+              mode="contained-tonal"
+              style={{
+                // alignSelf: "flex-end",
+                width: "50%",
+                marginHorizontal: 6,
+                borderRadius: 20,
+              }}
+            >
+              {response[0].RecyclingCategory.name}
+            </Button>
           </View>
           <View style={{ paddingHorizontal: 6 }}>
             {/* heading  */}
@@ -86,7 +85,7 @@ const RecyclerDetails = ({
                 Our Profile
               </Text>
               <Text style={{ color: colors.primary }}>
-                Joined: {recycler[0].joinedDate}
+                Joined On: {dateFormat(recycler[0].createdAt, "fullDate")}
               </Text>
             </View>
 

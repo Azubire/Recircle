@@ -74,8 +74,6 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
     try {
       const data = await dispatch(signIn(formData)).unwrap();
       if (data.error) {
-        console.log(data.message);
-        setLoading(false);
         setShowSnackBar((prev) => ({ show: true, message: data.message }));
       } else if (!data.error) {
         setUserToSecureStore({
@@ -86,17 +84,13 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
           },
         });
       }
-      console.log("response", data);
     } catch (error) {
-      console.log(error);
       setLoading(false);
       setShowSnackBar((prev) => ({
         show: true,
         message: "something went wront try again",
       }));
     } finally {
-      console.log("finally");
-      setLoading(false);
       console.log("auth", state.auth);
       console.log("user", state.user);
     }
@@ -231,7 +225,7 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
               </View>
               {/* Button  */}
               <Button
-                loading={loading}
+                loading={Boolean(state.auth.status === "loading")}
                 mode="contained"
                 buttonColor={colors.primary}
                 contentStyle={{

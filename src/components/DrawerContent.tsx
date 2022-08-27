@@ -209,15 +209,16 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
             }}
           >
             <TouchableOpacity>
+             { user.user.profile.profileImg ? (
               <Avatar.Image
-                size={40}
-                //@ts-ignore
+                size={30}
                 source={{
-                  uri:
-                    `http://192.168.43.35:3001/images/categoryImages/${user?.user.profile.profileImg}` ||
-                    user.defaultImg.profileImg,
+                  uri: `http://192.168.43.35:3001/images/categoryImages/${user.user.profile?.profileImg}`,
                 }}
               />
+              ) : (
+              <Avatar.Image size={30} source={user.defaultImg.profileImg} />
+              )}
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {

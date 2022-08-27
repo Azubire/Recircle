@@ -69,10 +69,8 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
   const focused = useIsFocused();
 
   React.useEffect(() => {
-    if (state.status === "success") {
-      navigation.setParams({ notificationCount });
-    }
-  }, [notificationCount, focused, state.status === "success"]);
+    navigation.setParams({ notificationCount: notificationCount });
+  }, [notificationCount, focused, state.data]);
 
   return (
     <SafeAreaView>

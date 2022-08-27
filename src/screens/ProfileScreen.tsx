@@ -15,9 +15,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { getUser, stateProps } from "../store/features/AuthSlice";
 import { useAppSelector } from "../hooks/reduxhooks";
 import { TabScreenProps } from "../navigations/appTabs/types";
+import axios from "axios";
 
 const coverImg = require("../../assets/images/cover.jpeg");
 const profileImg = require("../../assets/images/profile.jpeg");
+const baseUrl = "http://192.168.43.35:3001";
 
 const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
   const [user, setUser] = React.useState<{
@@ -28,6 +30,10 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
       profileImg: ImageSourcePropType | undefined;
     };
   }>();
+  const [recyclerStatus, setRecyclerStatus] = React.useState({
+    isRecycler: false,
+    isVerified: false,
+  });
   const [loading, setLoading] = React.useState(true);
 
   const state = useAppSelector(getUser);
@@ -45,6 +51,28 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
   }, [state.user.profile]);
   // console.log(user);
 
+  const getRecyclerStatus = async () => {
+    try {
+      const { data } = await axios.get(
+        `${baseUrl}/recycler/status/${state.user.profile.id}`
+      );
+      if (data.data.Recycler) {
+        if (data.data.Recycler.isVerified) {
+          setRecyclerStatus({ isRecycler: true, isVerified: true });
+        } else {
+          setRecyclerStatus({ isRecycler: true, isVerified: false });
+        }
+      } else {
+        setRecyclerStatus({ isRecycler: false, isVerified: false });
+      }
+    } catch (error) {
+      setRecyclerStatus({ isRecycler: false, isVerified: false });
+    }
+  };
+
+  React.useEffect(() => {
+    getRecyclerStatus();
+  }, []);
   const { colors } = useTheme();
   return (
     <>
@@ -65,35 +93,58 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
                 alignItems: "center",
               }}
             >
-              <Image
-                //@ts-ignore
-                source={{
-                  uri:
-                    `http://192.168.43.35:3001/images/categoryImages/${user?.profile.profileImg}` ||
-                    state.defaultImg.coverImg,
-                }}
-                resizeMode="cover"
-                style={{ width: "100%", height: 200 }}
-              />
-              <View style={{ marginTop: -50 }}>
+              {user?.profile.coverImg ? (
                 <Image
-                  //@ts-ignore
                   source={{
-                    uri:
-                      `http://192.168.43.35:3001/images/categoryImages/${user?.profile.profileImg}` ||
-                      state.defaultImg.profileImg,
+                    uri: `http://192.168.43.35:3001/images/categoryImages/${user?.profile.coverImg}`,
                   }}
                   resizeMode="cover"
                   style={{
-                    width: 110,
-                    height: 110,
-                    borderRadius: 100,
+                    width: "100%",
+                    height: 200,
                   }}
                 />
+              ) : (
+                <Image
+                  source={state.defaultImg.coverImg}
+                  resizeMode="cover"
+                  style={{
+                    width: "100%",
+                    height: 200,
+                  }}
+                />
+              )}
+              <View style={{ marginTop: -50 }}>
+                {user?.profile.profileImg ? (
+                  <Image
+                    source={{
+                      uri: `http://192.168.43.35:3001/images/categoryImages/${user?.profile.profileImg}`,
+                    }}
+                    resizeMode="cover"
+                    style={{
+                      width: 110,
+                      height: 110,
+                      borderRadius: 100,
+                    }}
+                  />
+                ) : (
+                  <Image
+                    source={state.defaultImg.profileImg}
+                    resizeMode="cover"
+                    style={{
+                      width: 110,
+                      height: 110,
+                      borderRadius: 100,
+                      borderWidth: 2,
+                      borderColor: colors.info,
+                    }}
+                  />
+                )}
+
                 <TouchableOpacity>
                   <Ionicons
                     name="camera"
-                    size={28}
+                    size={30}
                     color={colors.light}
                     style={{ position: "absolute", right: 0, bottom: 10 }}
                   />
@@ -111,16 +162,42 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
                 <Text>
                   Click below to become a recycler and set up your profile
                 </Text>
-                <Button
-                  onPress={() => {
-                    navigation.navigate("BecomeRecycler");
-                  }}
-                  mode="outlined"
-                  textColor={colors.danger}
-                  style={{ alignSelf: "center", borderColor: colors.danger }}
-                >
-                  Become A Recycler
-                </Button>
+                {recyclerStatus.isRecycler ? (
+                  recyclerStatus.isVerified ? (
+                    <Button
+                      mode="outlined"
+                      textColor={colors.success}
+                      style={{
+                        alignSelf: "center",
+                        borderColor: colors.success,
+                      }}
+                    >
+                      Verified
+                    </Button>
+                  ) : (
+                    <Button
+                      mode="outlined"
+                      textColor={colors.info}
+                      style={{
+                        alignSelf: "center",
+                        borderColor: colors.info,
+                      }}
+                    >
+                      Verification Pending
+                    </Button>
+                  )
+                ) : (
+                  <Button
+                    onPress={() => {
+                      navigation.navigate("BecomeRecycler");
+                    }}
+                    mode="outlined"
+                    textColor={colors.danger}
+                    style={{ alignSelf: "center", borderColor: colors.danger }}
+                  >
+                    Register As Recycler
+                  </Button>
+                )}
               </View>
 
               <View style={{ paddingHorizontal: 6 }}>

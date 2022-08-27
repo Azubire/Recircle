@@ -37,7 +37,7 @@ const AppTabs = () => {
 
   const [visible, setVisible] = React.useState(false);
   const state = useAppSelector(getUser);
-
+  console.log(state.defaultImg);
   return (
     <Tab.Navigator
       screenOptions={({ navigation, route }) => {
@@ -97,7 +97,9 @@ const AppTabs = () => {
                     color="#fff"
                   />
                   <Badge size={13} style={{ position: "absolute" }}>
-                    {route.params?.notificationCount}
+                    {route.params?.notificationCount
+                      ? route.params.notificationCount
+                      : 0}
                   </Badge>
                 </TouchableOpacity>
 
@@ -180,16 +182,15 @@ const AppTabs = () => {
         name="Profile"
         options={{
           tabBarIcon({ focused, color, size }) {
-            return (
+            return state.user.profile.profileImg ? (
               <Avatar.Image
                 size={30}
-                //@ts-ignore
                 source={{
-                  uri:
-                    `http://192.168.43.35:3001/images/categoryImages/${state.user.profile?.profileImg}` ||
-                    state.defaultImg.profileImg,
+                  uri: `http://192.168.43.35:3001/images/categoryImages/${state.user.profile?.profileImg}`,
                 }}
               />
+            ) : (
+              <Avatar.Image size={30} source={state.defaultImg.profileImg} />
             );
           },
           // tabBarStyle: { display: "none" },
