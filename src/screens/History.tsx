@@ -13,14 +13,31 @@ import {
 } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
 import { Ionicons } from "@expo/vector-icons";
-import { useAppSelector } from "../hooks/reduxhooks";
+import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import { adFilterTypes, getAd, getAllAds } from "../store/features/AdSlice";
+import dateFormat from "dateformat";
+import {
+  getUserAds,
+  getUserAdsState,
+  UserAds,
+} from "../store/features/UserAds";
+import { getUser } from "../store/features/AuthSlice";
 
 const History = ({ navigation }: AppDrawerScreenProps<"History">) => {
-  const [filterItems, setFilterItems] = React.useState<adFilterTypes[]>();
+  const [filterItems, setFilterItems] = React.useState<
+    {
+      id: string;
+      title: string;
+      status: "pending" | "complete" | "rejected";
+      description: string;
+      adImage: string;
+      createdAt: string;
+    }[]
+  >();
   const [loading, setLoading] = React.useState(true);
   const [selectedValue, setSelectedValue] = React.useState<number>(1);
   const { colors } = useTheme();
+  const dispatch = useAppDispatch();
 
   const filterOptions = [
     { label: "All", value: 1 },
@@ -29,27 +46,34 @@ const History = ({ navigation }: AppDrawerScreenProps<"History">) => {
     { label: "Rejected", value: 4 },
   ];
 
-  const response = useAppSelector(getAllAds);
-  // console.log(response);
+  const state = useAppSelector(getUserAdsState);
+  const { user } = useAppSelector(getUser);
+
   const handleValueChange = (value: number) => {
     setLoading(true);
     let newFilterItems;
     switch (value) {
       case 2:
-        newFilterItems = response?.filter((item) => item.status == "Completed");
+        newFilterItems = state.data.user?.filter(
+          (item) => item.status == "complete"
+        );
         setSelectedValue(2);
         break;
       case 3:
-        newFilterItems = response?.filter((item) => item.status == "Pending");
+        newFilterItems = state.data.user?.filter(
+          (item) => item.status == "pending"
+        );
         setSelectedValue(3);
         break;
       case 4:
-        newFilterItems = response?.filter((item) => item.status == "Rejected");
+        newFilterItems = state.data.user?.filter(
+          (item) => item.status == "rejected"
+        );
         setSelectedValue(4);
         break;
 
       default:
-        newFilterItems = response;
+        newFilterItems = state.data.user;
         setSelectedValue(1);
         break;
     }
@@ -58,10 +82,25 @@ const History = ({ navigation }: AppDrawerScreenProps<"History">) => {
     setLoading(false);
   };
 
+  const getData = async () => {
+    console.log("first", state.status);
+    try {
+      const data = await dispatch(
+        getUserAds(user.userToken.toString())
+      ).unwrap();
+      console.log(data);
+      setSelectedValue(1);
+      setFilterItems(state.data.user);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
   React.useEffect(() => {
-    setFilterItems(response);
-    setLoading(false);
-  }, [response]);
+    getData();
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -93,38 +132,40 @@ const History = ({ navigation }: AppDrawerScreenProps<"History">) => {
         />
       </View>
 
-      <FlatList
-        data={filterItems}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) =>
-          loading ? (
-            <ActivityIndicator />
-          ) : (
+      {loading ? (
+        <ActivityIndicator />
+      ) : (
+        <FlatList
+          data={filterItems}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => (
             <View style={{ flex: 1, margin: 6 }}>
               <Card mode="contained">
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Title style={{ flex: 0.5, paddingLeft: 8 }}>{item.id}</Title>
+                  <Title style={{ flex: 0.4, paddingLeft: 8 }}>{item.id}</Title>
                   <Image
-                    source={item.img}
-                    style={{ height: 40, width: 40, flex: 0.5 }}
+                    source={{
+                      uri: `http://192.168.43.35:3001/images/ads/${item.adImage}`,
+                    }}
+                    style={{ height: 60, width: 70, flex: 0.7 }}
                     resizeMode="cover"
                   />
                   <View style={{ flex: 3 }}>
                     <Card.Title
                       title={item.title}
-                      subtitle={`${item.date} | ${item.time}`}
+                      subtitle={dateFormat(item.createdAt, "fullDate")}
                     />
                   </View>
                   <View
                     style={{
-                      flex: 1.5,
+                      flex: 1.3,
                     }}
                   >
                     <Button
                       textColor={
-                        item.status == "Completed"
+                        item.status == "complete"
                           ? colors.success
-                          : item.status == "Pending"
+                          : item.status == "pending"
                           ? colors.info
                           : colors.danger
                       }
@@ -135,10 +176,12 @@ const History = ({ navigation }: AppDrawerScreenProps<"History">) => {
                 </View>
               </Card>
             </View>
-          )
-        }
-        ListFooterComponent={() => <View style={{ marginVertical: 8 }}></View>}
-      />
+          )}
+          ListFooterComponent={() => (
+            <View style={{ marginVertical: 8 }}></View>
+          )}
+        />
+      )}
     </View>
   );
 };

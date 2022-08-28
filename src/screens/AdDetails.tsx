@@ -4,6 +4,7 @@ import { HomeStackScreenProps } from "../navigations/AppStack/types";
 import { adFilterTypes, getAd } from "../store/features/AdSlice";
 import { useAppSelector } from "../hooks/reduxhooks";
 import { Button, Paragraph, Text, Title } from "react-native-paper";
+import dateFormat from "dateformat";
 
 const AdDetails = ({
   navigation,
@@ -29,7 +30,9 @@ const AdDetails = ({
           {/* cover image  */}
           <View>
             <Image
-              source={ad[0]?.img}
+              source={{
+                uri: `http://192.168.43.35:3001/images/ads/${ad[0].adImage}`,
+              }}
               style={{ width: "100%", height: 200 }}
               resizeMode="cover"
             />
@@ -43,12 +46,21 @@ const AdDetails = ({
                 }}
               >
                 <Title>{ad[0]?.title}</Title>
-                <Button mode="outlined" style={{ borderRadius: 50 }}>
-                  {ad[0]?.category}
-                </Button>
+                {ad[0].RecyclingCategory?.name && (
+                  <Button
+                    mode="outlined"
+                    style={{ borderRadius: 50, marginRight: 2 }}
+                  >
+                    {ad[0].RecyclingCategory?.name}
+                  </Button>
+                )}
               </View>
-              <Text variant="bodySmall">{`${ad[0]?.date} | ${ad[0]?.time}`}</Text>
-              <Paragraph style={{ marginTop: 16 }}>{ad[0]?.desc}</Paragraph>
+              <Text variant="bodySmall">
+                {dateFormat(ad[0].createdAt, "fullDate")}
+              </Text>
+              <Paragraph style={{ marginTop: 16 }}>
+                {ad[0].description}
+              </Paragraph>
 
               <Button mode="outlined" style={{ marginTop: 32 }}>
                 Contact Seller

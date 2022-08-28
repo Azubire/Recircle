@@ -3,13 +3,14 @@ import axios from "axios";
 import { RootState } from "..";
 import { baseUrl } from "./AuthSlice";
 
-interface UserAds {
+export interface UserAds {
   error: boolean;
   status: "idle" | "loading" | "success" | "failed";
   data: {
     user: {
       id: string;
       title: string;
+      status: "pending" | "complete" | "rejected";
       description: string;
       adImage: string;
       createdAt: string;

@@ -96,11 +96,13 @@ const AppTabs = () => {
                     size={25}
                     color="#fff"
                   />
-                  <Badge size={13} style={{ position: "absolute" }}>
-                    {route.params?.notificationCount
-                      ? route.params.notificationCount
-                      : 0}
-                  </Badge>
+                  {route.params?.notificationCount && (
+                    <Badge size={13} style={{ position: "absolute" }}>
+                      {route.params?.notificationCount
+                        ? route.params.notificationCount
+                        : 0}
+                    </Badge>
+                  )}
                 </TouchableOpacity>
 
                 <Menu

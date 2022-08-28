@@ -9,15 +9,7 @@ import {
 import React from "react";
 import CustomStatusbar from "../components/CustomStatusbar";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
-import { adFilterTypes, getBestSellingAds } from "../store/features/AdSlice";
-import {
-  Button,
-  Card,
-  Divider,
-  Paragraph,
-  Title,
-  useTheme,
-} from "react-native-paper";
+import { Button, Card, Paragraph, Title, useTheme } from "react-native-paper";
 import { HomeStackScreenProps } from "../navigations/AppStack/types";
 import { getUserAds, getUserAdsState } from "../store/features/UserAds";
 import { baseUrl } from "../store/features/AuthSlice";
@@ -30,12 +22,12 @@ const MyAds = ({ navigation, route }: HomeStackScreenProps<"MyAds">) => {
   const { status, data } = useAppSelector(getUserAdsState);
   const { colors } = useTheme();
   const { id } = route.params;
-  console.log(id);
+  // console.log(id);
 
   const myAds = async (id: string) => {
     try {
       await dispatch(getUserAds(id)).unwrap();
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       console.log(error);
     }
@@ -43,7 +35,7 @@ const MyAds = ({ navigation, route }: HomeStackScreenProps<"MyAds">) => {
 
   React.useEffect(() => {
     myAds(id.toString());
-  }, [dispatch]);
+  }, [dispatch, id]);
 
   return (
     <SafeAreaView>
@@ -97,8 +89,18 @@ const MyAds = ({ navigation, route }: HomeStackScreenProps<"MyAds">) => {
                         justifyContent: "flex-end",
                       }}
                     >
-                      <Button textColor={colors.info}>Edit</Button>
-                      <Button textColor={colors.danger}>delete</Button>
+                      <Button textColor={colors.gray}>Status :</Button>
+                      <Button
+                        textColor={
+                          item.status === "pending"
+                            ? colors.info
+                            : item.status === "complete"
+                            ? colors.success
+                            : colors.danger
+                        }
+                      >
+                        {item.status}
+                      </Button>
                     </View>
                   </View>
                 </View>

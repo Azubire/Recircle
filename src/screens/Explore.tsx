@@ -1,42 +1,36 @@
 import { View, ScrollView, FlatList, ActivityIndicator } from "react-native";
 import React from "react";
 import { StatusBar } from "expo-status-bar";
-import { useAppSelector } from "../hooks/reduxhooks";
-import {
-  getBestSellingAds,
-  getNewestAds,
-  getTopAds,
-  initialAdSliceStatetypes,
-} from "../store/features/AdSlice";
+import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
+import { fetchAdverts, getAds } from "../store/features/AdSlice";
 import { Button, Card, Paragraph, Title, useTheme } from "react-native-paper";
 import { TabScreenProps } from "../navigations/appTabs/types";
 import { SafeAreaView } from "react-native-safe-area-context";
+import dateFormat from "dateformat";
 
 const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
-  const [data, setData] = React.useState<initialAdSliceStatetypes>();
-  const [loading, setLoading] = React.useState(true);
-  const [request, setRequest] = React.useState(false);
-
-  const newestAds = useAppSelector(getNewestAds);
-  const bestSellingAd = useAppSelector(getBestSellingAds);
-  const topAds = useAppSelector(getTopAds);
-
   const { colors } = useTheme();
+  const dispatch = useAppDispatch();
+  const state = useAppSelector(getAds);
+
+  const getAdsFromDB = async () => {
+    try {
+      const data = await dispatch(fetchAdverts());
+      console.log("data----->", data);
+    } catch (error) {
+      console.log("error---->", error);
+    }
+  };
 
   React.useEffect(() => {
-    setData({
-      newestAds: newestAds,
-      bestSellingAds: bestSellingAd,
-      topAds: topAds,
-    });
-    setLoading(false);
-  }, [newestAds, bestSellingAd, topAds]);
-  console.log("-->>>", data);
+    getAdsFromDB();
+  }, []);
+
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
       <StatusBar style="light" />
       <ScrollView>
-        {loading ? (
+        {state.status === "loading" || state.status === "idle" ? (
           <ActivityIndicator animating size="large" />
         ) : (
           <>
@@ -48,7 +42,7 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
               <FlatList
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                data={data?.newestAds}
+                data={state.data.newestAds}
                 initialNumToRender={20}
                 keyExtractor={(item, index) => item.id.toString()}
                 renderItem={({ item, index }) => (
@@ -56,23 +50,29 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                     style={{ width: 250, marginHorizontal: 5, marginTop: 16 }}
                   >
                     <Card>
-                      <Card.Cover source={item.img} />
+                      <Card.Cover
+                        source={{
+                          uri: `http://192.168.43.35:3001/images/ads/${item.adImage}`,
+                        }}
+                      />
                       {/* <Title>{item.title}</Title> */}
                       <Card.Title
                         title={item.title}
-                        subtitle={`${item.date} | ${item.time}`}
+                        subtitle={dateFormat(item.createdAt, "fullDate")}
                         // left={LeftContent}
                       />
                       <Card.Content>
-                        <Paragraph numberOfLines={2}>{item.desc}</Paragraph>
+                        <Paragraph numberOfLines={1}>
+                          {item.description}
+                        </Paragraph>
                       </Card.Content>
                       <Card.Actions>
                         <Button
-                          mode="text"
+                          mode="outlined"
                           textColor={colors.info}
-                          onPress={() => setRequest((prev) => !prev)}
+                          onPress={() => {}}
                         >
-                          {request ? "Request Send" : " Request"}
+                          {item.status}
                         </Button>
                         <Button
                           buttonColor={colors.info}
@@ -99,26 +99,43 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
               <FlatList
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                data={data?.bestSellingAds}
-                initialNumToRender={20}
+                data={state.data.bestSellingAds}
+                initialNumToRender={21}
                 keyExtractor={(item, index) => item.id.toString()}
                 renderItem={({ item, index }) => (
                   <View
-                    style={{ width: 250, marginHorizontal: 5, marginTop: 16 }}
+                    style={{
+                      width: 250,
+                      backgroundColor: "red",
+                      marginHorizontal: 5,
+                      marginTop: 16,
+                    }}
                   >
-                    <Card>
-                      <Card.Cover source={item.img} />
+                    <Card style={{ top: 0, bottom: 0 }}>
+                      <Card.Cover
+                        source={{
+                          uri: `http://192.168.43.35:3001/images/ads/${item.adImage}`,
+                        }}
+                      />
                       {/* <Title>{item.title}</Title> */}
                       <Card.Title
                         title={item.title}
-                        subtitle={`${item.date} | ${item.time}`}
+                        subtitle={dateFormat(item.createdAt, "fullDate")}
                         // left={LeftContent}
                       />
                       <Card.Content>
-                        <Paragraph numberOfLines={2}>{item.desc}</Paragraph>
+                        <Paragraph numberOfLines={1}>
+                          {item.description}
+                        </Paragraph>
                       </Card.Content>
                       <Card.Actions>
-                        <Button textColor={colors.info}>Request</Button>
+                        <Button
+                          mode="outlined"
+                          textColor={colors.info}
+                          onPress={() => {}}
+                        >
+                          {item.status}
+                        </Button>
                         <Button
                           buttonColor={colors.info}
                           onPress={() => {
@@ -144,7 +161,7 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
               <FlatList
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                data={data?.topAds}
+                data={state.data.topAds}
                 initialNumToRender={20}
                 keyExtractor={(item, index) => item.id.toString()}
                 renderItem={({ item, index }) => (
@@ -152,18 +169,30 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                     style={{ width: 250, marginHorizontal: 5, marginTop: 16 }}
                   >
                     <Card>
-                      <Card.Cover source={item.img} />
+                      <Card.Cover
+                        source={{
+                          uri: `http://192.168.43.35:3001/images/ads/${item.adImage}`,
+                        }}
+                      />
                       {/* <Title>{item.title}</Title> */}
                       <Card.Title
                         title={item.title}
-                        subtitle={`${item.date} | ${item.time}`}
+                        subtitle={dateFormat(item.createdAt, "fullDate")}
                         // left={LeftContent}
                       />
                       <Card.Content>
-                        <Paragraph numberOfLines={2}>{item.desc}</Paragraph>
+                        <Paragraph numberOfLines={1}>
+                          {item.description}
+                        </Paragraph>
                       </Card.Content>
                       <Card.Actions>
-                        <Button textColor={colors.info}>Request</Button>
+                        <Button
+                          mode="outlined"
+                          textColor={colors.info}
+                          onPress={() => {}}
+                        >
+                          {item.status}
+                        </Button>
                         <Button
                           buttonColor={colors.info}
                           onPress={() => {
