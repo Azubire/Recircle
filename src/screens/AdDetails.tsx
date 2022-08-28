@@ -1,10 +1,25 @@
 import { View, ScrollView, ActivityIndicator, Image } from "react-native";
 import React from "react";
 import { HomeStackScreenProps } from "../navigations/AppStack/types";
-import { adFilterTypes, getAd } from "../store/features/AdSlice";
-import { useAppSelector } from "../hooks/reduxhooks";
-import { Button, Paragraph, Text, Title } from "react-native-paper";
+import { adFilterTypes, getAd, getAds } from "../store/features/AdSlice";
+import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
+import {
+  Button,
+  Modal,
+  Paragraph,
+  Portal,
+  Text,
+  TextInput,
+  Title,
+  useTheme,
+} from "react-native-paper";
 import dateFormat from "dateformat";
+import { Ionicons } from "@expo/vector-icons";
+import { getUser } from "../store/features/AuthSlice";
+import {
+  getAllNotification,
+  notify,
+} from "../store/features/NotificationSlice";
 
 const AdDetails = ({
   navigation,
@@ -12,21 +27,90 @@ const AdDetails = ({
 }: HomeStackScreenProps<"AdDetails">) => {
   const [ad, setAd] = React.useState<adFilterTypes[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
+  const [showModal, setShowModal] = React.useState(false);
 
-  const { id, filter } = route.params;
+  const { user } = useAppSelector(getUser);
+  const { id, filter, userId } = route.params;
+
+  const [formData, setFormData] = React.useState({
+    userId: user.profile.id,
+    adId: id,
+    sellerId: userId,
+    message: "",
+  });
+
   const response = useAppSelector(getAd(filter, id));
+  const dispatch = useAppDispatch();
+  const colors = useTheme();
 
   React.useEffect(() => {
     setAd(response);
     setLoading(false);
   }, [id]);
   // console.log(ad && ad[0].title);
+
+  const handleMessageSeller = async () => {
+    if (formData.message.length < 1) {
+      return;
+    }
+    try {
+      const data = await dispatch(
+        notify({ id: formData.userId, body: formData })
+      ).unwrap();
+      if (!data.error) {
+        setShowModal(true);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   return (
-    <ScrollView>
+    <ScrollView style={{ flex: 1 }}>
       {loading ? (
         <ActivityIndicator size="large" />
       ) : (
         <View>
+          {/* modal  */}
+          <Portal>
+            <Modal
+              visible={showModal}
+              onDismiss={() => setShowModal(false)}
+              contentContainerStyle={{
+                width: "80%",
+                // height: 300,
+                paddingHorizontal: 20,
+                paddingVertical: 35,
+                backgroundColor: "#fff",
+                alignSelf: "center",
+              }}
+            >
+              <Ionicons
+                style={{ alignSelf: "center" }}
+                name="checkmark-circle-outline"
+                size={80}
+                color={"#22c55e"}
+              />
+              <Title style={{ textAlign: "center" }}>
+                Message succesfully sent to {response[0].User.name}
+              </Title>
+              <Text style={{ textAlign: "center" }} variant="bodyMedium">
+                You will get a notification if {response[0].User.name} if
+                replies
+              </Text>
+
+              <Button
+                buttonColor={"#f43f5e"}
+                style={{ marginTop: 16 }}
+                mode="contained"
+                onPress={() => {
+                  setShowModal(false);
+                }}
+              >
+                Ok
+              </Button>
+            </Modal>
+          </Portal>
           {/* cover image  */}
           <View>
             <Image
@@ -45,15 +129,15 @@ const AdDetails = ({
                   justifyContent: "space-between",
                 }}
               >
-                <Title>{ad[0]?.title}</Title>
-                {ad[0].RecyclingCategory?.name && (
+                <Title style={{ flex: 3 }}>{ad[0]?.title}</Title>
+                {ad[0].RecyclingCategory?.name ? (
                   <Button
                     mode="outlined"
-                    style={{ borderRadius: 50, marginRight: 2 }}
+                    style={{ borderRadius: 50, marginRight: 2, flex: 1 }}
                   >
-                    {ad[0].RecyclingCategory?.name}
+                    {"Ghc." + ad[0].price}
                   </Button>
-                )}
+                ) : null}
               </View>
               <Text variant="bodySmall">
                 {dateFormat(ad[0].createdAt, "fullDate")}
@@ -62,9 +146,24 @@ const AdDetails = ({
                 {ad[0].description}
               </Paragraph>
 
-              <Button mode="outlined" style={{ marginTop: 32 }}>
-                Contact Seller
-              </Button>
+              <View>
+                <TextInput
+                  multiline
+                  numberOfLines={3}
+                  onChangeText={(text) =>
+                    setFormData((prev) => ({ ...prev, message: text }))
+                  }
+                  mode="outlined"
+                  placeholder="Type your message here"
+                />
+                <Button
+                  mode="outlined"
+                  style={{ marginTop: 32 }}
+                  onPress={handleMessageSeller}
+                >
+                  Message Seller
+                </Button>
+              </View>
             </View>
           </View>
         </View>

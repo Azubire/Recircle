@@ -142,7 +142,7 @@ const Recyclers = ({ navigation }: RecyclerStackScreenProps<"Recyclers">) => {
                         });
                       }}
                     >
-                      Contact
+                      View Profile
                     </Button>
                   </View>
                 </View>

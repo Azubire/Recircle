@@ -18,6 +18,11 @@ export interface adFilterTypes {
   RecyclingCategory: {
     name: string;
   };
+  User: {
+    id: number;
+    name: string;
+    profileImg: string;
+  };
   price: string;
   createdAt: string;
   status: "pending" | "complete" | "rejected";

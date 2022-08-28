@@ -5,34 +5,33 @@ import CustomStatusbar from "../components/CustomStatusbar";
 import { Avatar, Badge, Card, List, Title, useTheme } from "react-native-paper";
 import {
   getAllNotification,
+  getNotifications,
   NotificationStateTypes,
 } from "../store/features/NotificationSlice";
-import { useAppSelector } from "../hooks/reduxhooks";
+import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
+import { getUser } from "../store/features/AuthSlice";
 
 const Notification = ({
   navigation,
 }: AppDrawerScreenProps<"Notifications">) => {
-  const [Notifications, setNotifications] =
-    React.useState<NotificationStateTypes[]>();
-  const [loading, setLoading] = React.useState<boolean>(true);
-
   const { colors } = useTheme();
-  const response = useAppSelector(getAllNotification);
+  const state = useAppSelector(getAllNotification);
+  const appState = useAppSelector(getUser);
+  const dispatch = useAppDispatch();
 
   React.useEffect(() => {
-    setNotifications(response);
-    setLoading(false);
-  }, [response]);
+    dispatch(getNotifications);
+  }, []);
 
   return (
     <View>
       <CustomStatusbar style="light" />
 
-      {loading ? (
+      {state.status === "idle" || state.status === "loading" ? (
         <ActivityIndicator />
       ) : (
         <FlatList
-          data={Notifications}
+          data={state.data}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) => (
             <View style={{ flex: 1, margin: 6 }}>
@@ -40,9 +39,17 @@ const Notification = ({
                 <List.Item
                   title={item.title}
                   description={item.body}
-                  left={(props) => (
-                    <Avatar.Image source={item.img} {...props} />
-                  )}
+                  left={(props) =>
+                    item.avatar ? (
+                      <Avatar.Image
+                        source={{
+                          uri: `http://192.168.43.35:3001/images/categoryImages/${item.avatar}`,
+                        }}
+                      />
+                    ) : (
+                      <Avatar.Image source={appState.defaultImg.coverImg} />
+                    )
+                  }
                   right={(props) => (
                     <Badge
                       style={{
@@ -51,7 +58,7 @@ const Notification = ({
                         // right: 0,
                         backgroundColor: colors.danger,
                       }}
-                      visible={item.status === 0 ? true : false}
+                      visible={item.status == false ? true : false}
                       size={16}
                     ></Badge>
                   )}

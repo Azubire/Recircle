@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 import { ImageSourcePropType } from "react-native";
 import { RootState } from "..";
 
@@ -6,84 +7,97 @@ const img1 = require("../../../assets/images/azubire.jpg");
 const img2 = require("../../../assets/images/cover.jpeg");
 const img3 = require("../../../assets/images/profile.jpeg");
 
+const baseUrl = "http://192.168.43.35:3001";
+
 export interface NotificationStateTypes {
-  id: number;
-  title: string;
-  body: string;
-  img: ImageSourcePropType;
-  priority: "High" | "Medium" | "Low";
-  status: number;
+  error: boolean;
+  status: "idle" | "loading" | "success" | "failed";
+  message: string;
+  data: {
+    id: number;
+    title: string;
+    body: string;
+    avatar: string;
+    status: boolean;
+  }[];
 }
 
-const initialState: NotificationStateTypes[] = [
-  {
-    id: 1,
-    title: "New Order",
-    body: "You have a new Order from Albert",
-    img: img1,
-    priority: "Low",
-    status: 0,
-  },
-  {
-    id: 2,
-    title: "Request Rejected",
-    body: "You request with John has been canceled due to your failure to comply",
-    img: img2,
-    priority: "Medium",
-    status: 0,
-  },
-  {
-    id: 3,
-    title: "Request Completed Successfully",
-    body: "You request with Mr Watson has been completed Successfully",
-    img: img3,
-    priority: "High",
-    status: 1,
-  },
-  {
-    id: 4,
-    title: "New Order",
-    body: "You have a new Order from Albert",
-    img: img1,
-    priority: "Medium",
-    status: 0,
-  },
-  {
-    id: 2,
-    title: "Request Rejected",
-    body: "You request with John has been canceled due to your failure to comply",
-    img: img2,
-    priority: "High",
-    status: 0,
-  },
-  {
-    id: 4,
-    title: "New Order",
-    body: "You have a new Order from Albert",
-    img: img1,
-    priority: "Medium",
-    status: 0,
-  },
-  {
-    id: 1,
-    title: "New Order",
-    body: "You have a new Order from Albert",
-    img: img1,
-    priority: "Low",
-    status: 0,
-  },
-];
+const initialState: NotificationStateTypes = {
+  error: false,
+  status: "idle",
+  message: "",
+  data: [],
+};
+
+export const getNotifications = createAsyncThunk("notifications", async () => {
+  const { data } = await axios.get<NotificationStateTypes>(
+    `${baseUrl}/notifications`
+  );
+
+  return data;
+});
+
+export const notify = createAsyncThunk(
+  "notify",
+  async (notificationData: {
+    id: number;
+    body: { userId: number; adId: number; sellerId: number; message: string };
+  }) => {
+    const { data } = await axios.post<{ error: false; message: string }>(
+      `${baseUrl}/notifications/create/${notificationData.id}`,
+      notificationData.body
+    );
+
+    return data;
+  }
+);
 
 const NotificationsSclice = createSlice({
   name: "Nofication",
   initialState,
   reducers: {},
+  extraReducers(builder) {
+    builder.addCase(notify.pending, (state) => {
+      state.status = "loading";
+    });
+    builder.addCase(notify.fulfilled, (state, actions) => {
+      if (actions.payload.error) {
+        state.status = "failed";
+        state.error = true;
+      } else {
+        state.status = "success";
+
+        state.error = false;
+      }
+    });
+    builder.addCase(notify.rejected, (state) => {
+      state.status = "failed";
+      state.error = true;
+    });
+    builder.addCase(getNotifications.pending, (state) => {
+      state.status = "loading";
+    });
+    builder.addCase(getNotifications.fulfilled, (state, action) => {
+      if (action.payload.error) {
+        state.error = true;
+        state.status = "failed";
+      } else {
+        state.error = false;
+        state.status = "success";
+        state.data = action.payload.data;
+      }
+    });
+    builder.addCase(getNotifications.rejected, (state) => {
+      state.error = true;
+      state.status = "failed";
+    });
+  },
 });
 
 export const getAllNotification = (state: RootState) => state.Notification;
 export const getAllNotificationCount = (state: RootState) =>
-  state.Notification.reduce(
-    (prev, cur) => (cur.status === 0 ? ++prev : prev),
+  state.Notification.data.reduce(
+    (prev, cur) => (cur.status === false ? ++prev : prev),
     0
   );
 

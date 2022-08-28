@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { SafeAreaView, View } from "react-native";
 import React from "react";
 import Center from "../components/Center";
 import { NavigationProp } from "@react-navigation/native";
@@ -9,10 +9,10 @@ import CustomStatusbar from "../components/CustomStatusbar";
 
 const Settings = ({ navigation }: AppDrawerScreenProps<"Settings">) => {
   return (
-    <View>
+    <SafeAreaView>
       <CustomStatusbar style="light" />
-      <Text>settings</Text>
-    </View>
+      <></>
+    </SafeAreaView>
   );
 };
 

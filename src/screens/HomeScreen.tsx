@@ -26,7 +26,10 @@ import {
   HomeCategorySliceTypes,
 } from "../store/features/HomeCategorySlice";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
-import { getAllNotificationCount } from "../store/features/NotificationSlice";
+import {
+  getAllNotificationCount,
+  getNotifications,
+} from "../store/features/NotificationSlice";
 import { useIsFocused } from "@react-navigation/native";
 import { getAuth, getUser } from "../store/features/AuthSlice";
 
@@ -61,14 +64,25 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
     }
   };
 
+  const getNotification = async () => {
+    try {
+      const data = await dispatch(getNotifications());
+      console.log("data", data);
+    } catch (error) {
+      console.log("errowr", error);
+    }
+  };
+
   React.useEffect(() => {
+    getNotification();
     fetchCategory();
   }, [state.data]);
 
-  const notificationCount = useAppSelector(getAllNotificationCount);
   const focused = useIsFocused();
-
+  const notificationCount = useAppSelector(getAllNotificationCount);
+  console.log("---------------", notificationCount);
   React.useEffect(() => {
+    dispatch(getNotifications);
     navigation.setParams({ notificationCount: notificationCount });
   }, [notificationCount, focused, state.data]);
 

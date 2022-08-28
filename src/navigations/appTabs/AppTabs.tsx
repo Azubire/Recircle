@@ -37,7 +37,6 @@ const AppTabs = () => {
 
   const [visible, setVisible] = React.useState(false);
   const state = useAppSelector(getUser);
-  console.log(state.defaultImg);
   return (
     <Tab.Navigator
       screenOptions={({ navigation, route }) => {
@@ -96,13 +95,13 @@ const AppTabs = () => {
                     size={25}
                     color="#fff"
                   />
-                  {route.params?.notificationCount && (
+                  {route.params?.notificationCount ? (
                     <Badge size={13} style={{ position: "absolute" }}>
                       {route.params?.notificationCount
                         ? route.params.notificationCount
                         : 0}
                     </Badge>
-                  )}
+                  ) : null}
                 </TouchableOpacity>
 
                 <Menu

@@ -96,7 +96,7 @@ const RecyclerDetails = ({
               </View>
 
               {/* cta button */}
-              <Button
+              {/* <Button
                 mode="contained"
                 // buttonColor={colors.secondary}
                 style={{
@@ -107,7 +107,7 @@ const RecyclerDetails = ({
                 }}
               >
                 Sell to us
-              </Button>
+              </Button> */}
             </View>
           </View>
         </ScrollView>

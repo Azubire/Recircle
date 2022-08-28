@@ -3,22 +3,32 @@ import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import { fetchAdverts, getAds } from "../store/features/AdSlice";
-import { Button, Card, Paragraph, Title, useTheme } from "react-native-paper";
+import {
+  Avatar,
+  Button,
+  Card,
+  Paragraph,
+  Text,
+  Title,
+  useTheme,
+} from "react-native-paper";
 import { TabScreenProps } from "../navigations/appTabs/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import dateFormat from "dateformat";
+import { getUser } from "../store/features/AuthSlice";
 
 const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const state = useAppSelector(getAds);
+  const userState = useAppSelector(getUser);
 
   const getAdsFromDB = async () => {
     try {
       const data = await dispatch(fetchAdverts());
-      console.log("data----->", data);
+      // console.log("data----->", data);
     } catch (error) {
-      console.log("error---->", error);
+      // console.log("error---->", error);
     }
   };
 
@@ -26,6 +36,14 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
     getAdsFromDB();
   }, []);
 
+  const getName = (id: number) => {
+    let name;
+    if (id === userState.user.profile.id) {
+      name = userState.user.profile.userName.split(" ")[1];
+    } else {
+      name = state.status;
+    }
+  };
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar style="light" />
@@ -50,6 +68,30 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                     style={{ width: 250, marginHorizontal: 5, marginTop: 16 }}
                   >
                     <Card>
+                      {/* <Title>{item.title}</Title> */}
+                      <Card.Title
+                        style={{ marginBottom: 16 }}
+                        title={<Text>{item.User.name.split(" ")[0]}</Text>}
+                        titleStyle={{ marginLeft: 10, marginTop: -20 }}
+                        left={() =>
+                          item.User.profileImg ? (
+                            <Avatar.Image
+                              size={45}
+                              source={{
+                                uri: `http://192.168.43.35:3001/images/categoryImages/${item.User.profileImg}`,
+                              }}
+                            />
+                          ) : (
+                            <Avatar.Text
+                              size={45}
+                              label={item.User.name
+                                .split(" ")[0]
+                                .charAt(0)
+                                .toUpperCase()}
+                            />
+                          )
+                        }
+                      />
                       <Card.Cover
                         source={{
                           uri: `http://192.168.43.35:3001/images/ads/${item.adImage}`,
@@ -59,8 +101,8 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                       <Card.Title
                         title={item.title}
                         subtitle={dateFormat(item.createdAt, "fullDate")}
-                        // left={LeftContent}
                       />
+
                       <Card.Content>
                         <Paragraph numberOfLines={1}>
                           {item.description}
@@ -68,17 +110,18 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                       </Card.Content>
                       <Card.Actions>
                         <Button
-                          mode="outlined"
+                          mode="text"
                           textColor={colors.info}
                           onPress={() => {}}
                         >
-                          {item.status}
+                          {/* {item.status} */}
                         </Button>
                         <Button
                           buttonColor={colors.info}
                           onPress={() => {
                             navigation.navigate("AdDetails", {
                               id: item.id,
+                              userId: item.User.id,
                               filter: "NEW",
                             });
                           }}
@@ -111,7 +154,31 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                       marginTop: 16,
                     }}
                   >
-                    <Card style={{ top: 0, bottom: 0 }}>
+                    <Card>
+                      {/* <Title>{item.title}</Title> */}
+                      <Card.Title
+                        style={{ marginBottom: 16 }}
+                        title={<Text>{item.User.name.split(" ")[0]}</Text>}
+                        titleStyle={{ marginLeft: 10, marginTop: -20 }}
+                        left={() =>
+                          item.User.profileImg ? (
+                            <Avatar.Image
+                              size={45}
+                              source={{
+                                uri: `http://192.168.43.35:3001/images/categoryImages/${item.User.profileImg}`,
+                              }}
+                            />
+                          ) : (
+                            <Avatar.Text
+                              size={45}
+                              label={item.User.name
+                                .split(" ")[0]
+                                .charAt(0)
+                                .toUpperCase()}
+                            />
+                          )
+                        }
+                      />
                       <Card.Cover
                         source={{
                           uri: `http://192.168.43.35:3001/images/ads/${item.adImage}`,
@@ -121,8 +188,8 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                       <Card.Title
                         title={item.title}
                         subtitle={dateFormat(item.createdAt, "fullDate")}
-                        // left={LeftContent}
                       />
+
                       <Card.Content>
                         <Paragraph numberOfLines={1}>
                           {item.description}
@@ -130,18 +197,19 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                       </Card.Content>
                       <Card.Actions>
                         <Button
-                          mode="outlined"
+                          mode="text"
                           textColor={colors.info}
                           onPress={() => {}}
                         >
-                          {item.status}
+                          {/* {item.status} */}
                         </Button>
                         <Button
                           buttonColor={colors.info}
                           onPress={() => {
                             navigation.navigate("AdDetails", {
                               id: item.id,
-                              filter: "BEST",
+                              userId: item.User.id,
+                              filter: "NEW",
                             });
                           }}
                         >
@@ -169,6 +237,30 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                     style={{ width: 250, marginHorizontal: 5, marginTop: 16 }}
                   >
                     <Card>
+                      {/* <Title>{item.title}</Title> */}
+                      <Card.Title
+                        style={{ marginBottom: 16 }}
+                        title={<Text>{item.User.name.split(" ")[0]}</Text>}
+                        titleStyle={{ marginLeft: 10, marginTop: -20 }}
+                        left={() =>
+                          item.User.profileImg ? (
+                            <Avatar.Image
+                              size={45}
+                              source={{
+                                uri: `http://192.168.43.35:3001/images/categoryImages/${item.User.profileImg}`,
+                              }}
+                            />
+                          ) : (
+                            <Avatar.Text
+                              size={45}
+                              label={item.User.name
+                                .split(" ")[0]
+                                .charAt(0)
+                                .toUpperCase()}
+                            />
+                          )
+                        }
+                      />
                       <Card.Cover
                         source={{
                           uri: `http://192.168.43.35:3001/images/ads/${item.adImage}`,
@@ -178,8 +270,8 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                       <Card.Title
                         title={item.title}
                         subtitle={dateFormat(item.createdAt, "fullDate")}
-                        // left={LeftContent}
                       />
+
                       <Card.Content>
                         <Paragraph numberOfLines={1}>
                           {item.description}
@@ -187,18 +279,19 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                       </Card.Content>
                       <Card.Actions>
                         <Button
-                          mode="outlined"
+                          mode="text"
                           textColor={colors.info}
                           onPress={() => {}}
                         >
-                          {item.status}
+                          {/* {item.status} */}
                         </Button>
                         <Button
                           buttonColor={colors.info}
                           onPress={() => {
                             navigation.navigate("AdDetails", {
                               id: item.id,
-                              filter: "TOP",
+                              userId: item.User.id,
+                              filter: "NEW",
                             });
                           }}
                         >
