@@ -28,7 +28,7 @@ const History = ({ navigation }: AppDrawerScreenProps<"History">) => {
     {
       id: string;
       title: string;
-      status: "pending" | "complete" | "rejected";
+      status: "pending" | "complete" | "rejected" | "all";
       description: string;
       adImage: string;
       createdAt: string;
@@ -53,6 +53,10 @@ const History = ({ navigation }: AppDrawerScreenProps<"History">) => {
     setLoading(true);
     let newFilterItems;
     switch (value) {
+      case 1:
+        newFilterItems = state.data.user;
+        setSelectedValue(1);
+        break;
       case 2:
         newFilterItems = state.data.user?.filter(
           (item) => item.status == "complete"
@@ -71,11 +75,6 @@ const History = ({ navigation }: AppDrawerScreenProps<"History">) => {
         );
         setSelectedValue(4);
         break;
-
-      default:
-        newFilterItems = state.data.user;
-        setSelectedValue(1);
-        break;
     }
 
     setFilterItems(newFilterItems);
@@ -83,17 +82,20 @@ const History = ({ navigation }: AppDrawerScreenProps<"History">) => {
   };
 
   const getData = async () => {
-    console.log("first", state.status);
     try {
       const data = await dispatch(
-        getUserAds(user.userToken.toString())
+        getUserAds(user.profile.id.toString())
       ).unwrap();
-      console.log(data);
-      setSelectedValue(1);
-      setFilterItems(state.data.user);
-      setLoading(false);
+      if (data.error) {
+        setLoading(false);
+      } else {
+        handleValueChange(1);
+        setLoading(false);
+      }
+      console.log("data", data);
+      setFilterItems(data.data.user);
+      console.log("userrr", data.data.user);
     } catch (error) {
-      console.log(error);
       setLoading(false);
     }
   };
@@ -134,6 +136,8 @@ const History = ({ navigation }: AppDrawerScreenProps<"History">) => {
 
       {loading ? (
         <ActivityIndicator />
+      ) : state.data.user.length <= 0 ? (
+        <Title>You don't have any history yet</Title>
       ) : (
         <FlatList
           data={filterItems}

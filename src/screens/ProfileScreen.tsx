@@ -12,10 +12,11 @@ import { Button, Text, TextInput, Title, useTheme } from "react-native-paper";
 import CustomStatusbar from "../components/CustomStatusbar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { getUser, stateProps } from "../store/features/AuthSlice";
-import { useAppSelector } from "../hooks/reduxhooks";
+import { getUser, removeUser, stateProps } from "../store/features/AuthSlice";
+import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import { TabScreenProps } from "../navigations/appTabs/types";
 import axios from "axios";
+import * as secureStore from "expo-secure-store";
 
 const coverImg = require("../../assets/images/cover.jpeg");
 const profileImg = require("../../assets/images/profile.jpeg");
@@ -37,6 +38,7 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
   const [loading, setLoading] = React.useState(true);
 
   const state = useAppSelector(getUser);
+  const dispatch = useAppDispatch();
 
   React.useEffect(() => {
     setUser((prev) => ({
@@ -74,6 +76,18 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
     getRecyclerStatus();
   }, []);
   const { colors } = useTheme();
+
+  const handleLogOut = async () => {
+    try {
+      await secureStore.deleteItemAsync("USERTOKEN");
+
+      dispatch(removeUser());
+      console.log("user token deleted");
+    } catch (error) {
+      console.log("error deleteing user token");
+    }
+  };
+
   return (
     <>
       <CustomStatusbar
@@ -205,7 +219,7 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
                   variant="bodyLarge"
                   style={{ marginTop: 16, textAlign: "center" }}
                 >
-                  Change your details below
+                  View your details below
                 </Text>
                 <View style={{ marginVertical: 16 }}>
                   <Text variant="labelLarge" style={{ marginBottom: 3 }}>
@@ -216,7 +230,7 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
                     mode="outlined"
                     value={user?.profile.userName}
                     left={<TextInput.Icon name="account-cog-outline" />}
-                    right={<TextInput.Icon name="pencil-outline" size={20} />}
+                    // right={<TextInput.Icon name="pencil-outline" size={20} />}
                   />
                 </View>
 
@@ -228,11 +242,11 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
                     mode="outlined"
                     value={user?.profile.email}
                     left={<TextInput.Icon name="email-edit-outline" />}
-                    right={<TextInput.Icon name="pencil-outline" size={20} />}
+                    // right={<TextInput.Icon name="pencil-outline" size={20} />}
                   />
                 </View>
 
-                <View style={{ marginBottom: 16 }}>
+                {/* <View style={{ marginBottom: 16 }}>
                   <Text variant="labelLarge" style={{ marginBottom: 3 }}>
                     Password
                   </Text>
@@ -243,7 +257,7 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
                     left={<TextInput.Icon name="account-eye-outline" />}
                     right={<TextInput.Icon name="pencil-outline" size={20} />}
                   />
-                </View>
+                </View> */}
               </View>
 
               <Button
@@ -255,8 +269,9 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
                   marginVertical: 16,
                   borderColor: colors.secondary,
                 }}
+                onPress={handleLogOut}
               >
-                Save Changes
+                Logout
               </Button>
             </SafeAreaView>
           </View>

@@ -35,7 +35,11 @@ export const getUserAds = createAsyncThunk("user/ads", async (id: string) => {
 const userAds = createSlice({
   name: "userAds",
   initialState,
-  reducers: {},
+  reducers: {
+    removeUserAds: (state) => {
+      state.data.user = [];
+    },
+  },
   extraReducers(builder) {
     builder.addCase(getUserAds.pending, (state) => {
       state.status = "loading";
@@ -57,5 +61,6 @@ const userAds = createSlice({
 });
 
 export const getUserAdsState = (state: RootState) => state.UserAds;
+export const { removeUserAds } = userAds.actions;
 
 export default userAds.reducer;

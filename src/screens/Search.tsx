@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, ActivityIndicator } from "react-native";
 import React from "react";
 import { TabScreenProps } from "../navigations/appTabs/types";
 import { Button, Searchbar, Title, useTheme } from "react-native-paper";
@@ -12,13 +12,20 @@ import { StatusBar } from "expo-status-bar";
 
 const Search = ({ navigation }: TabScreenProps<"Search">) => {
   const [searchQuery, setSearchQuery] = React.useState<string>("");
+  const [error, setError] = React.useState(false);
+  const [results, setResults] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [searchResult, setSearchResult] = React.useState<initialStateTypes>();
 
   const { colors } = useTheme();
 
   const handleSubmit = () => {
+    setLoading(true);
     const query = searchQuery.trim().toLowerCase();
+    setTimeout(() => {
+      setLoading(false);
+      setError(true);
+    }, 2000);
   };
 
   return (
@@ -41,7 +48,13 @@ const Search = ({ navigation }: TabScreenProps<"Search">) => {
           alignItems: "center",
         }}
       >
-        <Text style={{ color: colors.error }}>No Search Results Found !</Text>
+        {loading ? (
+          <ActivityIndicator />
+        ) : error ? (
+          <Text style={{ color: colors.error }}>No Search Results Found !</Text>
+        ) : results ? (
+          <Text style={{ color: colors.success }}>1 Result(s) Found !</Text>
+        ) : null}
       </View>
     </ScrollView>
   );

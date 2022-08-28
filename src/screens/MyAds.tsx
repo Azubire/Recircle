@@ -11,7 +11,11 @@ import CustomStatusbar from "../components/CustomStatusbar";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import { Button, Card, Paragraph, Title, useTheme } from "react-native-paper";
 import { HomeStackScreenProps } from "../navigations/AppStack/types";
-import { getUserAds, getUserAdsState } from "../store/features/UserAds";
+import {
+  getUserAds,
+  getUserAdsState,
+  removeUserAds,
+} from "../store/features/UserAds";
 import { baseUrl } from "../store/features/AuthSlice";
 
 const MyAds = ({ navigation, route }: HomeStackScreenProps<"MyAds">) => {
@@ -35,7 +39,10 @@ const MyAds = ({ navigation, route }: HomeStackScreenProps<"MyAds">) => {
 
   React.useEffect(() => {
     myAds(id.toString());
-  }, [dispatch, id]);
+    return () => {
+      dispatch(removeUserAds());
+    };
+  }, []);
 
   return (
     <SafeAreaView>
@@ -112,9 +119,9 @@ const MyAds = ({ navigation, route }: HomeStackScreenProps<"MyAds">) => {
           )}
         />
       ) : (
-        <Text>
+        <Title style={{ marginTop: 16 }}>
           You dont have adverts yet create some to and view them here later
-        </Text>
+        </Title>
       )}
     </SafeAreaView>
   );
