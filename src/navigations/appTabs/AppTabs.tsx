@@ -26,9 +26,10 @@ import {
   useTheme,
 } from "react-native-paper";
 import HomeStack from "../AppStack/AppStack";
-import { useAppSelector } from "../../hooks/reduxhooks";
-import { getUser } from "../../store/features/AuthSlice";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxhooks";
+import { getUser, removeUser } from "../../store/features/AuthSlice";
 const profileImage = require("../../../assets/images/profile.jpeg");
+import * as secureStore from "expo-secure-store";
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
@@ -37,6 +38,18 @@ const AppTabs = () => {
 
   const [visible, setVisible] = React.useState(false);
   const state = useAppSelector(getUser);
+  const dispatch = useAppDispatch();
+  const handleLogOut = async () => {
+    try {
+      await secureStore.deleteItemAsync("USERTOKEN");
+
+      dispatch(removeUser());
+      console.log("user token deleted");
+    } catch (error) {
+      console.log("error deleteing user token");
+    }
+  };
+
   return (
     <Tab.Navigator
       screenOptions={({ navigation, route }) => {
@@ -101,7 +114,11 @@ const AppTabs = () => {
                         ? route.params.notificationCount
                         : 0}
                     </Badge>
-                  ) : null}
+                  ) : (
+                    <Badge size={13} style={{ position: "absolute" }}>
+                      0
+                    </Badge>
+                  )}
                 </TouchableOpacity>
 
                 <Menu
@@ -117,10 +134,24 @@ const AppTabs = () => {
                     </TouchableOpacity>
                   }
                 >
-                  <Menu.Item onPress={() => {}} title="Item 1" />
-                  <Menu.Item onPress={() => {}} title="Settings" />
+                  <Menu.Item
+                    onPress={() => {
+                      navigation.navigate("MyAds", {
+                        id: state.user.profile.id,
+                      });
+                      setVisible(false);
+                    }}
+                    title="My Ads"
+                  />
+                  <Menu.Item
+                    onPress={() => {
+                      navigation.navigate("History");
+                      setVisible(false);
+                    }}
+                    title="History"
+                  />
                   <Divider />
-                  <Menu.Item onPress={() => {}} title="Logout" />
+                  <Menu.Item onPress={handleLogOut} title="Logout" />
                 </Menu>
               </View>
             );

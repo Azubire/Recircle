@@ -111,6 +111,23 @@ export const verifyToken = createAsyncThunk(
   }
 );
 
+export const updateProfileImage = createAsyncThunk(
+  "profile/update",
+  async (formData: { id: number; image: any }) => {
+    const { data } = await axios.put<{
+      error: boolean;
+      message: string;
+      image: ImageSourcePropType;
+    }>(`${baseUrl}/users/update/${formData.id}`, formData.image, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return data;
+  }
+);
+
 const initialState: stateProps = {
   user: {
     userToken: "",
@@ -198,6 +215,9 @@ const AuthSlice = createSlice({
       } else {
         state.user = action.payload.data;
       }
+    });
+    builder.addCase(updateProfileImage.fulfilled, (state, action) => {
+      state.user.profile.profileImg = action.payload.image;
     });
   },
 });

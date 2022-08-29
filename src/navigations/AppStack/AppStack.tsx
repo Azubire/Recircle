@@ -13,6 +13,7 @@ import RecyclerStack from "../RecyclersStack";
 import Menu from "../../screens/Menu";
 import AdDetails from "../../screens/AdDetails";
 import BecomeRecycler from "../../screens/BecomeRecycler";
+import NotificationDetails from "../../screens/NotificationDetails";
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 
@@ -48,6 +49,11 @@ const HomeStack = () => {
         name="BecomeRecycler"
         component={BecomeRecycler}
         options={{ headerTitle: "Become A Recycler" }}
+      />
+      <Stack.Screen
+        name="NotificationDetails"
+        component={NotificationDetails}
+        options={{ headerTitle: "Messages" }}
       />
     </Stack.Navigator>
   );

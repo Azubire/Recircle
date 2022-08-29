@@ -12,11 +12,18 @@ import { Button, Text, TextInput, Title, useTheme } from "react-native-paper";
 import CustomStatusbar from "../components/CustomStatusbar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { getUser, removeUser, stateProps } from "../store/features/AuthSlice";
+import {
+  getUser,
+  removeUser,
+  stateProps,
+  updateProfileImage,
+} from "../store/features/AuthSlice";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import { TabScreenProps } from "../navigations/appTabs/types";
 import axios from "axios";
 import * as secureStore from "expo-secure-store";
+import * as ImagePicker from "expo-image-picker";
+import mime from "mime";
 
 const coverImg = require("../../assets/images/cover.jpeg");
 const profileImg = require("../../assets/images/profile.jpeg");
@@ -35,6 +42,8 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
     isRecycler: false,
     isVerified: false,
   });
+
+  const [image, setImage] = React.useState<any>();
   const [loading, setLoading] = React.useState(true);
 
   const state = useAppSelector(getUser);
@@ -88,6 +97,49 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
     }
   };
 
+  const createFormData = (image: any) => {
+    const newImg = {
+      uri: image.uri,
+      name: image.uri.split("/").pop(),
+      type: mime.getType(image.uri),
+    };
+    const data = new FormData();
+    //@ts-ignore
+    data.append("profileImage", newImg);
+
+    return data;
+  };
+
+  const uploadImage = async () => {
+    try {
+      const formData = createFormData(image);
+      const newData = { id: state.user.profile.id, image: formData };
+      const data = await dispatch(updateProfileImage(newData)).unwrap();
+      console.log("datha", data);
+      setImage(undefined);
+    } catch (error) {
+      console.log("error", error);
+      setImage(undefined);
+    }
+  };
+
+  const pickImage = async () => {
+    setImage(undefined);
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    // console.log(result);
+    if (!result.cancelled) {
+      setImage(result);
+      if (image) {
+        await uploadImage();
+      }
+    }
+  };
+
   return (
     <>
       <CustomStatusbar
@@ -96,7 +148,11 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
         translucent={true}
       />
       {loading ? (
-        <ActivityIndicator size="large" />
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" />
+        </View>
       ) : (
         <ScrollView>
           <View style={{ flex: 1 }}>
@@ -154,13 +210,12 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
                     }}
                   />
                 )}
-
-                <TouchableOpacity>
+                <TouchableOpacity onPress={pickImage}>
                   <Ionicons
                     name="camera"
-                    size={30}
-                    color={colors.light}
-                    style={{ position: "absolute", right: 0, bottom: 10 }}
+                    size={40}
+                    color={colors.info}
+                    style={{ position: "absolute", right: -8, bottom: 0 }}
                   />
                 </TouchableOpacity>
               </View>

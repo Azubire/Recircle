@@ -27,13 +27,18 @@ const AdDetails = ({
 }: HomeStackScreenProps<"AdDetails">) => {
   const [ad, setAd] = React.useState<adFilterTypes[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
-  const [showModal, setShowModal] = React.useState(false);
+  const [showModal, setShowModal] = React.useState({
+    error: false,
+    success: false,
+  });
 
   const { user } = useAppSelector(getUser);
   const { id, filter, userId } = route.params;
 
   const [formData, setFormData] = React.useState({
     userId: user.profile.id,
+    name: user.profile.userName,
+    img: user.profile.profileImg,
     adId: id,
     sellerId: userId,
     message: "",
@@ -50,15 +55,21 @@ const AdDetails = ({
   // console.log(ad && ad[0].title);
 
   const handleMessageSeller = async () => {
+    if (user.profile.id === userId) {
+      setShowModal((prev) => ({ ...prev, error: true }));
+      return;
+    }
+
     if (formData.message.length < 1) {
       return;
     }
     try {
       const data = await dispatch(
+        ///@ts-ignore
         notify({ id: formData.userId, body: formData })
       ).unwrap();
       if (!data.error) {
-        setShowModal(true);
+        setShowModal((prev) => ({ ...prev, success: true }));
       }
     } catch (error) {
       console.log("error", error);
@@ -74,8 +85,10 @@ const AdDetails = ({
           {/* modal  */}
           <Portal>
             <Modal
-              visible={showModal}
-              onDismiss={() => setShowModal(false)}
+              visible={showModal.success}
+              onDismiss={() =>
+                setShowModal((prev) => ({ ...prev, success: false }))
+              }
               contentContainerStyle={{
                 width: "80%",
                 // height: 300,
@@ -104,10 +117,47 @@ const AdDetails = ({
                 style={{ marginTop: 16 }}
                 mode="contained"
                 onPress={() => {
-                  setShowModal(false);
+                  setShowModal((prev) => ({ ...prev, success: false }));
                 }}
               >
                 Ok
+              </Button>
+            </Modal>
+          </Portal>
+          <Portal>
+            <Modal
+              visible={showModal.error}
+              onDismiss={() =>
+                setShowModal((prev) => ({ ...prev, error: true }))
+              }
+              contentContainerStyle={{
+                width: "80%",
+                // height: 300,
+                paddingHorizontal: 20,
+                paddingVertical: 35,
+                backgroundColor: "#fff",
+                alignSelf: "center",
+              }}
+            >
+              <Ionicons
+                style={{ alignSelf: "center" }}
+                name="close-circle-outline"
+                size={80}
+                color={"#f43f5e"}
+              />
+              <Title style={{ textAlign: "center" }}>
+                You can't send a message to your self
+              </Title>
+
+              <Button
+                buttonColor={"#f43f5e"}
+                style={{ marginTop: 16 }}
+                mode="contained"
+                onPress={() => {
+                  setShowModal((prev) => ({ ...prev, error: false }));
+                }}
+              >
+                Close
               </Button>
             </Modal>
           </Portal>

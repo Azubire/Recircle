@@ -8,6 +8,7 @@ export type HomeStackParamList = {
   Categories: undefined;
   RecyclersStack: NavigatorScreenParams<RecyclerStackParamList>;
   MyAds: { id: number };
+  NotificationDetails: { id: number };
   AdDetails: { id: number; filter: string; userId: number };
   BecomeRecycler: undefined;
 };

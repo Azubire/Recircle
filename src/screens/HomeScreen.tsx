@@ -66,10 +66,10 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
 
   const getNotification = async () => {
     try {
-      const data = await dispatch(getNotifications());
-      console.log("data", data);
+      const data = await dispatch(getNotifications(user.profile.id));
+      // console.log("data", data);
     } catch (error) {
-      console.log("errowr", error);
+      // console.log("errowr", error);
     }
   };
 
@@ -80,9 +80,10 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
 
   const focused = useIsFocused();
   const notificationCount = useAppSelector(getAllNotificationCount);
-  console.log("---------------", notificationCount);
+  // console.log("---------------", notificationCount);
   React.useEffect(() => {
-    dispatch(getNotifications);
+    // dispatch(getNotifications(user.profile.id));
+    getNotification();
     navigation.setParams({ notificationCount: notificationCount });
   }, [notificationCount, focused, state.data]);
 

@@ -29,23 +29,44 @@ const initialState: NotificationStateTypes = {
   data: [],
 };
 
-export const getNotifications = createAsyncThunk("notifications", async () => {
-  const { data } = await axios.get<NotificationStateTypes>(
-    `${baseUrl}/notifications`
-  );
+export const getNotifications = createAsyncThunk(
+  "notifications",
+  async (id: number) => {
+    const { data } = await axios.get<NotificationStateTypes>(
+      `${baseUrl}/notifications/${id}`
+    );
 
-  return data;
-});
+    return data;
+  }
+);
 
 export const notify = createAsyncThunk(
   "notify",
   async (notificationData: {
     id: number;
-    body: { userId: number; adId: number; sellerId: number; message: string };
+    body: {
+      userId: number;
+      adId: number;
+      name: string;
+      img: string | undefined;
+      sellerId: number;
+      message: string;
+    };
   }) => {
     const { data } = await axios.post<{ error: false; message: string }>(
       `${baseUrl}/notifications/create/${notificationData.id}`,
       notificationData.body
+    );
+
+    return data;
+  }
+);
+
+export const updateNotificationStatus = createAsyncThunk(
+  "notification/update",
+  async (id: number) => {
+    const { data } = await axios.put<{ error: boolean; message: string }>(
+      `${baseUrl}/notifications/update/${id}`
     );
 
     return data;
@@ -91,6 +112,7 @@ const NotificationsSclice = createSlice({
       state.error = true;
       state.status = "failed";
     });
+    builder.addCase(updateNotificationStatus.fulfilled, (state) => {});
   },
 });
 
