@@ -137,8 +137,8 @@ export const getRecycler = (id: number) => (state: RootState) =>
   state.Recycler.data.filter((recycler) => recycler.id === id);
 
 export const getSearchResults = (searchTerm: string) => (state: RootState) => {
-  const res = state.Recycler.data.map((item) =>
-    item.companyName.includes(searchTerm)
+  const res = state.Recycler.data.filter(
+    (item) => item.companyName == searchTerm
   );
 
   // state.Recycler.filter(item=>item.)

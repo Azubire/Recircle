@@ -24,6 +24,7 @@ import axios from "axios";
 import * as secureStore from "expo-secure-store";
 import * as ImagePicker from "expo-image-picker";
 import mime from "mime";
+import { getRecycler } from "../store/features/RecyclerSclice";
 
 const coverImg = require("../../assets/images/cover.jpeg");
 const profileImg = require("../../assets/images/profile.jpeg");
@@ -47,6 +48,7 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
   const [loading, setLoading] = React.useState(true);
 
   const state = useAppSelector(getUser);
+  // const recycler = useAppSelector(getRecycler)
   const dispatch = useAppDispatch();
 
   React.useEffect(() => {
@@ -80,10 +82,11 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
       setRecyclerStatus({ isRecycler: false, isVerified: false });
     }
   };
+  // console.log(recyclerStatus);
 
   React.useEffect(() => {
     getRecyclerStatus();
-  }, []);
+  });
   const { colors } = useTheme();
 
   const handleLogOut = async () => {
@@ -124,7 +127,7 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
   };
 
   const pickImage = async () => {
-    setImage(undefined);
+    // setImage(undefined);
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -134,9 +137,6 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
     // console.log(result);
     if (!result.cancelled) {
       setImage(result);
-      if (image) {
-        await uploadImage();
-      }
     }
   };
 
@@ -223,7 +223,13 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
                 variant="bodyLarge"
                 style={{ marginTop: 8, paddingBottom: 6 }}
               >
-                {user?.profile.userName}
+                {image ? (
+                  <Button mode="elevated" onPress={uploadImage}>
+                    Save Image
+                  </Button>
+                ) : (
+                  user?.profile.userName
+                )}
               </Text>
             </View>
             <SafeAreaView>

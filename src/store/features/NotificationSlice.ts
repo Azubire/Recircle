@@ -19,6 +19,7 @@ export interface NotificationStateTypes {
     body: string;
     avatar: string;
     status: boolean;
+    userId: number;
   }[];
 }
 

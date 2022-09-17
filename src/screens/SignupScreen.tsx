@@ -204,7 +204,7 @@ const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
                   render={({ field: { onChange, ...rest } }) => (
                     <>
                       <TextInput
-                        onChangeText={(firstname) => onChange(firstname)}
+                        onChangeText={onChange}
                         error={Boolean(errors.firstName)}
                         style={{ backgroundColor: colors.light }}
                         mode="outlined"
@@ -230,7 +230,7 @@ const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
                   render={({ field: { onChange, ...rest } }) => (
                     <>
                       <TextInput
-                        onChangeText={(lastname) => onChange(lastname)}
+                        onChangeText={onChange}
                         error={Boolean(errors.lastName)}
                         style={{ backgroundColor: colors.light }}
                         mode="outlined"
@@ -255,10 +255,11 @@ const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
               <Controller
                 name="email"
                 control={control}
+                defaultValue=""
                 render={({ field: { onChange, ...rest } }) => (
                   <>
                     <TextInput
-                      onChangeText={(email) => onChange(email)}
+                      onChangeText={onChange}
                       error={Boolean(errors.email)}
                       style={{ backgroundColor: colors.light }}
                       mode="outlined"
@@ -278,6 +279,7 @@ const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
               <Controller
                 name="password"
                 control={control}
+                defaultValue=""
                 render={({ field: { onChange, value, ...rest } }) => (
                   <>
                     <TextInput
@@ -304,6 +306,7 @@ const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
               <Controller
                 name="confirmPassword"
                 control={control}
+                defaultValue=""
                 render={({ field: { onChange, ...rest } }) => (
                   <>
                     <TextInput

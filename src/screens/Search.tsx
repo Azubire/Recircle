@@ -18,6 +18,8 @@ const Search = ({ navigation }: TabScreenProps<"Search">) => {
   const [searchResult, setSearchResult] = React.useState<initialStateTypes>();
 
   const { colors } = useTheme();
+  const result = useAppSelector(getSearchResults("Mamam"));
+  console.log(result);
 
   const handleSubmit = () => {
     setLoading(true);

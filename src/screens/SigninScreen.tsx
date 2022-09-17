@@ -70,6 +70,7 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
   });
 
   const onSubmit: SubmitHandler<formData> = async (formData) => {
+    console.log(formData);
     setLoading(true);
     try {
       const data = await dispatch(signIn(formData)).unwrap();
@@ -85,6 +86,7 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
         });
       }
     } catch (error) {
+      console.log(error);
       setLoading(false);
       setShowSnackBar((prev) => ({
         show: true,
@@ -166,10 +168,10 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
                   name="email"
                   control={control}
                   defaultValue=""
-                  render={({ field: { onChange }, ...rest }) => (
+                  render={({ field: { onChange, ...rest } }) => (
                     <>
                       <TextInput
-                        onChangeText={(email) => onChange(email)}
+                        onChangeText={onChange}
                         error={Boolean(errors.email)}
                         style={{ backgroundColor: colors.light }}
                         mode="outlined"
@@ -193,7 +195,7 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
                   render={({ field: { onChange, ...rest } }) => (
                     <>
                       <TextInput
-                        onChangeText={(password) => onChange(password)}
+                        onChangeText={onChange}
                         error={Boolean(errors.password)}
                         secureTextEntry
                         style={{ backgroundColor: colors.light }}

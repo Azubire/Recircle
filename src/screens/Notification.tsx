@@ -25,6 +25,7 @@ const Notification = ({
   const state = useAppSelector(getAllNotification);
   const appState = useAppSelector(getUser);
   const dispatch = useAppDispatch();
+  // console.log(state);
 
   React.useEffect(() => {
     dispatch(getNotifications(appState.user.profile.id));
@@ -34,7 +35,7 @@ const Notification = ({
     <SafeAreaView style={{ flex: 1 }}>
       <CustomStatusbar style="light" />
 
-      {state.status === "idle" || state.status === "loading" ? (
+      {state.status === "loading" ? (
         <ActivityIndicator />
       ) : (
         <FlatList
