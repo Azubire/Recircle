@@ -44,9 +44,9 @@ const AppTabs = () => {
       await secureStore.deleteItemAsync("USERTOKEN");
 
       dispatch(removeUser());
-      console.log("user token deleted");
+      // console.log("user token deleted");
     } catch (error) {
-      console.log("error deleteing user token");
+      // console.log("error deleteing user token");
     }
   };
 

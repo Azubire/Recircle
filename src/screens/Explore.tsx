@@ -25,25 +25,22 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
 
   const getAdsFromDB = async () => {
     try {
-      const data = await dispatch(fetchAdverts());
-      // console.log("data----->", data);
-    } catch (error) {
-      // console.log("error---->", error);
-    }
+      await dispatch(fetchAdverts()).unwrap();
+    } catch (error) {}
   };
 
   React.useEffect(() => {
-    getAdsFromDB();
+    if (state.status === "idle") getAdsFromDB();
   }, []);
 
-  const getName = (id: number) => {
-    let name;
-    if (id === userState.user.profile.id) {
-      name = userState.user.profile.userName.split(" ")[1];
-    } else {
-      name = state.status;
-    }
-  };
+  // const getName = (id: number) => {
+  //   let name;
+  //   if (id === userState.user.profile.id) {
+  //     name = userState.user.profile.userName.split(" ")[1];
+  //   } else {
+  //     name = state.status;
+  //   }
+  // };
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar style="light" />
@@ -71,7 +68,7 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                       {/* <Title>{item.title}</Title> */}
                       <Card.Title
                         style={{ marginBottom: 16 }}
-                        title={<Text>{item.User.name.split(" ")[0]}</Text>}
+                        title={<Text>{item.User.name.split(" ")[1]}</Text>}
                         titleStyle={{ marginLeft: 10, marginTop: -20 }}
                         left={() =>
                           item.User.profileImg ? (
@@ -84,10 +81,7 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                           ) : (
                             <Avatar.Text
                               size={45}
-                              label={item.User.name
-                                .split(" ")[0]
-                                .charAt(0)
-                                .toUpperCase()}
+                              label={item.User.name.split(" ")[0]}
                             />
                           )
                         }

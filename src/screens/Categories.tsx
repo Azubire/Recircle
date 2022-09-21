@@ -33,9 +33,9 @@ const Categories = ({ navigation }: HomeStackScreenProps<"Categories">) => {
     if (response.status === "idle") {
       try {
         const data = await dispatch(fetchRecyclingCategories());
-        console.log("data", data);
+        // console.log("data", data);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
     }
   };

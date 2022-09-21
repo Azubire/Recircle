@@ -83,7 +83,7 @@ const BecomeRecycler = ({
     if (categories.status === "failed" || categories.status === "idle") {
       dispatch(fetchRecyclingCategories);
     }
-    console.log("----", categories);
+    // console.log("----", categories);
   }, []);
 
   const pickImage = async () => {
@@ -93,7 +93,7 @@ const BecomeRecycler = ({
       aspect: [4, 3],
       quality: 1,
     });
-    console.log(result);
+    // console.log(result);
     if (!result.cancelled) {
       setImage(result);
       setIsImageSet(true);
@@ -144,7 +144,7 @@ const BecomeRecycler = ({
   //function to submit form after validation
   const onSubmit: SubmitHandler<formData> = async (data) => {
     if (!image) {
-      console.log("select image");
+      // console.log("select image");
       return;
     }
 
@@ -158,7 +158,7 @@ const BecomeRecycler = ({
       navigation.goBack();
       reset();
     } catch (error) {
-      console.log("error", error);
+      // console.log("error", error);
     }
   };
 
@@ -192,7 +192,7 @@ const BecomeRecycler = ({
                       <Picker
                         selectedValue={selectedCategory}
                         onValueChange={(itemValue) => {
-                          console.log(itemValue);
+                          // console.log(itemValue);
                           setSelectedCategory(itemValue);
                           //@ts-ignore
                           return onChange(itemValue);

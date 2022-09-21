@@ -2,19 +2,9 @@ import { ActivityIndicator, FlatList, Image, View } from "react-native";
 import React from "react";
 import { AppDrawerScreenProps } from "../navigations/AppDrawer/Types";
 import CustomStatusbar from "../components/CustomStatusbar";
-import {
-  Button,
-  Card,
-  Paragraph,
-  Text,
-  TextInput,
-  Title,
-  useTheme,
-} from "react-native-paper";
+import { Button, Card, TextInput, Title, useTheme } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
-import { Ionicons } from "@expo/vector-icons";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
-import { adFilterTypes, getAd, getAllAds } from "../store/features/AdSlice";
 import dateFormat from "dateformat";
 import {
   getUserAds,
@@ -92,9 +82,9 @@ const History = ({ navigation }: AppDrawerScreenProps<"History">) => {
         handleValueChange(1);
         setLoading(false);
       }
-      console.log("data", data);
+      // console.log("data", data);
       setFilterItems(data.data.user);
-      console.log("userrr", data.data.user);
+      // console.log("userrr", data.data.user);
     } catch (error) {
       setLoading(false);
     }

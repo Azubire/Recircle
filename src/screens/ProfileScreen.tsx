@@ -7,15 +7,13 @@ import {
   View,
 } from "react-native";
 import React from "react";
-import Center from "../components/Center";
-import { Button, Text, TextInput, Title, useTheme } from "react-native-paper";
+import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import CustomStatusbar from "../components/CustomStatusbar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import {
   getUser,
   removeUser,
-  stateProps,
   updateProfileImage,
 } from "../store/features/AuthSlice";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
@@ -24,11 +22,7 @@ import axios from "axios";
 import * as secureStore from "expo-secure-store";
 import * as ImagePicker from "expo-image-picker";
 import mime from "mime";
-import { getRecycler } from "../store/features/RecyclerSclice";
-
-const coverImg = require("../../assets/images/cover.jpeg");
-const profileImg = require("../../assets/images/profile.jpeg");
-const baseUrl = "http://192.168.43.35:3001";
+import { baseUrl } from "../utils/helpers";
 
 const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
   const [user, setUser] = React.useState<{
@@ -51,19 +45,6 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
   // const recycler = useAppSelector(getRecycler)
   const dispatch = useAppDispatch();
 
-  React.useEffect(() => {
-    setUser((prev) => ({
-      profile: {
-        userName: state.user.profile.userName,
-        email: state.user.profile.email,
-        coverImg: state.user.profile.coverImg,
-        profileImg: state.user.profile.profileImg,
-      },
-    }));
-    setLoading(false);
-  }, [state.user.profile]);
-  // console.log(user);
-
   const getRecyclerStatus = async () => {
     try {
       const { data } = await axios.get(
@@ -82,11 +63,23 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
       setRecyclerStatus({ isRecycler: false, isVerified: false });
     }
   };
-  // console.log(recyclerStatus);
+
+  React.useEffect(() => {
+    setUser((prev) => ({
+      profile: {
+        userName: state.user.profile.userName,
+        email: state.user.profile.email,
+        coverImg: state.user.profile.coverImg,
+        profileImg: state.user.profile.profileImg,
+      },
+    }));
+    setLoading(false);
+  }, [state.user.profile]);
+  // console.log(user);
 
   React.useEffect(() => {
     getRecyclerStatus();
-  });
+  }, []);
   const { colors } = useTheme();
 
   const handleLogOut = async () => {
@@ -94,9 +87,9 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
       await secureStore.deleteItemAsync("USERTOKEN");
 
       dispatch(removeUser());
-      console.log("user token deleted");
+      // console.log("user token deleted");
     } catch (error) {
-      console.log("error deleteing user token");
+      // console.log("error deleteing user token");
     }
   };
 
@@ -118,10 +111,10 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
       const formData = createFormData(image);
       const newData = { id: state.user.profile.id, image: formData };
       const data = await dispatch(updateProfileImage(newData)).unwrap();
-      console.log("datha", data);
+      // console.log("datha", data);
       setImage(undefined);
     } catch (error) {
-      console.log("error", error);
+      // console.log("error", error);
       setImage(undefined);
     }
   };
@@ -225,7 +218,7 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
               >
                 {image ? (
                   <Button mode="elevated" onPress={uploadImage}>
-                    Save Image
+                    click to save image
                   </Button>
                 ) : (
                   user?.profile.userName
@@ -237,30 +230,17 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
                 <Text>
                   Click below to become a recycler and set up your profile
                 </Text>
-                {recyclerStatus.isRecycler ? (
-                  recyclerStatus.isVerified ? (
-                    <Button
-                      mode="outlined"
-                      textColor={colors.success}
-                      style={{
-                        alignSelf: "center",
-                        borderColor: colors.success,
-                      }}
-                    >
-                      Verified
-                    </Button>
-                  ) : (
-                    <Button
-                      mode="outlined"
-                      textColor={colors.info}
-                      style={{
-                        alignSelf: "center",
-                        borderColor: colors.info,
-                      }}
-                    >
-                      Verification Pending
-                    </Button>
-                  )
+                {recyclerStatus?.isVerified ? (
+                  <Button
+                    mode="outlined"
+                    textColor={colors.success}
+                    style={{
+                      alignSelf: "center",
+                      borderColor: colors.success,
+                    }}
+                  >
+                    Verified
+                  </Button>
                 ) : (
                   <Button
                     onPress={() => {
@@ -268,7 +248,10 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
                     }}
                     mode="outlined"
                     textColor={colors.danger}
-                    style={{ alignSelf: "center", borderColor: colors.danger }}
+                    style={{
+                      alignSelf: "center",
+                      borderColor: colors.danger,
+                    }}
                   >
                     Register As Recycler
                   </Button>

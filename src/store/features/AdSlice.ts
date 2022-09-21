@@ -1,13 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { ImageSourcePropType } from "react-native";
 import { RootState } from "..";
-import { useAppSelector } from "../../hooks/reduxhooks";
-import Search from "../../screens/Search";
-import { formData } from "../../screens/Sell";
-import { getAuth } from "./AuthSlice";
-
-const baseUrl = "http://192.168.43.35:3001";
+import { baseUrl } from "../../utils/helpers";
 
 export interface adFilterTypes {
   id: number;
@@ -84,6 +78,13 @@ export const fetchAdverts = createAsyncThunk("get/ads", async () => {
   return data;
 });
 
+export const deleteAd = createAsyncThunk("ad/delete", async (id: number) => {
+  const { data } = await axios.delete<{ error: boolean; message: string }>(
+    `${baseUrl}/adverts/delete/${id}`
+  );
+  return data;
+});
+
 const AdSlice = createSlice({
   name: "Ad",
   initialState,
@@ -120,6 +121,20 @@ const AdSlice = createSlice({
       state.status = "failed";
       state.error = true;
     });
+    builder
+      .addCase(deleteAd.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteAd.fulfilled, (state, action) => {
+        if (action.payload.error) {
+          state.status = "failed";
+        } else {
+          state.status = "success";
+        }
+      })
+      .addCase(deleteAd.rejected, (state) => {
+        state.status = "failed";
+      });
   },
 });
 

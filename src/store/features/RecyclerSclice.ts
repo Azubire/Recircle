@@ -1,12 +1,7 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { AppState, ImageSourcePropType } from "react-native";
 import { RootState } from "..";
-import { useAppSelector } from "../../hooks/reduxhooks";
-const img1 = require("../../../assets/images/r1.jpg");
-const img2 = require("../../../assets/images/r2.jpg");
-const img3 = require("../../../assets/images/r3.jpg");
-const baseUrl = "http://192.168.43.35:3001";
+import { baseUrl } from "../../utils/helpers";
 
 export interface ResponseType {
   error: boolean;
@@ -215,3 +210,5 @@ export default RecyclerSlice.reducer;
 //     verified: true,
 //     ratings: 122,
 //   },
+
+// Object.create

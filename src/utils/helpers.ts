@@ -21,3 +21,5 @@ export const getUserFromSecureStore = async (key: string) => {
 export const setUserToSecureStore = (props: UserInterface) => {
   SecureStore.setItemAsync(props.key, JSON.stringify(props.payload));
 };
+
+export const baseUrl = "https://lets-recycle.herokuapp.com";

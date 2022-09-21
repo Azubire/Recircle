@@ -1,10 +1,4 @@
-import {
-  View,
-  ScrollView,
-  Image,
-  ImageSourcePropType,
-  ActivityIndicator,
-} from "react-native";
+import { View, ScrollView, Image, ActivityIndicator } from "react-native";
 import React from "react";
 import { RecyclerStackScreenProps } from "../navigations/RecyclersStack/types";
 import { Button, Text, useTheme } from "react-native-paper";
@@ -94,20 +88,6 @@ const RecyclerDetails = ({
                   {response[0].profile}
                 </Text>
               </View>
-
-              {/* cta button */}
-              {/* <Button
-                mode="contained"
-                // buttonColor={colors.secondary}
-                style={{
-                  marginTop: 24,
-                  marginBottom: 16,
-                  width: "70%",
-                  alignSelf: "center",
-                }}
-              >
-                Sell to us
-              </Button> */}
             </View>
           </View>
         </ScrollView>

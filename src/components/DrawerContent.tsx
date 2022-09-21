@@ -114,9 +114,9 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
       await secureStore.deleteItemAsync("USERTOKEN");
 
       dispatch(removeUser());
-      console.log("user token deleted");
+      // console.log("user token deleted");
     } catch (error) {
-      console.log("error deleteing user token");
+      // console.log("error deleteing user token");
     }
   };
 
@@ -209,15 +209,15 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
             }}
           >
             <TouchableOpacity>
-             { user.user.profile.profileImg ? (
-              <Avatar.Image
-                size={30}
-                source={{
-                  uri: `http://192.168.43.35:3001/images/categoryImages/${user.user.profile?.profileImg}`,
-                }}
-              />
+              {user.user.profile.profileImg ? (
+                <Avatar.Image
+                  size={30}
+                  source={{
+                    uri: `http://192.168.43.35:3001/images/categoryImages/${user.user.profile?.profileImg}`,
+                  }}
+                />
               ) : (
-              <Avatar.Image size={30} source={user.defaultImg.profileImg} />
+                <Avatar.Image size={30} source={user.defaultImg.profileImg} />
               )}
             </TouchableOpacity>
             <TouchableOpacity

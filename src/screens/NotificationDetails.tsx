@@ -39,7 +39,6 @@ const NotificationDetails = ({
     success: false,
   });
 
-  const { colors } = useTheme();
   const state = useAppSelector(getAllNotification);
   const appState = useAppSelector(getUser);
   const dispatch = useAppDispatch();

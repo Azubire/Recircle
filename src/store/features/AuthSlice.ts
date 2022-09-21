@@ -1,17 +1,11 @@
-import {
-  createAsyncThunk,
-  createSlice,
-  PayloadAction,
-  SerializedError,
-} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { ImageSourcePropType } from "react-native";
 import { RootState } from "..";
+import { baseUrl } from "../../utils/helpers";
 
-export const baseUrl = "http://192.168.43.35:3001";
 const coverImg = require("../../../assets/images/default_cover.jpg");
 const profileImg = require("../../../assets/images/default_user.jpg");
-// const profileImg = require("../../../assets/images/");
 interface axiosResponse {
   error: boolean;
   message: string;

@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import UserReducer from "./features/userSlice";
 import AuthReducer from "./features/AuthSlice";
 import RecyclerReducer from "./features/RecyclerSclice";
 import AdReducer from "./features/AdSlice";

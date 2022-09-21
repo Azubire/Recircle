@@ -16,10 +16,7 @@ import {
 import dateFormat from "dateformat";
 import { Ionicons } from "@expo/vector-icons";
 import { getUser } from "../store/features/AuthSlice";
-import {
-  getAllNotification,
-  notify,
-} from "../store/features/NotificationSlice";
+import { notify } from "../store/features/NotificationSlice";
 
 const AdDetails = ({
   navigation,

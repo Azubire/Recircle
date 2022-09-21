@@ -44,6 +44,7 @@ const schema = Joi.object<any, false, formData>({
 // const auth = getAuth();
 const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [showPass, setShowPass] = React.useState(true);
   const [showModal, setShowModal] = React.useState(false);
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
@@ -259,7 +260,7 @@ const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
                 render={({ field: { onChange, ...rest } }) => (
                   <>
                     <TextInput
-                      onChangeText={onChange}
+                      onChangeText={(text) => onChange(text.trim())}
                       error={Boolean(errors.email)}
                       style={{ backgroundColor: colors.light }}
                       mode="outlined"
@@ -286,11 +287,16 @@ const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
                       value={value}
                       onChangeText={(password) => onChange(password)}
                       error={Boolean(errors.password)}
-                      secureTextEntry
+                      secureTextEntry={showPass}
                       style={{ backgroundColor: colors.light }}
                       mode="outlined"
                       placeholder="at least 8 characters"
-                      right={<TextInput.Icon name="eye" />}
+                      right={
+                        <TextInput.Icon
+                          name="eye"
+                          onPress={() => setShowPass((prev) => !prev)}
+                        />
+                      }
                       {...rest}
                     />
                     <HelperText type="error" visible={Boolean(errors.password)}>

@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { RootState } from "..";
-import { baseUrl } from "./AuthSlice";
+import { baseUrl } from "../../utils/helpers";
 
 export interface UserAds {
   error: boolean;

@@ -23,7 +23,6 @@ import CustomStatusbar from "../components/CustomStatusbar";
 import {
   fetchHomeCategory,
   getHomeCategory,
-  HomeCategorySliceTypes,
 } from "../store/features/HomeCategorySlice";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import {
@@ -66,7 +65,7 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
 
   const getNotification = async () => {
     try {
-      const data = await dispatch(getNotifications(user.profile.id));
+      const data = await dispatch(getNotifications(user.profile.id)).unwrap();
       // console.log("data", data);
     } catch (error) {
       // console.log("errowr", error);

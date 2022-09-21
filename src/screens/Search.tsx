@@ -1,8 +1,7 @@
 import { View, Text, ScrollView, ActivityIndicator } from "react-native";
 import React from "react";
 import { TabScreenProps } from "../navigations/appTabs/types";
-import { Button, Searchbar, Title, useTheme } from "react-native-paper";
-import CustomStatusbar from "../components/CustomStatusbar";
+import { Searchbar, Title, useTheme } from "react-native-paper";
 import { useAppSelector } from "../hooks/reduxhooks";
 import {
   getSearchResults,
@@ -19,7 +18,7 @@ const Search = ({ navigation }: TabScreenProps<"Search">) => {
 
   const { colors } = useTheme();
   const result = useAppSelector(getSearchResults("Mamam"));
-  console.log(result);
+  // console.log(result);
 
   const handleSubmit = () => {
     setLoading(true);

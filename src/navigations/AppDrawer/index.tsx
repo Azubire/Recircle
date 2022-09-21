@@ -1,19 +1,11 @@
 import React, { useEffect } from "react";
 import {
   createDrawerNavigator,
-  DrawerContentComponentProps,
-  DrawerNavigationProp,
   DrawerScreenProps,
 } from "@react-navigation/drawer";
-import HomeStack from "../AppStack/AppStack";
 import Settings from "../../screens/SettingsScreen";
 import AppTabs from "../appTabs/AppTabs";
-import {
-  Button,
-  Drawer as PaperDrawer,
-  Text,
-  useTheme,
-} from "react-native-paper";
+import { Drawer as PaperDrawer, useTheme } from "react-native-paper";
 import { DrawerParamList } from "./Types";
 import {
   Ionicons,

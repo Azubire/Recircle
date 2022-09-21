@@ -20,6 +20,7 @@
     "@reduxjs/toolkit": "^1.8.3",
     "axios": "^0.27.2",
     "dateformat": "^5.0.3",
+    "dotenv": "^16.0.2",
     "expo": "~45.0.0",
     "expo-image-picker": "~13.1.1",
     "expo-linear-gradient": "~11.3.0",

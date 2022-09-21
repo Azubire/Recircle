@@ -1,11 +1,4 @@
-import {
-  View,
-  ScrollView,
-  ActivityIndicator,
-  ImageSourcePropType,
-  Platform,
-  Image,
-} from "react-native";
+import { View, ScrollView, ActivityIndicator, Image } from "react-native";
 import React from "react";
 import { TabScreenProps } from "../navigations/appTabs/types";
 import {
@@ -28,7 +21,6 @@ import { getUser } from "../store/features/AuthSlice";
 import * as ImagePicker from "expo-image-picker";
 import { createAd, getAds } from "../store/features/AdSlice";
 import mime from "mime";
-import { useNavigation } from "@react-navigation/native";
 
 export type formData = {
   title: string;
@@ -88,7 +80,7 @@ const Sell = ({ route, navigation }: TabScreenProps<"Sell">) => {
       aspect: [4, 3],
       quality: 1,
     });
-    console.log(result);
+    // console.log(result);
     if (!result.cancelled) {
       setImage(result);
       setIsImageSet(true);
@@ -115,22 +107,22 @@ const Sell = ({ route, navigation }: TabScreenProps<"Sell">) => {
 
   const onSubmit: SubmitHandler<formData> = async (data) => {
     if (!image) {
-      console.log("select image");
+      // console.log("select image");
       return;
     }
 
     const newData = createFormData(image, data);
-    console.log(newData);
+    // console.log(newData);
     try {
       const data = await dispatch(createAd({ newData, userToken })).unwrap();
-      console.log(data);
-      if (adState.status === "success") {
-        navigation.navigate("MyAds", { id: user.profile.id });
+      // console.log(data);
+      if (!data.error) {
         reset();
+        navigation.navigate("MyAds", { id: user.profile.id });
       }
     } catch (error) {
-      console.log(error);
-      console.log(adState.status);
+      // console.log(error);
+      // console.log(adState.status);
     }
   };
 
@@ -202,7 +194,7 @@ const Sell = ({ route, navigation }: TabScreenProps<"Sell">) => {
                         <Picker
                           selectedValue={selectedCategory}
                           onValueChange={(itemValue) => {
-                            console.log(itemValue);
+                            // console.log(itemValue);
                             setSelectedCategory(itemValue);
                             //@ts-ignore
                             return onChange(itemValue);
@@ -363,14 +355,11 @@ const Sell = ({ route, navigation }: TabScreenProps<"Sell">) => {
               mode="outlined"
               textColor={colors.primary}
               icon={() => (
-                <Ionicons
-                  name="add-circle-outline"
-                  size={20}
-                  color={colors.primary}
-                />
+                <Ionicons name="remove" size={20} color={colors.danger} />
               )}
+              onPress={() => reset()}
             >
-              Add Category
+              Clear form
             </Button>
             <Button
               loading={Boolean(adState.status === "loading")}

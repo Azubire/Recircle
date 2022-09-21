@@ -40,6 +40,7 @@ const schema = Joi.object<any, true, formData>({
 
 const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
   const [loading, setLoading] = React.useState(false);
+  const [showPass, setShowPass] = React.useState(true);
   const [showSnackBar, setShowSnackBar] = React.useState({
     show: false,
     message: "",
@@ -74,6 +75,7 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
     setLoading(true);
     try {
       const data = await dispatch(signIn(formData)).unwrap();
+      console.log(data);
       if (data.error) {
         setShowSnackBar((prev) => ({ show: true, message: data.message }));
       } else if (!data.error) {
@@ -93,8 +95,8 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
         message: "something went wront try again",
       }));
     } finally {
-      console.log("auth", state.auth);
-      console.log("user", state.user);
+      // console.log("auth", state.auth);
+      // console.log("user", state.user);
     }
   };
 
@@ -171,7 +173,7 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
                   render={({ field: { onChange, ...rest } }) => (
                     <>
                       <TextInput
-                        onChangeText={onChange}
+                        onChangeText={(text) => onChange(text.trim())}
                         error={Boolean(errors.email)}
                         style={{ backgroundColor: colors.light }}
                         mode="outlined"
@@ -197,11 +199,16 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
                       <TextInput
                         onChangeText={onChange}
                         error={Boolean(errors.password)}
-                        secureTextEntry
+                        secureTextEntry={showPass}
                         style={{ backgroundColor: colors.light }}
                         mode="outlined"
                         placeholder="at least 8 characters"
-                        right={<TextInput.Icon name="eye" />}
+                        right={
+                          <TextInput.Icon
+                            name="eye"
+                            onPress={() => setShowPass((prev) => !prev)}
+                          />
+                        }
                         {...rest}
                       />
                       <HelperText

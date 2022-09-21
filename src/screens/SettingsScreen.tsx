@@ -1,9 +1,6 @@
 import { Image, SafeAreaView, View } from "react-native";
 import React from "react";
-import Center from "../components/Center";
-import { NavigationProp } from "@react-navigation/native";
-import { screenParamList } from "../navigations/SettingStack/types";
-import { Button, Text, Title } from "react-native-paper";
+import { Text, Title } from "react-native-paper";
 import { AppDrawerScreenProps } from "../navigations/AppDrawer/Types";
 import CustomStatusbar from "../components/CustomStatusbar";
 import { useAppSelector } from "../hooks/reduxhooks";

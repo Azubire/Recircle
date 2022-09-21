@@ -1,14 +1,12 @@
 import { View, FlatList, SafeAreaView, ActivityIndicator } from "react-native";
 import React from "react";
 import { Avatar, Button, Card, Text, useTheme } from "react-native-paper";
-import { HomeStackScreenProps } from "../navigations/AppStack/types";
 import { Ionicons, Octicons } from "@expo/vector-icons";
 import { RecyclerStackScreenProps } from "../navigations/RecyclersStack/types";
 import CustomStatusbar from "../components/CustomStatusbar";
 import {
   fetchRecylers,
   getAllRecyclers,
-  initialStateTypes,
 } from "../store/features/RecyclerSclice";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import { getAuth } from "../store/features/AuthSlice";
@@ -23,9 +21,9 @@ const Recyclers = ({ navigation }: RecyclerStackScreenProps<"Recyclers">) => {
   const getData = async () => {
     try {
       const data = await dispatch(fetchRecylers(user.userToken)).unwrap();
-      console.log("success", data);
+      // console.log("success", data);
     } catch (error) {
-      console.log("error", error);
+      // console.log("error", error);
     }
   };
 

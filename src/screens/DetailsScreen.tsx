@@ -5,7 +5,7 @@ import { Text } from "react-native-paper";
 import { HomeStackScreenProps } from "../navigations/AppStack/types";
 import CustomStatusbar from "../components/CustomStatusbar";
 
-const Details: React.FC<HomeStackScreenProps<"Details">> = ({ navigation }) => {
+const Details = () => {
   return (
     <Center>
       <CustomStatusbar style="light" />

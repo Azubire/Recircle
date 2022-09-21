@@ -2,11 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { ImageSourcePropType } from "react-native";
 import { RootState } from "..";
 import axios from "axios";
-
-const icon1 = require("../../../assets/images/icon1.png");
-const icon2 = require("../../../assets/images/icon2.png");
-const icon3 = require("../../../assets/images/icon3.png");
-const icon4 = require("../../../assets/images/icon4.png");
+import { baseUrl } from "../../utils/helpers";
 
 export interface HomeCategorySliceTypes {
   status: "idle" | "loading" | "success" | "failed";
@@ -37,35 +33,12 @@ const initialHomeCategory: HomeCategorySliceTypes = {
   message: "",
   data: [],
 };
-// {
-//   id: 1,
-//   icon: icon1,
-//   title: "Sell",
-//   screen: "Sell",
-// },
-// {
-//   id: 2,
-//   icon: icon2,
-//   title: "Recyclers",
-//   screen: "RecyclersStack",
-// },
-// {
-//   id: 3,
-//   icon: icon3,
-//   title: "Categories",
-//   screen: "Categories",
-// },
-// {
-//   id: 4,
-//   icon: icon4,
-//   title: "My Ads",
-//   screen: "MyAds",
-// },
+
 export const fetchHomeCategory = createAsyncThunk(
   "home/Categories",
   async (token: string) => {
     const { data } = await axios.get<axiosReponse>(
-      "http://192.168.43.35:3001/home/categories",
+      `${baseUrl}/home/categories`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }

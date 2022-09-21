@@ -1,13 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { ImageSourcePropType } from "react-native";
 import { RootState } from "..";
-
-const img1 = require("../../../assets/images/azubire.jpg");
-const img2 = require("../../../assets/images/cover.jpeg");
-const img3 = require("../../../assets/images/profile.jpeg");
-
-const baseUrl = "http://192.168.43.35:3001";
+import { baseUrl } from "../../utils/helpers";
 
 export interface NotificationStateTypes {
   error: boolean;
