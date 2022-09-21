@@ -16,12 +16,12 @@ import { TabScreenProps } from "../navigations/appTabs/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import dateFormat from "dateformat";
 import { getUser } from "../store/features/AuthSlice";
+import { baseUrl } from "../utils/helpers";
 
 const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const state = useAppSelector(getAds);
-  const userState = useAppSelector(getUser);
 
   const getAdsFromDB = async () => {
     try {
@@ -33,14 +33,6 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
     if (state.status === "idle") getAdsFromDB();
   }, []);
 
-  // const getName = (id: number) => {
-  //   let name;
-  //   if (id === userState.user.profile.id) {
-  //     name = userState.user.profile.userName.split(" ")[1];
-  //   } else {
-  //     name = state.status;
-  //   }
-  // };
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar style="light" />
@@ -75,7 +67,7 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                             <Avatar.Image
                               size={45}
                               source={{
-                                uri: `http://192.168.43.35:3001/images/categoryImages/${item.User.profileImg}`,
+                                uri: `${baseUrl}/images/categoryImages/${item.User.profileImg}`,
                               }}
                             />
                           ) : (
@@ -88,7 +80,7 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                       />
                       <Card.Cover
                         source={{
-                          uri: `http://192.168.43.35:3001/images/ads/${item.adImage}`,
+                          uri: `${baseUrl}/images/ads/${item.adImage}`,
                         }}
                       />
                       {/* <Title>{item.title}</Title> */}
@@ -159,7 +151,7 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                             <Avatar.Image
                               size={45}
                               source={{
-                                uri: `http://192.168.43.35:3001/images/categoryImages/${item.User.profileImg}`,
+                                uri: `${baseUrl}/images/categoryImages/${item.User.profileImg}`,
                               }}
                             />
                           ) : (
@@ -175,7 +167,7 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                       />
                       <Card.Cover
                         source={{
-                          uri: `http://192.168.43.35:3001/images/ads/${item.adImage}`,
+                          uri: `${baseUrl}/images/ads/${item.adImage}`,
                         }}
                       />
                       {/* <Title>{item.title}</Title> */}
@@ -241,7 +233,7 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                             <Avatar.Image
                               size={45}
                               source={{
-                                uri: `http://192.168.43.35:3001/images/categoryImages/${item.User.profileImg}`,
+                                uri: `${baseUrl}/images/categoryImages/${item.User.profileImg}`,
                               }}
                             />
                           ) : (
@@ -257,7 +249,7 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
                       />
                       <Card.Cover
                         source={{
-                          uri: `http://192.168.43.35:3001/images/ads/${item.adImage}`,
+                          uri: `${baseUrl}/images/ads/${item.adImage}`,
                         }}
                       />
                       {/* <Title>{item.title}</Title> */}

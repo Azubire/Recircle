@@ -1,30 +1,19 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   createDrawerNavigator,
   DrawerScreenProps,
 } from "@react-navigation/drawer";
 import Settings from "../../screens/SettingsScreen";
 import AppTabs from "../appTabs/AppTabs";
-import { Drawer as PaperDrawer, useTheme } from "react-native-paper";
+import { useTheme } from "react-native-paper";
 import { DrawerParamList } from "./Types";
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import {
-  Image,
-  TouchableHighlight,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native";
 import DrawerContent from "../../components/DrawerContent";
 import History from "../../screens/History";
 import AboutUS from "../../screens/AboutUS";
 import ContactUs from "../../screens/ContactUs";
 import Notification from "../../screens/Notification";
-import { StatusBar } from "expo-status-bar";
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
 
@@ -37,8 +26,6 @@ const AppDrawer = () => {
         navigation,
         route,
       }: DrawerScreenProps<DrawerParamList>) => {
-        // console.log("------->>>", sta te.);
-
         return {
           headerLeft: (props) => (
             <TouchableOpacity

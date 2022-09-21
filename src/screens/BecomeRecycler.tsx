@@ -2,9 +2,7 @@ import {
   View,
   ScrollView,
   SafeAreaView,
-  ImageSourcePropType,
   KeyboardAvoidingView,
-  Platform,
   Image,
 } from "react-native";
 import React, { useState } from "react";
@@ -13,10 +11,8 @@ import { HomeStackScreenProps } from "../navigations/AppStack/types";
 import {
   Button,
   HelperText,
-  Snackbar,
   Text,
   TextInput,
-  Title,
   useTheme,
 } from "react-native-paper";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
@@ -24,7 +20,6 @@ import {
   fetchRecyclingCategories,
   getAllCategory,
 } from "../store/features/RecyclingCategorySlice";
-import MultiSelect from "react-native-multiple-select";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";

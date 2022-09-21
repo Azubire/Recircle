@@ -5,6 +5,7 @@ import { AppDrawerScreenProps } from "../navigations/AppDrawer/Types";
 import CustomStatusbar from "../components/CustomStatusbar";
 import { useAppSelector } from "../hooks/reduxhooks";
 import { getUser } from "../store/features/AuthSlice";
+import { baseUrl } from "../utils/helpers";
 
 const Settings = ({ navigation }: AppDrawerScreenProps<"Settings">) => {
   const state = useAppSelector(getUser);
@@ -16,7 +17,7 @@ const Settings = ({ navigation }: AppDrawerScreenProps<"Settings">) => {
         {state.user?.profile.coverImg ? (
           <Image
             source={{
-              uri: `http://192.168.43.35:3001/images/categoryImages/${state.user?.profile.coverImg}`,
+              uri: `${baseUrl}/images/categoryImages/${state.user?.profile.coverImg}`,
             }}
             resizeMode="cover"
             style={{

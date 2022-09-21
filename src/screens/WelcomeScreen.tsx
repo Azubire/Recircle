@@ -5,8 +5,6 @@ import { Button, Text, useTheme } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import CustomStatusbar from "../components/CustomStatusbar";
 import { AuthScreenProps } from "../navigations/authStack/types";
-import { useAppSelector } from "../hooks/reduxhooks";
-import { getUser } from "../store/features/AuthSlice";
 
 const WelcomeScreen = ({ navigation }: AuthScreenProps<"Welcome">) => {
   const { colors } = useTheme();

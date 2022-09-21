@@ -62,28 +62,8 @@ const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
   } = useForm<formData>({
     defaultValues: {},
     resolver: joiResolver(schema),
-    // resolver: async (data, context, options) => {
-    //   // you can debug your validation schema here
-    //   // console.log("formData", data);
-    //   console.log(
-    //     "validation result",
-    //     await joiResolver(schema)(data, context, options)
-    //   );
-    //   return joiResolver(schema)(data, context, options);
-    // },
   });
-  // React.useEffect(() => {
-  //   console.log("state", state);
-  // }, [auth.status]);
 
-  // if (auth.status === "loading") {
-  //   setLoading(true);
-  // }
-  //else if (auth.status === "failed" || auth.status === "idle") {
-  //   setLoading(false);
-  // } else if (auth.error && auth.message) {
-  //   console.log(auth.message);
-  // }
   const onSubmit: SubmitHandler<formData> = async (data) => {
     setLoading(true);
     const { confirmPassword, ...rest } = data;
@@ -317,12 +297,17 @@ const SignupScreen = ({ navigation }: AuthScreenProps<"Signup">) => {
                   <>
                     <TextInput
                       onChangeText={(text) => onChange(text)}
-                      secureTextEntry
+                      secureTextEntry={showPass}
                       style={{ backgroundColor: colors.light }}
                       mode="outlined"
                       error={Boolean(errors.confirmPassword)}
-                      placeholder="repeat password "
-                      right={<TextInput.Icon name="eye" />}
+                      placeholder="repeat password"
+                      right={
+                        <TextInput.Icon
+                          name="eye"
+                          onPress={() => setShowPass((prev) => !prev)}
+                        />
+                      }
                       {...rest}
                     />
                     <HelperText

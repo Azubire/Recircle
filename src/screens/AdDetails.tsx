@@ -1,7 +1,7 @@
 import { View, ScrollView, ActivityIndicator, Image } from "react-native";
 import React from "react";
 import { HomeStackScreenProps } from "../navigations/AppStack/types";
-import { adFilterTypes, getAd, getAds } from "../store/features/AdSlice";
+import { adFilterTypes, getAd } from "../store/features/AdSlice";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import {
   Button,
@@ -11,12 +11,12 @@ import {
   Text,
   TextInput,
   Title,
-  useTheme,
 } from "react-native-paper";
 import dateFormat from "dateformat";
 import { Ionicons } from "@expo/vector-icons";
 import { getUser } from "../store/features/AuthSlice";
 import { notify } from "../store/features/NotificationSlice";
+import { baseUrl } from "../utils/helpers";
 
 const AdDetails = ({
   navigation,
@@ -43,7 +43,6 @@ const AdDetails = ({
 
   const response = useAppSelector(getAd(filter, id));
   const dispatch = useAppDispatch();
-  const colors = useTheme();
 
   React.useEffect(() => {
     setAd(response);
@@ -162,7 +161,7 @@ const AdDetails = ({
           <View>
             <Image
               source={{
-                uri: `http://192.168.43.35:3001/images/ads/${ad[0].adImage}`,
+                uri: `${baseUrl}/images/ads/${ad[0].adImage}`,
               }}
               style={{ width: "100%", height: 200 }}
               resizeMode="cover"

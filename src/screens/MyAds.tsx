@@ -23,16 +23,10 @@ import { deleteAd, getAds } from "../store/features/AdSlice";
 import dateFormat from "dateformat";
 
 const MyAds = ({ navigation, route }: HomeStackScreenProps<"MyAds">) => {
-  // const [myAds, setMyAds] = React.useState<adFilterTypes[]>();
-  const [loading, setLoading] = React.useState<boolean>(true);
-  // const [loading, setLoading] = React.useState<boolean>(true);
-
   const dispatch = useAppDispatch();
   const { status, data } = useAppSelector(getUserAdsState);
-  const state = useAppSelector(getAds);
   const { colors } = useTheme();
   const { id } = route.params;
-  // console.log(id);
 
   const myAds = async (id: string) => {
     try {

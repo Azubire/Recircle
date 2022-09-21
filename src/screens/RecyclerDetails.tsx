@@ -10,28 +10,16 @@ import {
 } from "../store/features/RecyclerSclice";
 import { useAppSelector } from "../hooks/reduxhooks";
 import dateFormat from "dateformat";
+import { baseUrl } from "../utils/helpers";
 
 const RecyclerDetails = ({
   route,
 }: RecyclerStackScreenProps<"RecyclerDetails">) => {
-  const [recycler, setRecycler] = React.useState<initialStateTypes[] | null>(
-    null
-  );
-
-  const [loading, setLoading] = React.useState<boolean>(true);
-
   const { colors } = useTheme();
   const { id } = route.params;
 
   const response = useAppSelector(getRecycler(id));
   const state = useAppSelector(getAllRecyclers);
-
-  React.useEffect(() => {
-    setRecycler(response);
-    setLoading(false);
-  }, [id]);
-
-  // console.log(recycler);
 
   return (
     <>
@@ -45,7 +33,7 @@ const RecyclerDetails = ({
             <View>
               <Image
                 source={{
-                  uri: `http://192.168.43.35:3001/images/recyclers/${response[0].profileImg}`,
+                  uri: `${baseUrl}/images/recyclers/${response[0].profileImg}`,
                 }}
                 resizeMode="cover"
                 style={{ width: "100%", height: 200 }}

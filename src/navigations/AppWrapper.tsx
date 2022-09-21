@@ -3,8 +3,6 @@ import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import HomeStack from "./AppStack/AppStack";
 import {
   getUser,
-  setUser,
-  signIn,
   verifyToken,
   verifyTokenData,
 } from "../store/features/AuthSlice";
@@ -81,8 +79,6 @@ const AppWrapper = () => {
       <NavigationContainer>
         {/* conditionally render app and auth  */}
         {user.userToken ? <HomeStack /> : <AuthStack />}
-        {/* <AuthStack /> */}
-        {/* <HomeStack /> */}
       </NavigationContainer>
     </View>
   );

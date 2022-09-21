@@ -1,16 +1,11 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { HomeStackParamList } from "./types";
-import Details from "../../screens/DetailsScreen";
-import Profile from "../../screens/ProfileScreen";
-import Home from "../../screens/HomeScreen";
 import AppDrawer from "../AppDrawer";
 import Categories from "../../screens/Categories";
-import Recyclers from "../../screens/Recyclers";
 import MyAds from "../../screens/MyAds";
 import { useTheme } from "react-native-paper";
 import RecyclerStack from "../RecyclersStack";
-import Menu from "../../screens/Menu";
 import AdDetails from "../../screens/AdDetails";
 import BecomeRecycler from "../../screens/BecomeRecycler";
 import NotificationDetails from "../../screens/NotificationDetails";

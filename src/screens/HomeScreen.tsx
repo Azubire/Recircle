@@ -4,7 +4,6 @@ import {
   FlatList,
   Image,
   SafeAreaView,
-  ScrollView,
   View,
 } from "react-native";
 import {
@@ -31,6 +30,7 @@ import {
 } from "../store/features/NotificationSlice";
 import { useIsFocused } from "@react-navigation/native";
 import { getAuth, getUser } from "../store/features/AuthSlice";
+import { baseUrl } from "../utils/helpers";
 
 const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
   const [showModal, setShowModal] = React.useState(false);
@@ -65,11 +65,8 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
 
   const getNotification = async () => {
     try {
-      const data = await dispatch(getNotifications(user.profile.id)).unwrap();
-      // console.log("data", data);
-    } catch (error) {
-      // console.log("errowr", error);
-    }
+      await dispatch(getNotifications(user.profile.id)).unwrap();
+    } catch (error) {}
   };
 
   React.useEffect(() => {
@@ -218,7 +215,7 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
                 <Card.Cover
                   resizeMode="contain"
                   source={{
-                    uri: `http://192.168.43.35:3001/images/categoryImages/${item.icon}`,
+                    uri: `${baseUrl}/images/categoryImages/${item.icon}`,
                   }}
                   style={{
                     paddingTop: 10,

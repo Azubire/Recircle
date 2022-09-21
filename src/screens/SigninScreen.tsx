@@ -4,7 +4,6 @@ import {
   Button,
   Checkbox,
   HelperText,
-  Snackbar,
   Text,
   TextInput,
   Title,
@@ -22,9 +21,6 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import { setUserToSecureStore } from "../utils/helpers";
-
-const coverImg = require("../../assets/images/cover.jpeg");
-const profileImg = require("../../assets/images/profile.jpeg");
 
 interface formData {
   email: string;
@@ -59,15 +55,6 @@ const SigninScreen = ({ navigation }: AuthScreenProps<"Signin">) => {
     defaultValues: {},
 
     resolver: joiResolver(schema),
-    // resolver: async (data, context, options) => {
-    //   // you can debug your validation schema here
-    //   console.log("formData", data);
-    //   console.log(
-    //     "validation result",
-    //     await joiResolver(schema)(data, context, options)
-    //   );
-    //   return joiResolver(schema)(data, context, options);
-    // },
   });
 
   const onSubmit: SubmitHandler<formData> = async (formData) => {

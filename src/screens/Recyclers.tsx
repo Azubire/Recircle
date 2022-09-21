@@ -10,6 +10,7 @@ import {
 } from "../store/features/RecyclerSclice";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import { getAuth } from "../store/features/AuthSlice";
+import { baseUrl } from "../utils/helpers";
 
 const Recyclers = ({ navigation }: RecyclerStackScreenProps<"Recyclers">) => {
   const state = useAppSelector(getAllRecyclers);
@@ -20,7 +21,7 @@ const Recyclers = ({ navigation }: RecyclerStackScreenProps<"Recyclers">) => {
 
   const getData = async () => {
     try {
-      const data = await dispatch(fetchRecylers(user.userToken)).unwrap();
+      await dispatch(fetchRecylers(user.userToken)).unwrap();
       // console.log("success", data);
     } catch (error) {
       // console.log("error", error);
@@ -78,7 +79,7 @@ const Recyclers = ({ navigation }: RecyclerStackScreenProps<"Recyclers">) => {
                   left={() => (
                     <Avatar.Image
                       source={{
-                        uri: `http://192.168.43.35:3001/images/recyclers/${item.profileImg}`,
+                        uri: `${baseUrl}/images/recyclers/${item.profileImg}`,
                       }}
                       size={60}
                     />

@@ -6,12 +6,9 @@ import { Button, Card, TextInput, Title, useTheme } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import dateFormat from "dateformat";
-import {
-  getUserAds,
-  getUserAdsState,
-  UserAds,
-} from "../store/features/UserAds";
+import { getUserAds, getUserAdsState } from "../store/features/UserAds";
 import { getUser } from "../store/features/AuthSlice";
+import { baseUrl } from "../utils/helpers";
 
 const History = ({ navigation }: AppDrawerScreenProps<"History">) => {
   const [filterItems, setFilterItems] = React.useState<
@@ -139,7 +136,7 @@ const History = ({ navigation }: AppDrawerScreenProps<"History">) => {
                   <Title style={{ flex: 0.4, paddingLeft: 8 }}>{item.id}</Title>
                   <Image
                     source={{
-                      uri: `http://192.168.43.35:3001/images/ads/${item.adImage}`,
+                      uri: `${baseUrl}/images/ads/${item.adImage}`,
                     }}
                     style={{ height: 60, width: 70, flex: 0.7 }}
                     resizeMode="cover"

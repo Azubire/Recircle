@@ -9,7 +9,6 @@ import {
   Text,
   TextInput,
   Title,
-  useTheme,
 } from "react-native-paper";
 import {
   getAllNotification,
@@ -20,6 +19,7 @@ import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import { getUser } from "../store/features/AuthSlice";
 import { HomeStackScreenProps } from "../navigations/AppStack/types";
 import { Ionicons } from "@expo/vector-icons";
+import { baseUrl } from "../utils/helpers";
 
 const NotificationDetails = ({
   navigation,
@@ -64,7 +64,6 @@ const NotificationDetails = ({
       setShowModal((prev) => ({ ...prev, error: true }));
       return;
     }
-    console.log("first");
 
     if (formData.message.length < 1) {
       return;
@@ -82,7 +81,7 @@ const NotificationDetails = ({
         }));
       }
     } catch (error) {
-      console.log("error", error);
+      // console.log("error", error);
     }
   };
 
@@ -135,7 +134,7 @@ const NotificationDetails = ({
             <Avatar.Image
               size={100}
               source={{
-                uri: `http://192.168.43.35:3001/images/categoryImages/${data.avatar}`,
+                uri: `${baseUrl}/images/categoryImages/${data.avatar}`,
               }}
             />
           ) : (

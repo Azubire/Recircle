@@ -2,13 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import Home from "../../screens/HomeScreen";
-import Settings from "../../screens/SettingsScreen";
-import {
-  MaterialCommunityIcons,
-  MaterialIcons,
-  AntDesign,
-  Ionicons,
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 import { TouchableOpacity, View } from "react-native";
 import { DrawerActions } from "@react-navigation/native";
 import { TabParamList, TabScreenProps } from "./types";
@@ -16,20 +10,11 @@ import Explore from "../../screens/Explore";
 import Sell from "../../screens/Sell";
 import Search from "../../screens/Search";
 import Profile from "../../screens/ProfileScreen";
-import {
-  Avatar,
-  Badge,
-  Button,
-  Divider,
-  Menu,
-  Text,
-  useTheme,
-} from "react-native-paper";
-import HomeStack from "../AppStack/AppStack";
+import { Avatar, Badge, Divider, Menu, useTheme } from "react-native-paper";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxhooks";
 import { getUser, removeUser } from "../../store/features/AuthSlice";
-const profileImage = require("../../../assets/images/profile.jpeg");
 import * as secureStore from "expo-secure-store";
+import { baseUrl } from "../../utils/helpers";
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
@@ -218,7 +203,7 @@ const AppTabs = () => {
               <Avatar.Image
                 size={30}
                 source={{
-                  uri: `http://192.168.43.35:3001/images/categoryImages/${state.user.profile?.profileImg}`,
+                  uri: `${baseUrl}/images/categoryImages/${state.user.profile?.profileImg}`,
                 }}
               />
             ) : (

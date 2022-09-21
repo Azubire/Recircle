@@ -16,18 +16,13 @@ import {
   Badge,
 } from "react-native-paper";
 import { DrawerContentComponentProps } from "@react-navigation/drawer";
-import { StatusBar } from "expo-status-bar";
-import { useIsFocused } from "@react-navigation/native";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import { getUser, removeUser } from "../store/features/AuthSlice";
 import * as secureStore from "expo-secure-store";
-import {
-  getAllNotification,
-  getAllNotificationCount,
-} from "../store/features/NotificationSlice";
+import { getAllNotificationCount } from "../store/features/NotificationSlice";
+import { baseUrl } from "../utils/helpers";
 
 const logo = require("../../assets/images/logo.png");
-const profileImage = require("../../assets/images/profile.jpeg");
 
 const DrawerContent = (props: DrawerContentComponentProps) => {
   const [active, setActive] = React.useState<number | null>(null);
@@ -213,7 +208,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
                 <Avatar.Image
                   size={30}
                   source={{
-                    uri: `http://192.168.43.35:3001/images/categoryImages/${user.user.profile?.profileImg}`,
+                    uri: `${baseUrl}/images/categoryImages/${user.user.profile?.profileImg}`,
                   }}
                 />
               ) : (

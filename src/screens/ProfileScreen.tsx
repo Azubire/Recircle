@@ -159,7 +159,7 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
               {user?.profile.coverImg ? (
                 <Image
                   source={{
-                    uri: `http://192.168.43.35:3001/images/categoryImages/${user?.profile.coverImg}`,
+                    uri: `${baseUrl}/images/categoryImages/${user?.profile.coverImg}`,
                   }}
                   resizeMode="cover"
                   style={{
@@ -181,7 +181,7 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
                 {user?.profile.profileImg ? (
                   <Image
                     source={{
-                      uri: `http://192.168.43.35:3001/images/categoryImages/${user?.profile.profileImg}`,
+                      uri: `${baseUrl}/images/categoryImages/${user?.profile.profileImg}`,
                     }}
                     resizeMode="cover"
                     style={{

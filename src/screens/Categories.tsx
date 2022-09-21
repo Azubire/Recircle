@@ -1,15 +1,12 @@
 import {
   View,
   FlatList,
-  ImageSourcePropType,
   Image,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
 import React from "react";
-import { LinearGradient } from "expo-linear-gradient";
-import { Button, Card, Text, useTheme } from "react-native-paper";
-import { StatusBar } from "expo-status-bar";
+import { Card, Text, useTheme } from "react-native-paper";
 import { HomeStackScreenProps } from "../navigations/AppStack/types";
 import {
   fetchRecyclingCategories,
@@ -18,6 +15,7 @@ import {
 } from "../store/features/RecyclingCategorySlice";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import CustomStatusbar from "../components/CustomStatusbar";
+import { baseUrl } from "../utils/helpers";
 
 const Categories = ({ navigation }: HomeStackScreenProps<"Categories">) => {
   const [categories, setCategories] =
@@ -116,7 +114,7 @@ const Categories = ({ navigation }: HomeStackScreenProps<"Categories">) => {
                 <Card.Cover
                   resizeMode="contain"
                   source={{
-                    uri: `http://192.168.43.35:3001/images/categoryImages/${item.icon}`,
+                    uri: `${baseUrl}/images/categoryImages/${item.icon}`,
                   }}
                   style={{
                     paddingTop: 10,

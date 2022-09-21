@@ -9,6 +9,7 @@ import {
 } from "../store/features/NotificationSlice";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
 import { getUser } from "../store/features/AuthSlice";
+import { baseUrl } from "../utils/helpers";
 
 const Notification = ({
   navigation,
@@ -45,7 +46,7 @@ const Notification = ({
                     item.avatar ? (
                       <Avatar.Image
                         source={{
-                          uri: `http://192.168.43.35:3001/images/categoryImages/${item.avatar}`,
+                          uri: `${baseUrl}/images/categoryImages/${item.avatar}`,
                         }}
                       />
                     ) : (
