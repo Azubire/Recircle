@@ -31,6 +31,7 @@ import {
 import { useIsFocused } from "@react-navigation/native";
 import { getAuth, getUser } from "../store/features/AuthSlice";
 import { baseUrl } from "../utils/helpers";
+import { StatusBar } from "expo-status-bar";
 
 const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
   const [showModal, setShowModal] = React.useState(false);
@@ -84,8 +85,8 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
   }, [notificationCount, focused, state.data]);
 
   return (
-    <SafeAreaView>
-      <CustomStatusbar style="light" />
+    <View>
+      <StatusBar style="light" />
       {state.status === "loading" ? (
         <ActivityIndicator size="large" />
       ) : (
@@ -238,6 +239,7 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
                     buttonColor={colors.primary}
                     onPress={() => {
                       navigation.navigate(item.screen, { id: user.profile.id });
+                      // navigation.push()
                     }}
                   >
                     <Ionicons name="arrow-forward" color="#fff" size={24} />
@@ -248,7 +250,7 @@ const Home = ({ navigation, route }: TabScreenProps<"Home">) => {
           />
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

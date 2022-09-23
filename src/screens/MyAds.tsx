@@ -21,6 +21,7 @@ import { getUserAds, getUserAdsState } from "../store/features/UserAds";
 import { baseUrl } from "../utils/helpers";
 import { deleteAd, getAds } from "../store/features/AdSlice";
 import dateFormat from "dateformat";
+import { StatusBar } from "expo-status-bar";
 
 const MyAds = ({ navigation, route }: HomeStackScreenProps<"MyAds">) => {
   const dispatch = useAppDispatch();
@@ -51,8 +52,8 @@ const MyAds = ({ navigation, route }: HomeStackScreenProps<"MyAds">) => {
   }, [id, dispatch]);
 
   return (
-    <SafeAreaView>
-      <CustomStatusbar style="light" />
+    <View>
+      <StatusBar style="light" />
       {status === "loading" || status === "idle" ? (
         <ActivityIndicator size="large" />
       ) : data.user.length > 0 ? (
@@ -135,7 +136,7 @@ const MyAds = ({ navigation, route }: HomeStackScreenProps<"MyAds">) => {
       ) : (
         <Title style={{ marginTop: 16 }}>No adverts yet!</Title>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 
