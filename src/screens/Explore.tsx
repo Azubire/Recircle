@@ -1,4 +1,10 @@
-import { View, ScrollView, FlatList, ActivityIndicator } from "react-native";
+import {
+  View,
+  ScrollView,
+  FlatList,
+  ActivityIndicator,
+  RefreshControl,
+} from "react-native";
 import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
@@ -19,6 +25,7 @@ import { getUser } from "../store/features/AuthSlice";
 import { baseUrl } from "../utils/helpers";
 
 const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
+  const [refreshing, setRefreshing] = React.useState(false);
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const state = useAppSelector(getAds);
@@ -30,15 +37,29 @@ const Explore = ({ navigation }: TabScreenProps<"Explore">) => {
   };
 
   React.useEffect(() => {
-    if (state.status === "idle") getAdsFromDB();
+    getAdsFromDB();
+  }, []);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await dispatch(fetchAdverts()).unwrap();
+      setRefreshing(false);
+    } catch (error) {
+      setRefreshing(false);
+    }
   }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar style="light" />
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {state.status === "loading" || state.status === "idle" ? (
-          <ActivityIndicator animating size="large" />
+          <ActivityIndicator animating size="large" style={{ marginTop: 21 }} />
         ) : (
           <>
             {/* newest ads */}

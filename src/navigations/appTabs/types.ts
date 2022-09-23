@@ -12,7 +12,7 @@ export type TabParamList = {
   Explore: undefined;
   Sell: { id?: number } | undefined;
   Search: undefined;
-  Profile: undefined;
+  Profile: { refresh?: boolean };
 };
 
 export type TabScreenProps<T extends keyof TabParamList> = CompositeScreenProps<

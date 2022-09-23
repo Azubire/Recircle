@@ -24,7 +24,7 @@ import * as ImagePicker from "expo-image-picker";
 import mime from "mime";
 import { baseUrl } from "../utils/helpers";
 
-const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
+const Profile = ({ navigation, route }: TabScreenProps<"Profile">) => {
   const [user, setUser] = React.useState<{
     profile: {
       userName: string;
@@ -42,7 +42,6 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
   const [loading, setLoading] = React.useState(true);
 
   const state = useAppSelector(getUser);
-  // const recycler = useAppSelector(getRecycler)
   const dispatch = useAppDispatch();
 
   const getRecyclerStatus = async () => {
@@ -75,11 +74,11 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
     }));
     setLoading(false);
   }, [state.user.profile]);
-  // console.log(user);
+  console.log("sgdhag");
 
   React.useEffect(() => {
     getRecyclerStatus();
-  }, []);
+  }, [route.params?.refresh]);
   const { colors } = useTheme();
 
   const handleLogOut = async () => {
@@ -227,34 +226,41 @@ const Profile = ({ navigation }: TabScreenProps<"Profile">) => {
             </View>
             <SafeAreaView>
               <View style={{ paddingHorizontal: 16 }}>
-                <Text>
-                  Click below to become a recycler and set up your profile
-                </Text>
                 {recyclerStatus?.isVerified ? (
-                  <Button
-                    mode="outlined"
-                    textColor={colors.success}
-                    style={{
-                      alignSelf: "center",
-                      borderColor: colors.success,
-                    }}
-                  >
-                    Verified
-                  </Button>
+                  <>
+                    <Text style={{ textAlign: "center", marginBottom: 10 }}>
+                      Recycler Status
+                    </Text>
+                    <Button
+                      mode="outlined"
+                      textColor={colors.success}
+                      style={{
+                        alignSelf: "center",
+                        borderColor: colors.success,
+                      }}
+                    >
+                      Verified
+                    </Button>
+                  </>
                 ) : (
-                  <Button
-                    onPress={() => {
-                      navigation.navigate("BecomeRecycler");
-                    }}
-                    mode="outlined"
-                    textColor={colors.danger}
-                    style={{
-                      alignSelf: "center",
-                      borderColor: colors.danger,
-                    }}
-                  >
-                    Register As Recycler
-                  </Button>
+                  <>
+                    <Text style={{ textAlign: "center", marginBottom: 10 }}>
+                      Click below to become a recycler and set up your profile
+                    </Text>
+                    <Button
+                      onPress={() => {
+                        navigation.push("BecomeRecycler");
+                      }}
+                      mode="outlined"
+                      textColor={colors.danger}
+                      style={{
+                        alignSelf: "center",
+                        borderColor: colors.danger,
+                      }}
+                    >
+                      Register As Recycler
+                    </Button>
+                  </>
                 )}
               </View>
 

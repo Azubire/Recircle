@@ -41,7 +41,7 @@ const schema = Joi.object<any, true, formData>({
 });
 
 const Sell = ({ route, navigation }: TabScreenProps<"Sell">) => {
-  const [selectedCategory, setSelectedCategory] = React.useState<number>(0);
+  const [selectedCategory, setSelectedCategory] = React.useState<number>(1);
   const [loading, setLoading] = React.useState(true);
   const [isImageSet, setIsImageSet] = React.useState(false);
   const [image, setImage] = React.useState<any>();
@@ -185,6 +185,7 @@ const Sell = ({ route, navigation }: TabScreenProps<"Sell">) => {
               <Controller
                 name="categoryId"
                 control={control}
+                defaultValue={selectedCategory}
                 render={({ field: { onChange } }) => (
                   <>
                     <TextInput

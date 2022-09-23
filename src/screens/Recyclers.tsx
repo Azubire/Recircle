@@ -120,8 +120,10 @@ const Recyclers = ({ navigation }: RecyclerStackScreenProps<"Recyclers">) => {
                     >
                       <Ionicons name="time-outline" size={20} />
                       <View style={{ flexDirection: "row", marginLeft: 8 }}>
-                        <Text>{item.workingDays}</Text>
-                        <Text style={{ marginLeft: 8 }}>Mon - Fri</Text>
+                        <Text>Mon - Fri</Text>
+                        <Text style={{ marginLeft: 8 }}>
+                          {item.workingHours}
+                        </Text>
                       </View>
                     </View>
                     <View style={{ flexDirection: "row" }}>

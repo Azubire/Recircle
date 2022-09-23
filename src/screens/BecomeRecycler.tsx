@@ -11,8 +11,11 @@ import { HomeStackScreenProps } from "../navigations/AppStack/types";
 import {
   Button,
   HelperText,
+  Modal,
+  Portal,
   Text,
   TextInput,
+  Title,
   useTheme,
 } from "react-native-paper";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxhooks";
@@ -64,7 +67,7 @@ const BecomeRecycler = ({
   const newCat = categories.data.map((cat) => ({ id: cat.id, name: cat.name }));
 
   // category state
-  const [selectedCategory, setSelectedCategory] = React.useState<number>(0);
+  const [selectedCategory, setSelectedCategory] = React.useState<number>(1);
 
   const { user } = useAppSelector(getAuth);
   const state = useAppSelector(getAllRecyclers);
@@ -107,15 +110,6 @@ const BecomeRecycler = ({
     },
 
     resolver: joiResolver(schema),
-    // resolver: async (data, context, options) => {
-    // you can debug your validation schema here
-    // console.log("formData", data);
-    //   console.log(
-    //     "validation result",
-    //     await joiResolver(schema)(data, context, options)
-    //   );
-    //   return joiResolver(schema)(data, context, options);
-    // },
   });
 
   //create form data
@@ -150,8 +144,12 @@ const BecomeRecycler = ({
       const data = await dispatch(
         createRecycler({ newData, userToken })
       ).unwrap();
-      navigation.goBack();
+      // navigation.goBack();
       reset();
+      navigation.navigate("Drawer", {
+        screen: "Dashboard",
+        params: { screen: "Profile", params: { refresh: true } },
+      });
     } catch (error) {
       // console.log("error", error);
     }
@@ -160,6 +158,7 @@ const BecomeRecycler = ({
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <CustomStatusbar style="light" />
+
       <ScrollView>
         <KeyboardAvoidingView enabled>
           <View style={{ paddingHorizontal: 16 }}>
@@ -174,9 +173,20 @@ const BecomeRecycler = ({
             >
               Please complete the form below to become a recycler
             </Text>
+            <Button
+              onPress={() => {
+                navigation.navigate("Drawer", {
+                  screen: "Dashboard",
+                  params: { screen: "Profile", params: { refresh: true } },
+                });
+              }}
+            >
+              go back
+            </Button>
             <Controller
               name="recyclingCatId"
               control={control}
+              defaultValue={selectedCategory}
               render={({ field: { onChange } }) => (
                 <>
                   <HelperText type="info">Select a category</HelperText>
@@ -312,7 +322,7 @@ const BecomeRecycler = ({
                       style={{ marginTop: 16 }}
                       onChangeText={(location) => onChange(location)}
                       label="Working Hours"
-                      placeholder="Enter your woking hours"
+                      placeholder="8am-5pm"
                       {...rest}
                     />
                     <HelperText
