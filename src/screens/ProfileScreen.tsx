@@ -45,6 +45,7 @@ const Profile = ({ navigation, route }: TabScreenProps<"Profile">) => {
   const dispatch = useAppDispatch();
 
   const getRecyclerStatus = async () => {
+    setLoading(true);
     try {
       const { data } = await axios.get(
         `${baseUrl}/recycler/status/${state.user.profile.id}`
@@ -58,10 +59,15 @@ const Profile = ({ navigation, route }: TabScreenProps<"Profile">) => {
       } else {
         setRecyclerStatus({ isRecycler: false, isVerified: false });
       }
+      setLoading(false);
     } catch (error) {
       setRecyclerStatus({ isRecycler: false, isVerified: false });
+      setLoading(false);
     }
   };
+  React.useEffect(() => {
+    getRecyclerStatus();
+  }, [route.params?.refresh]);
 
   React.useEffect(() => {
     setUser((prev) => ({
@@ -72,13 +78,8 @@ const Profile = ({ navigation, route }: TabScreenProps<"Profile">) => {
         profileImg: state.user.profile.profileImg,
       },
     }));
-    setLoading(false);
   }, [state.user.profile]);
-  console.log("sgdhag");
 
-  React.useEffect(() => {
-    getRecyclerStatus();
-  }, [route.params?.refresh]);
   const { colors } = useTheme();
 
   const handleLogOut = async () => {
@@ -226,7 +227,7 @@ const Profile = ({ navigation, route }: TabScreenProps<"Profile">) => {
             </View>
             <SafeAreaView>
               <View style={{ paddingHorizontal: 16 }}>
-                {recyclerStatus?.isVerified ? (
+                {recyclerStatus.isRecycler ? (
                   <>
                     <Text style={{ textAlign: "center", marginBottom: 10 }}>
                       Recycler Status

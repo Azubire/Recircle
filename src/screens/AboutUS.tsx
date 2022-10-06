@@ -23,40 +23,20 @@ const AboutUS = () => {
         </Title>
 
         <Paragraph style={{ marginBottom: 16 }}>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quam hic
-          ipsam in et nam sequi, eaque aut ad excepturi dolorum reiciendis
-          officia deserunt alias dolores quae consequuntur itaque. Reiciendis,
-          pariatur? Veritatis deleniti, debitis minima cumque nisi eaque ipsum
-          quos, quod, eum provident qui exercitationem aliquid enim esse culpa
-          magnam officiis labore fugit consequuntur in. Magni quisquam voluptas
-          impedit, sed saepe.
+          Simple tool for recycling and disposing waste.
         </Paragraph>
         <Paragraph>
-          cupiditate itaque. Laudantium! Corrupti inventore, aliquid consectetur
-          laboriosam distinctio molestias eaque possimus ut mollitia labore esse
-          ratione velit, recusandae architecto saepe blanditiis quos fuga fugiat
-          aliquam praesentium adipisci vitae? Similique eius praesentium facere?
-          Dolorem beatae minus nihil numquam sunt maxime. Impedit, commodi
-          error? Eligendi iusto repudiandae optio molestiae sapiente, ullam
-          ratione soluta in. Temporibus sint unde maiores veniam mollitia magni
+          Lets recycle app enables you to sell or buy waste conviniently and
+          profitability, communicate more effieciently with sellers, buyers and
+          recyclers.
+        </Paragraph>
+        <Paragraph>
+          Lets recycle app makes you choose the kind of waste you want to sell
+          or buy to customers and recyclers which is found in the category
+          section on the app dashboard.
         </Paragraph>
         <Paragraph style={{ marginBottom: 16 }}>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quam hic
-          ipsam in et nam sequi, eaque aut ad excepturi dolorum reiciendis
-          officia deserunt alias dolores quae consequuntur itaque. Reiciendis,
-          pariatur? Veritatis deleniti, debitis minima cumque nisi eaque ipsum
-          quos, quod, eum provident qui exercitationem aliquid enim esse culpa
-          magnam officiis labore fugit consequuntur in. Magni quisquam voluptas
-          impedit, sed saepe.
-        </Paragraph>
-        <Paragraph style={{ marginBottom: 16 }}>
-          cupiditate itaque. Laudantium! Corrupti inventore, aliquid consectetur
-          laboriosam distinctio molestias eaque possimus ut mollitia labore esse
-          ratione velit, recusandae architecto saepe blanditiis quos fuga fugiat
-          aliquam praesentium adipisci vitae? Similique eius praesentium facere?
-          Dolorem beatae minus nihil numquam sunt maxime. Impedit, commodi
-          error? Eligendi iusto repudiandae optio molestiae sapiente, ullam
-          ratione soluta in. Temporibus sint unde maiores veniam mollitia magni
+          Let's recycle,let's make money.
         </Paragraph>
       </View>
     </ScrollView>
